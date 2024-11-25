@@ -1,0 +1,35 @@
+.title-adm {
+    color: #9B2D20;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.title-div-adm {
+    border-bottom: 2px solid #9B2D20;
+    width: 150px;
+    text-align: center;
+    color: #9B2D20;
+}
+.sub-title-adm {
+    color: grey;
+    font-size: 14px;
+}
+
+.color-grey {
+    color: #193238;
+}
+
+.color-green {
+    color: #07C158;
+}
+
+.img-adm {
+    height: 120px;
+    width: 120px;
+}
+
+
+.btnC-adm {
+    background-color: #9B2D20 !important;
+    font-size: 12px;
+}

@@ -26,6 +26,8 @@ import AgendaAdministrador from "./components/administrador/AgendaAdministrador"
 import ListarFuncionariosAtivos from "./components/administrador/ListarFuncionariosAtivos";
 import ListarFuncionariosArquivados from "./components/administrador/ListarFuncionariosArquivados";
 import CadastroProfissionalForm from "./components/administrador/CadastroProfissionalForm";
+import DadosEquitadorAdm from "./components/administrador/DadosEquitadorAdm.js";
+import DadosEquoterapeutaAdm from "./components/administrador/DadosEquoterapeutaAdm.js";
 
 function App() {
   return (
@@ -246,6 +248,30 @@ function App() {
                 <div className="content">
                   <CadastroProfissionalForm />
                 </div>
+              </div>
+            }
+          />
+
+          <Route
+            path="/dados-equitador-adm"
+            element={
+              <div className="app-content">
+                <SidebarAdministrador />
+                <div className="content">
+                  <DadosEquitadorAdm />
+              </div>
+              </div>
+            }
+          />
+
+          <Route
+            path="/dados-equoterapeuta-adm"
+            element={
+              <div className="app-content">
+                <SidebarAdministrador />
+                <div className="content">
+                  <DadosEquoterapeutaAdm />
+              </div>
               </div>
             }
           />
