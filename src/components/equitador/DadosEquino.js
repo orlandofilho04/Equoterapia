@@ -29,7 +29,7 @@ const DadosEquino = () => {
                     </Col>
                 </Row>
 
-                <div className='title-sec-div'>
+                <div className='title-div'>
                     Dados Equino
                 </div>
                 
