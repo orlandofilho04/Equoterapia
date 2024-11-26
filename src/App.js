@@ -28,6 +28,11 @@ import ListarFuncionariosArquivados from "./components/administrador/ListarFunci
 import CadastroProfissionalForm from "./components/administrador/CadastroProfissionalForm";
 import DadosEquitadorAdm from "./components/administrador/DadosEquitadorAdm.js";
 import DadosEquoterapeutaAdm from "./components/administrador/DadosEquoterapeutaAdm.js";
+import FeedbackSessaoAnterior from "./components/praticante/FeedbackSessaoAnterior.js";
+import DetalhesSessao from "./components/praticante/DetalhesSessao.js";
+import InformacoesPraticante from "./components/praticante/InformacoesPraticante.js";
+import FinalizarSessao from "./components/praticante/FinalizarSessao.js";
+
 
 function App() {
   return (
@@ -275,6 +280,65 @@ function App() {
               </div>
             }
           />
+          <Route
+            path="/FeedbackSessaoAnterior"
+            element={
+              <div className="app-content">
+                <Sidebar />
+                <div className="content">
+                  <FeedbackSessaoAnterior />
+                </div>
+              </div>
+            }
+          />
+
+          <Route
+              path="/DetalhesSessao"
+              element={
+                <div className="app-content">
+                  <Sidebar />
+
+                  <div className="content">
+                  <DetalhesSessao />
+                  </div>
+                  
+                  
+                </div>
+
+              }
+          />
+
+          <Route
+              path="/FinalizarSessao"
+              element={
+                <div className="app-content">
+                  <Sidebar />
+
+                  <div className="content">
+                  <FinalizarSessao />
+
+                  </div>
+                  
+                  
+                </div>
+
+              }
+          />
+
+
+
+          <Route
+              path="/InformacoesPraticante"
+              element={
+                <div className="app-content">
+                  <Sidebar />
+                  <div className="content">
+                    <InformacoesPraticante />
+                  </div>
+                </div>
+              }
+            />
+
         </Routes>
       </div>
     </Router>

@@ -1,0 +1,7 @@
+.rounded-photo {
+    width: 100px;         /* Define a largura da imagem */
+    height: 100px;        /* Define a altura da imagem */
+    border-radius: 50%;   /* Torna a imagem redonda */
+    object-fit: cover;    /* Faz a imagem se ajustar ao tamanho */
+  }
+  
