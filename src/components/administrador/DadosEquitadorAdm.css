@@ -28,6 +28,11 @@
     font-style: normal;
 }
 
+.title-adm {
+    color: #9B2D20;
+    font-weight: bold;
+}
+
 .sub-title-adm {
     color: grey;
     font-size: 14px;

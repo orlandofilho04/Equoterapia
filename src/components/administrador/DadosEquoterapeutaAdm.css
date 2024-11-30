@@ -1,26 +1,50 @@
-.title-adm {
-    color: #9B2D20;
-    font-weight: bold;
-    font-size: 20px;
+.btn-container {
+    display: flex;
+    justify-content: start;
+    gap: 20px;
+    margin-top: 20px;
 }
 
 .title-div-adm {
-    border-bottom: 2px solid #9B2D20;
-    width: 150px;
+    width: 15vw!important;
+    padding: 10px;
     text-align: center;
-    color: #9B2D20;
+    color: black;
+    font-weight: normal;
+    cursor: pointer;
+    white-space: nowrap; 
 }
+  
+.title-div-adm.active-btn {
+    color: #9B2D20;
+    font-weight: bold;
+    border-bottom: 2px solid #9B2D20;
+}
+  
+.title-div-adm:not(.active-btn) {
+    color: #000000;
+    font-weight: normal;
+    border-bottom: none;
+    font-style: normal;
+}
+
+
+.title-adm {
+    color: #9B2D20;
+    font-weight: bold;
+}
+
 .sub-title-adm {
     color: grey;
     font-size: 14px;
 }
 
-.color-grey {
-    color: #193238;
+.green{
+    color: #07C158;
 }
 
-.color-green {
-    color: #07C158;
+.color-grey {
+    color: #193238;
 }
 
 .img-adm {
@@ -32,4 +56,10 @@
 .btnC-adm {
     background-color: #9B2D20 !important;
     font-size: 12px;
+}
+
+@media (max-width: 768px) {
+    .title-div-adm {
+        width: 45vw;
+    }
 }
