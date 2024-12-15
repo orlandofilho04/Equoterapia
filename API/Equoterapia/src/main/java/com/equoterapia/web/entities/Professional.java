@@ -1,6 +1,6 @@
 package com.equoterapia.web.entities;
 
-import com.equoterapia.web.entities.enums.Specialty;
+import com.equoterapia.web.entities.enums.Roles;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -21,7 +21,7 @@ public class Professional {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    private Specialty specialty;
+    private Roles roles;
 
     @ManyToMany
     @JoinTable(name = "tb_professionals_has_pacients", joinColumns = @JoinColumn(name = "professional_id"), inverseJoinColumns = @JoinColumn(name = "pacient_id"))
