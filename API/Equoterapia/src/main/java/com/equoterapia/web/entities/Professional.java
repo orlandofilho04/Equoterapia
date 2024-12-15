@@ -27,4 +27,6 @@ public class Professional {
     @JoinTable(name = "tb_professionals_has_pacients", joinColumns = @JoinColumn(name = "professional_id"), inverseJoinColumns = @JoinColumn(name = "pacient_id"))
     private List<Pacient> pacients = new ArrayList<>();
 
+    @OneToMany(mappedBy = "professional")
+    private List<Appointment> appointments = new ArrayList<>();
 }

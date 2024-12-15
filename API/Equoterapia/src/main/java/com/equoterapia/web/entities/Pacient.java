@@ -25,4 +25,7 @@ public class Pacient {
 
     @ManyToMany(mappedBy = "pacients")
     private List<Professional> professionals = new ArrayList<>();
+
+    @OneToMany(mappedBy = "pacient")
+    private List<Appointment> appointments = new ArrayList<>();
 }
