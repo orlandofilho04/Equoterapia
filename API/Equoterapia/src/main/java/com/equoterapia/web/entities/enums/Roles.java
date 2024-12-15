@@ -1,7 +1,7 @@
 package com.equoterapia.web.entities.enums;
 
 
-public enum Specialty {
+public enum Roles {
     FONOAUDIOLOGO,
     FISIOTERAPEUTA,
     PSICOLOGO;
