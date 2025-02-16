@@ -16,8 +16,6 @@ import java.util.List;
 public class EquitorResource {
 
     @Autowired
-    private EquitorResource equitorResource;
-    @Autowired
     private EquitorService equitorService;
 
     @GetMapping

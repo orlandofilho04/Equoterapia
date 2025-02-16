@@ -2,27 +2,33 @@ package com.equoterapia.web.services;
 import java.util.List;
 import java.util.Optional;
 
+import com.equoterapia.web.entities.LegallyResponsible;
+import com.equoterapia.web.repositories.LegallyResponsibleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-import com.equoterapia.web.entities.Pacient;
-import com.equoterapia.web.repositories.PacientRepository;
-
+@Service
 public class LegallyResponsibleService {
-    @Autowired
-    private PacientRepository pacientRepository;
 
-    public List<Pacient> findAll(){
-        return pacientRepository.findAll();
+    @Autowired
+    private LegallyResponsibleRepository legallyResponsibleRepository;
+
+    public List<LegallyResponsible> findAll(){
+        return legallyResponsibleRepository.findAll();
     }
-    public Pacient findById(Long id){
-        Optional<Pacient> optionalPacient = pacientRepository.findById(id);
-        return optionalPacient.orElseThrow(() -> new RuntimeException());
+
+    public LegallyResponsible findById(Long id){
+        Optional<LegallyResponsible> optionalLegallyResponsible = legallyResponsibleRepository.findById(id);
+        return optionalLegallyResponsible.orElseThrow(() -> new RuntimeException());
     }
+
     public void delete(Long id){
-        pacientRepository.deleteById(id);
+        legallyResponsibleRepository.deleteById(id);
     }
-     public Pacient insert(Pacient pai){
-      return pacientRepository.save(pai);
+
+     public LegallyResponsible insert(LegallyResponsible parent){
+      return legallyResponsibleRepository.save(parent);
      }
+
     }
 

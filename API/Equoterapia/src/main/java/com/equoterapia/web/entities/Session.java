@@ -21,17 +21,22 @@ import java.util.List;
 public class Session {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private LocalDateTime hour;
+    private long id;
+    private LocalDateTime sessionHour;
     private LocalTime duration;
     private SessionStatus sessionStatus;
 
     @ManyToMany
-    @JoinTable(name = "tb_sessions_has_professionals", joinColumns = @JoinColumn(name = "session_id"), inverseJoinColumns = @JoinColumn(name = "professional_id"))
+    @JoinTable(name = "tb_sessions_has_professionals",
+            joinColumns = @JoinColumn(name = "session_id"),
+            inverseJoinColumns = @JoinColumn(name = "professional_id"))
     private List<Professional> professionals = new ArrayList<>();
+
     @ManyToOne
     @JoinColumn(name = "pacient_id")
     private Pacient pacient = new Pacient();
+
     @ManyToOne
-    @JoinColumn(name = "equine_id")
-    private Equine equine = new Equine(); // Classe que ainda será criada
+    @JoinColumn(name = "horse_id")
+    private Horse equine = new Horse();
 }

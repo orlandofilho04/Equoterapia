@@ -13,7 +13,7 @@ import java.util.List;
 @RestController
 @CrossOrigin("*")
 @RequestMapping(value = "/horses")
-public class HorseController {
+public class HorseResource {
 
     @Autowired
     private HorseService horseService;

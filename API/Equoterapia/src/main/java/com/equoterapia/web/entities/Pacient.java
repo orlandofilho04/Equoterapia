@@ -24,8 +24,18 @@ public class Pacient {
     private LocalDate birthDate;
 
     @ManyToMany(mappedBy = "pacients")
+    private List<LegallyResponsible> LegallyResponsibles  = new ArrayList<>();
+
+    @OneToMany(mappedBy = "pacient", cascade = CascadeType.ALL)
+    private List<Session> sessions = new ArrayList<>();
+
+    @ManyToMany(mappedBy = "pacients")
     private List<Professional> professionals = new ArrayList<>();
 
     @OneToMany(mappedBy = "pacient")
     private List<Appointment> appointments = new ArrayList<>();
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "anamnesis_id", referencedColumnName = "id")
+    private Anamnesis anamnesis;
 }

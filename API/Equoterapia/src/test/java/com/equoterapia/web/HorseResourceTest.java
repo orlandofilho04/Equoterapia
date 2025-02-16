@@ -8,19 +8,18 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
-class HorseControllerTest {
+class HorseResourceTest {
 
     @Mock
     private HorseService horseService;
 
     @InjectMocks
-    private HorseController horseController;
+    private HorseResource horseResource;
 
     private Horse horse;
 
@@ -33,7 +32,7 @@ class HorseControllerTest {
     void findAll_ShouldReturnListOfHorses() {
         when(horseService.findAll()).thenReturn(List.of(horse));
 
-        ResponseEntity<List<Horse>> response = horseController.findAll();
+        ResponseEntity<List<Horse>> response = horseResource.findAll();
 
         assertEquals(200, response.getStatusCodeValue());
         assertNotNull(response.getBody());
@@ -44,7 +43,7 @@ class HorseControllerTest {
     void insert_ShouldCreateHorseAndReturn201() {
         when(horseService.insert(any(Horse.class))).thenReturn(horse);
 
-        ResponseEntity<Horse> response = horseController.insert(horse);
+        ResponseEntity<Horse> response = horseResource.insert(horse);
 
         assertEquals(201, response.getStatusCodeValue());
         assertEquals(horse, response.getBody());

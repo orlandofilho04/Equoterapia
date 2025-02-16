@@ -34,3 +34,4 @@ public class Appointment {
     private Anamnesis anamnesis;
 
 }
+

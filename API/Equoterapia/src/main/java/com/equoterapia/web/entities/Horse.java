@@ -11,23 +11,22 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity 
-@Table(name = "horses") // nome da tabela
+@Table(name = "tb_horses")
 public class Horse {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) 
-    private Long id; // identificador
+    private Long id;
 
-    @Column(name = "name", nullable = false, length = 100)
-    private String name; // nnome do cavalo
+    @Column(name = "name",length = 100)
+    private String name;
 
     @Column(name = "height")
-    private Double height; // altura do cavalo
+    private Double height;
 
     @Column(name = "gait", length = 50)
-    private String gait; // Tipo de marcha do cavalo
+    private String gait;
 
     @Column(name = "equipment", length = 200)
-    private String equipment; // equipamentos "sela e estribo""
-
+    private String equipment;
 }
