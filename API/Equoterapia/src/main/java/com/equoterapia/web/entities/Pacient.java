@@ -38,4 +38,6 @@ public class Pacient {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "anamnesis_id", referencedColumnName = "id")
     private Anamnesis anamnesis;
+
+
 }
