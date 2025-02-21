@@ -1,4 +1,55 @@
 package com.equoterapia.web.resources;
 
+import com.equoterapia.web.entities.Anamnesis;
+import com.equoterapia.web.entities.Pacient;
+import com.equoterapia.web.services.AnamnesisService;
+import com.equoterapia.web.services.PacientService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import java.net.URI;
+import java.util.List;
+
+@RestController
+@CrossOrigin("*")
+@RequestMapping(value = "/anamnesis")
+
 public class AnamnesisResource {
+    @Autowired
+    private AnamnesisService anamnesisService;
+    @Autowired
+    private PacientService pacientService;
+
+    @GetMapping
+    public ResponseEntity<List<Anamnesis>> findAll(){
+        List<Anamnesis> anamnesisList = anamnesisService.findAll();
+        return ResponseEntity.ok().body(anamnesisList);
+    }
+
+    @GetMapping(value = "/{id}")
+    public ResponseEntity<Anamnesis> findOne(@PathVariable(name = "id") Long id){
+        Anamnesis anamnesis = anamnesisService.findById(id);
+        return ResponseEntity.ok().body(anamnesis);
+    }
+
+    @PostMapping
+    public  ResponseEntity<Anamnesis> insertAnamnesis(@RequestBody Anamnesis anamnesis, @RequestParam Long pacient_id){
+        anamnesis = anamnesisService.insert(anamnesis);
+        //TODO talvez atribuir essa responsabilidade para outro método
+        try {
+            pacientService.setPacientAnamnesis(anamnesis, pacient_id);
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e);
+        }
+
+        URI uri = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}").buildAndExpand(anamnesis.getId())
+                .toUri();
+        return ResponseEntity.created(uri).body(anamnesis);
+
+    }
+
 }
