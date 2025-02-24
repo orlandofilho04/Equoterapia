@@ -6,6 +6,8 @@ import com.equoterapia.web.services.AnamnesisService;
 import com.equoterapia.web.services.PacientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -15,6 +17,7 @@ import java.util.List;
 @RestController
 @CrossOrigin("*")
 @RequestMapping(value = "/anamnesis")
+@EnableTransactionManagement
 
 public class AnamnesisResource {
     @Autowired
@@ -35,10 +38,12 @@ public class AnamnesisResource {
     }
 
     @PostMapping
+    @Transactional
     public  ResponseEntity<Anamnesis> insertAnamnesis(@RequestBody Anamnesis anamnesis, @RequestParam Long pacient_id){
-        anamnesis = anamnesisService.insert(anamnesis);
+
         //TODO talvez atribuir essa responsabilidade para outro método
         try {
+            anamnesis = anamnesisService.insert(anamnesis);
             pacientService.setPacientAnamnesis(anamnesis, pacient_id);
         } catch (RuntimeException e) {
             throw new RuntimeException(e);
