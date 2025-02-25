@@ -1,8 +1,8 @@
 package com.equoterapia.web.services;
 import java.util.List;
-import java.util.Optional;
 
 import com.equoterapia.web.entities.LegallyResponsible;
+import com.equoterapia.web.exceptions.NotFoundException;
 import com.equoterapia.web.repositories.LegallyResponsibleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,11 +18,18 @@ public class LegallyResponsibleService {
     }
 
     public LegallyResponsible findById(Long id){
-        Optional<LegallyResponsible> optionalLegallyResponsible = legallyResponsibleRepository.findById(id);
-        return optionalLegallyResponsible.orElseThrow(() -> new RuntimeException());
+
+        if(!legallyResponsibleRepository.existsById(id)){
+            throw new NotFoundException("Responsável legal não encontrado");
+        }
+
+        return legallyResponsibleRepository.findById(id).orElseThrow();
     }
 
     public void delete(Long id){
+        if (!legallyResponsibleRepository.existsById(id)){
+            throw new NotFoundException("Responsável legal não encontrado");
+        }
         legallyResponsibleRepository.deleteById(id);
     }
 

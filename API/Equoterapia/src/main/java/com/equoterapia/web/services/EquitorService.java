@@ -1,6 +1,7 @@
 package com.equoterapia.web.services;
 
 import com.equoterapia.web.entities.Equitor;
+import com.equoterapia.web.exceptions.NotFoundException;
 import com.equoterapia.web.repositories.EquitorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,8 +19,11 @@ public class EquitorService {
         }
 
          public Equitor findById(Long id) {
-             Optional<Equitor> optionalEquitor = equitorRepository.findById(id);
-             return optionalEquitor.orElseThrow(() -> new RuntimeException());
+             if (!equitorRepository.existsById(id)){
+                 throw new NotFoundException("Equitor não encontrado");
+             }
+
+             return equitorRepository.findById(id).orElseThrow();
          }
 
          public Equitor insert(Equitor equitor) {

@@ -1,12 +1,12 @@
 package com.equoterapia.web.services;
 
 import com.equoterapia.web.entities.Horse;
+import com.equoterapia.web.exceptions.NotFoundException;
 import com.equoterapia.web.repositories.HorseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class HorseService {
@@ -19,8 +19,11 @@ public class HorseService {
     }
 
     public Horse findById(Long id) {
-        Optional<Horse> optionalHorse = horseRepository.findById(id);
-        return optionalHorse.orElseThrow(() -> new RuntimeException("Cavalo não encontrado"));
+        if (!horseRepository.existsById(id)){
+            throw new NotFoundException("Cavalo não encontrado");
+        }
+
+        return horseRepository.findById(id).orElseThrow();
     }
 
     public Horse insert(Horse horse) {

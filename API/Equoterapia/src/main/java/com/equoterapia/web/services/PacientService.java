@@ -2,15 +2,18 @@ package com.equoterapia.web.services;
 
 import com.equoterapia.web.entities.Anamnesis;
 import com.equoterapia.web.entities.Pacient;
+import com.equoterapia.web.exceptions.NotFoundException;
 import com.equoterapia.web.repositories.PacientRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
+@Slf4j
 @Service
 public class PacientService {
+
     @Autowired
     private PacientRepository pacientRepository;
 
@@ -19,13 +22,17 @@ public class PacientService {
     }
     
     public Pacient findById(Long id){
-        Optional<Pacient> optionalPacient = pacientRepository.findById(id);
-        return optionalPacient.orElseThrow(RuntimeException::new);
+        if (!pacientRepository.existsById(id)){
+            log.error("Pacient NotFoundException");
+            throw new NotFoundException("Paciente não encontrado");
+        }
+
+        return pacientRepository.findById(id).orElseThrow();
     }
 
     public void setPacientAnamnesis(Anamnesis anamnesis, Long pacient_id){
 
-        pacientRepository.findById(pacient_id).orElseThrow(RuntimeException::new);
+        pacientRepository.findById(pacient_id).orElseThrow();
 
         Pacient pacient = new Pacient();
         pacient.setAnamnesis(anamnesis);
