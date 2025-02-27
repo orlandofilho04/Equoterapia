@@ -2,6 +2,9 @@ package com.equoterapia.web.resources;
 
 import com.equoterapia.web.entities.Administrator;
 import com.equoterapia.web.services.AdministratorService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +21,10 @@ public class AdministratorResource {
     private AdministratorService administratorService;
 
     @GetMapping
+    @Operation(description = "Endpoint responsável por retornar todos os usuários")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Busca por todos os admins realizada")
+    })
     public ResponseEntity<List<Administrator>> findAll() {
         List<Administrator> administrators = administratorService.findAll();
         return ResponseEntity.ok().body(administrators);

@@ -4,6 +4,9 @@ import com.equoterapia.web.entities.Anamnesis;
 import com.equoterapia.web.entities.Pacient;
 import com.equoterapia.web.services.AnamnesisService;
 import com.equoterapia.web.services.PacientService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -26,6 +29,10 @@ public class AnamnesisResource {
     private PacientService pacientService;
 
     @GetMapping
+    @Operation(description = "Endpoint responsável por retornar todas as anamneses")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Busca por todos as anamneses realizada")
+    })
     public ResponseEntity<List<Anamnesis>> findAll(){
         List<Anamnesis> anamnesisList = anamnesisService.findAll();
         return ResponseEntity.ok().body(anamnesisList);
