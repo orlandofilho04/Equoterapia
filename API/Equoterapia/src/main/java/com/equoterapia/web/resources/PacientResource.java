@@ -1,7 +1,6 @@
 package com.equoterapia.web.resources;
 
 import com.equoterapia.web.entities.Pacient;
-import com.equoterapia.web.services.AnamnesisService;
 import com.equoterapia.web.services.PacientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
