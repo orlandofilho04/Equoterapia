@@ -1,5 +1,6 @@
 package com.equoterapia.web.services;
 
+import com.equoterapia.web.entities.Anamnesis;
 import com.equoterapia.web.entities.Pacient;
 import com.equoterapia.web.entities.Professional;
 import com.equoterapia.web.entities.Appointment;
@@ -16,6 +17,13 @@ public class ProfessionalService {
     
     @Autowired
     private ProfessionalRepository professionalRepository;
+
+    @Autowired
+    private AnamnesisService anamnesisService;
+    @Autowired
+    private PacientService pacientService;
+    @Autowired
+    private AppointmentService appointmentService;
 
     public List<Professional> findAll() {
         return professionalRepository.findAll();
@@ -60,12 +68,30 @@ public class ProfessionalService {
         return professional.getAppointments();
     }
 
-    public Appointment marcarConsulta(Long professionalId, Appointment appointment) {
-        Professional professional = findById(professionalId);
-        appointment.setProfessional(professional);
-        professional.getAppointments().add(appointment);
-        professionalRepository.save(professional);
-        return appointment;
+    public Appointment marcarConsulta(Long professional_id, Long pacient_id, Appointment appointment) {
+        try {
+            Professional professional = findById(professional_id);
+            Pacient pacient = pacientService.findById(pacient_id);
+
+            appointment.setProfessional(professional);
+            appointment.setAnamnesis(pacient.getAnamnesis());
+            appointment.setPacient(pacient);
+
+            pacient.getAnamnesis().getAppointments().add(appointment);
+            pacient.getAppointments().add(appointment);
+            professional.getPacients().add(pacient);
+            professional.getAppointments().add(appointment);
+
+            pacientService.update(pacient);
+            anamnesisService.update(pacient.getAnamnesis());
+            professionalRepository.save(professional);
+
+
+            return appointmentService.insert(appointment);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     public void desmarcarConsulta(Long professionalId, Long appointmentId) {
