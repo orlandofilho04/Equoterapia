@@ -7,31 +7,31 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class EquitorService {
     @Autowired
-        private EquitorRepository equitorRepository;
+    private EquitorRepository equitorRepository;
 
-        public List<Equitor> findAll() {
+    public List<Equitor> findAll() {
             return equitorRepository.findAll();
         }
+    public Equitor findById(Long id) {
+        if (!equitorRepository.existsById(id)){
+            throw new NotFoundException("Equitador não encontrado");
+        }
+        return equitorRepository.findById(id).orElseThrow();
+    }
+    public Equitor insert(Equitor equitor) {
+        return equitorRepository.save(equitor);
+    }
 
-         public Equitor findById(Long id) {
-             if (!equitorRepository.existsById(id)){
-                 throw new NotFoundException("Equitor não encontrado");
-             }
+    public Equitor update(Equitor equitor) {
+        if (!equitorRepository.existsById(equitor.getId())){
+            throw new NotFoundException("Equitador não encontrado");
+        }
+        return equitorRepository.save(equitor);
+    }
 
-             return equitorRepository.findById(id).orElseThrow();
-         }
-
-         public Equitor insert(Equitor equitor) {
-            return equitorRepository.save(equitor);
-         }
-
-         public Equitor update(Equitor equitor) {
-            return equitorRepository.save(equitor);
-         }
-         public void delete(Long id) {equitorRepository.deleteById(id);}
+    public void delete(Long id) {equitorRepository.deleteById(id);}
 }

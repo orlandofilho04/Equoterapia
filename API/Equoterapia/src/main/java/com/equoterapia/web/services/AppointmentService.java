@@ -25,15 +25,20 @@ public class AppointmentService {
         return appointmentRepository.findById(id).orElseThrow(RuntimeException::new);
     }
 
-    public Appointment insert(Appointment appointment){
-        return appointmentRepository.save(appointment);
-    }
+    public Appointment insert(Appointment appointment){return appointmentRepository.save(appointment);}
 
     public void delete(Long id){
         if (!appointmentRepository.existsById(id)){
             throw new NotFoundException("Consulta não encontrada");
         }
         appointmentRepository.deleteById(id);
+    }
+
+    public Appointment update(Appointment appointment){
+        if (!appointmentRepository.existsById(appointment.getId())){
+            throw new NotFoundException("Consulta não encontrada");
+        }
+        return appointmentRepository.save(appointment);
     }
 
 
