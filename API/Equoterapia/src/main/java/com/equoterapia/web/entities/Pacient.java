@@ -1,5 +1,6 @@
 package com.equoterapia.web.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,17 +23,22 @@ public class Pacient {
     private Long id;
     private String name;
     private LocalDate birthDate;
+    private String photo;
+    private Character gender;
 
     @ManyToMany(mappedBy = "pacients")
     private List<LegallyResponsible> LegallyResponsibles  = new ArrayList<>();
 
     @OneToMany(mappedBy = "pacient", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<Session> sessions = new ArrayList<>();
 
     @ManyToMany(mappedBy = "pacients")
+    @JsonIgnore
     private List<Professional> professionals = new ArrayList<>();
 
     @OneToMany(mappedBy = "pacient")
+    @JsonIgnore
     private List<Appointment> appointments = new ArrayList<>();
 
     @OneToOne(cascade = CascadeType.ALL)
