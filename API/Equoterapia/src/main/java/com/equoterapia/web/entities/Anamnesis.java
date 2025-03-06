@@ -1,5 +1,6 @@
 package com.equoterapia.web.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -27,6 +28,7 @@ public class Anamnesis {
     private String observation;
 
     @OneToMany(mappedBy = "anamnesis")
+    @JsonIgnore
     private List<Appointment> appointments = new ArrayList<>();
 
 }
