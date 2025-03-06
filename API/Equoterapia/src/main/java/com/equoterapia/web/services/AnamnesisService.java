@@ -26,4 +26,8 @@ public class AnamnesisService {
     }
 
     public Anamnesis insert(Anamnesis anamnesis){ return anamnesisRepository.save(anamnesis);}
+
+    public Anamnesis update(Anamnesis anamnesis){
+        return anamnesisRepository.save(anamnesis);
+    }
 }
