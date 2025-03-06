@@ -40,6 +40,19 @@ public class SessionResource {
                 .toUri();
         return ResponseEntity.created(uri).body(session);
     }
+    @PostMapping(value = "/registerSession")
+    public ResponseEntity<Session> cadastrarSessao(@RequestBody Session session,
+                                                   @RequestParam Long pacient_id,
+                                                   @RequestParam Long horse_id,
+                                                   @RequestParam Long professional_id) {
+        session = sessionService.cadastrarSessao(session, pacient_id, horse_id, professional_id);
+        URI uri = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(session.getId())
+                .toUri();
+        return ResponseEntity.created(uri).body(session);
+    }
 
     @PutMapping(value = "/{id}")
     public ResponseEntity<Session> update(@PathVariable Long id, @RequestBody Session session) {
