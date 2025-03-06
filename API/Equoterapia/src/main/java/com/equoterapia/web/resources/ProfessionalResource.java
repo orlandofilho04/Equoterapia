@@ -1,5 +1,6 @@
 package com.equoterapia.web.resources;
 
+import com.equoterapia.web.entities.Appointment;
 import com.equoterapia.web.entities.Professional;
 import com.equoterapia.web.services.ProfessionalService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +13,7 @@ import java.util.List;
 
 @RestController
 @CrossOrigin("*")
-@RequestMapping(value = "/professionals")
+@RequestMapping(value = "/professional")
 public class ProfessionalResource {
 
     @Autowired
@@ -39,6 +40,21 @@ public class ProfessionalResource {
                 .buildAndExpand(professional.getId())
                 .toUri();
         return ResponseEntity.created(uri).body(professional);
+    }
+
+    @PostMapping(value = "/scheduleAppointment")
+    public ResponseEntity<Appointment> scheduleAppointment(@RequestParam Long professional_id,
+                                                            @RequestParam Long pacient_id,
+                                                            @RequestBody Appointment appointment){
+
+        Appointment newAppointment = professionalService.marcarConsulta(professional_id, pacient_id, appointment);
+
+        URI uri = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(newAppointment.getId())
+                .toUri();
+        return ResponseEntity.created(uri).body(newAppointment);
     }
 
     @PutMapping(value = "/{id}")
