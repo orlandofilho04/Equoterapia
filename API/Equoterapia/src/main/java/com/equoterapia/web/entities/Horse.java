@@ -18,15 +18,15 @@ public class Horse {
     @GeneratedValue(strategy = GenerationType.IDENTITY) 
     private Long id;
 
-    @Column(name = "name",length = 100)
+    @Column(name = "name",length = 100, nullable = false)
     private String name;
 
-    @Column(name = "height")
+    @Column(name = "height", nullable = false)
     private Double height;
 
-    @Column(name = "gait", length = 50)
+    @Column(name = "gait", length = 50, nullable = false)
     private String gait;
 
-    @Column(name = "equipment", length = 200)
+    @Column(name = "equipment", length = 200, nullable = false)
     private String equipment;
 }
