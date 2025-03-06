@@ -21,7 +21,7 @@ import java.util.List;
 public class Session {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
     private LocalDateTime sessionHour;
     private LocalTime duration;
     private SessionStatus sessionStatus;
