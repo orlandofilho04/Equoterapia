@@ -26,6 +26,18 @@ public class HorseService {
         return horseRepository.findById(id).orElseThrow();
     }
 
+    public void delete(Long id) {
+        horseRepository.deleteById(id);
+    }
+
+    public Horse update(Horse horse) {
+        if (!horseRepository.existsById(horse.getId())){
+            throw new NotFoundException("Cavalo não encontrado");
+        }
+
+        return horseRepository.save(horse);
+    }
+
     public Horse insert(Horse horse) {
         return horseRepository.save(horse);
     }
