@@ -1,5 +1,6 @@
 package com.equoterapia.web.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -31,6 +32,7 @@ public class Appointment {
 
     @ManyToOne
     @JoinColumn(name = "anamnesis_id")
+    @JsonIgnore
     private Anamnesis anamnesis;
 
 }
