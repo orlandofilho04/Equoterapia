@@ -23,7 +23,7 @@ public class LegallyResponsible {
     private Long id;
     private String name;
     private String cpf;
-    private char sexo;
+    private Character gender;
     @ManyToMany
     @JoinTable(
             name = "tb_LegallyResponsibles_has_pacients",
@@ -32,8 +32,5 @@ public class LegallyResponsible {
     )
     @JsonIgnore
     private  List<Pacient> pacients = new ArrayList<>();
-
-    public void addPacients(List<Pacient> pacients) {
-        this.pacients.addAll(pacients);
-    }
+    
 }
