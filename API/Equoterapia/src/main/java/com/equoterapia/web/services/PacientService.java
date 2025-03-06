@@ -1,6 +1,7 @@
 package com.equoterapia.web.services;
 
 import com.equoterapia.web.entities.Anamnesis;
+import com.equoterapia.web.entities.Appointment;
 import com.equoterapia.web.entities.Pacient;
 import com.equoterapia.web.exceptions.NotFoundException;
 import com.equoterapia.web.repositories.PacientRepository;
@@ -20,6 +21,12 @@ public class PacientService {
     public List<Pacient> findAll(){
         return pacientRepository.findAll();
     }
+
+    public List<Pacient> findAllById(List<Long> ids){
+        pacientRepository.findAllById(ids);
+
+        return pacientRepository.findAllById(ids);
+    }
     
     public Pacient findById(Long id){
         if (!pacientRepository.existsById(id)){
@@ -34,7 +41,7 @@ public class PacientService {
 
         pacientRepository.findById(pacient_id).orElseThrow();
 
-        Pacient pacient = new Pacient();
+        Pacient pacient = pacientRepository.findById(pacient_id).orElseThrow();
         pacient.setAnamnesis(anamnesis);
         pacient.setId(pacient_id);
 
@@ -42,7 +49,9 @@ public class PacientService {
     }
 
     public Pacient insert(Pacient pacient){
-
+        return pacientRepository.save(pacient);
+    }
+    public Pacient update(Pacient pacient){
         return pacientRepository.save(pacient);
     }
 }
