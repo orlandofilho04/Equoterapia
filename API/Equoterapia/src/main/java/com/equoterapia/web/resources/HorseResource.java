@@ -50,8 +50,7 @@ public class HorseResource {
     @PostMapping
     public ResponseEntity<Horse> insert(@RequestBody Horse horse) {
         horse = horseService.insert(horse);
-        URI uri = ServletUriComponentsBuilder
-                .fromCurrentRequest()
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
                 .buildAndExpand(horse.getId())
                 .toUri();

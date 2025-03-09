@@ -1,6 +1,7 @@
-package com.equoterapia.web.resources;
+package com.equoterapia.web;
 
 import com.equoterapia.web.entities.Administrator;
+import com.equoterapia.web.resources.AdministratorResource;
 import com.equoterapia.web.services.AdministratorService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

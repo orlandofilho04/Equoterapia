@@ -52,8 +52,6 @@ public class SessionService {
         return sessionRepository.save(session);
     }
 
-
-
     public Session update(Session session) {
         if (!sessionRepository.existsById(session.getId())){
             throw new NotFoundException("Sessao não encontrada");

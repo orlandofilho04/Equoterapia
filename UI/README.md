@@ -68,3 +68,8 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+### Java API Instructions
+- Workdir: `/Equoterapia`
+- Para subir a imagem docker da API `docker build -t equoterapia .`
+- Para criar o container a partir da imagem `docker-compose up -d`
