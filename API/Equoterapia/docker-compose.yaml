@@ -1,5 +1,21 @@
 services:
   api:
-    image: equoterapia
+    image: eclipse-temurin:23-jdk-alpine
+    container_name: api
+    volumes:
+      - ./target/Equoterapia-0.0.1-SNAPSHOT.jar:/app/equoterapiaAPI.jar
+    command: [ "java", "-jar", "/app/equoterapiaAPI.jar"]
     ports:
       - "8080:8080"
+    depends_on:
+      - db
+  db:
+    image: mysql:latest
+    container_name: database
+    environment:
+      - MYSQL_DATABASE=equoterapiadb
+      - MYSQL_PASSWORD=secret
+      - MYSQL_ROOT_PASSWORD=verysecret
+      - MYSQL_USER=equoAdmin
+    ports:
+      - '3306:3306'
