@@ -58,7 +58,6 @@ public class AnamnesisResource {
             @ApiResponse(responseCode = "404", description = "Paciente não encontrado"),
             @ApiResponse(responseCode = "500", description = "Erro Interno do Servidor")
     })
-    @Transactional
     public  ResponseEntity<Anamnesis> insertAnamnesis(@RequestBody Anamnesis anamnesis, @RequestParam Long pacient_id){
 
         try {
