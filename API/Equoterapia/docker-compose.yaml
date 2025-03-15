@@ -7,15 +7,21 @@ services:
     command: [ "java", "-jar", "/app/equoterapiaAPI.jar"]
     ports:
       - "8080:8080"
+    expose:
+      - '8080'
+    environment:
+      - DB_URL=jdbc:mysql://db:3306/Equoterapia
     depends_on:
       - db
   db:
-    image: mysql:latest
+    image: mysql
     container_name: database
     environment:
-      - MYSQL_DATABASE=equoterapiadb
+      - MYSQL_DATABASE=Equoterapia
+      - MYSQL_USER=equoAdmin
       - MYSQL_PASSWORD=secret
       - MYSQL_ROOT_PASSWORD=verysecret
-      - MYSQL_USER=equoAdmin
     ports:
       - '3306:3306'
+    expose:
+      - '3306'
