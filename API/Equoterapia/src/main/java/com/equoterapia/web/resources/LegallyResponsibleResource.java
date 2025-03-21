@@ -4,6 +4,7 @@ import java.net.URI;
 import java.util.List;
 
 import com.equoterapia.web.entities.LegallyResponsible;
+import com.equoterapia.web.exceptions.NotFoundException;
 import com.equoterapia.web.services.PacientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -33,6 +34,9 @@ public class LegallyResponsibleResource{
     public ResponseEntity<LegallyResponsible> insert(@RequestBody LegallyResponsible legallyResponsible, @RequestParam List<Long> pacient_ids){
         try {
             List<Pacient> associatedPacient = pacientService.findAllById(pacient_ids);
+
+            if (associatedPacient.size() != pacient_ids.size() ){throw new NotFoundException("Um dos pacientes informado não existe");}
+
             legallyResponsible.setPacients(associatedPacient);
 
             legallyResponsible = legallyResponsibleService.insert(legallyResponsible);
