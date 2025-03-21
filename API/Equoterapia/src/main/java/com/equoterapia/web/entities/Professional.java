@@ -36,6 +36,7 @@ public class Professional implements UserDetails {
     private Roles role;
 
     @ManyToMany
+    @JsonIgnore
     @JoinTable(name = "tb_professionals_has_pacients",
             joinColumns = @JoinColumn(name = "professional_id"),
             inverseJoinColumns = @JoinColumn(name = "pacient_id"))
