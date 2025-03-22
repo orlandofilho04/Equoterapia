@@ -58,9 +58,9 @@ public class AnamnesisResource {
             @ApiResponse(responseCode = "404", description = "Paciente não encontrado"),
             @ApiResponse(responseCode = "500", description = "Erro Interno do Servidor")
     })
-    public  ResponseEntity<Anamnesis> insertAnamnesis(@RequestBody Anamnesis anamnesis, @RequestParam Long pacient_id){
-
+    public  ResponseEntity<Anamnesis> insertAnamnesis(@RequestBody Anamnesis anamnesis, @RequestParam(required = true) Long pacient_id){
         try {
+            pacientService.findById(pacient_id);
             anamnesis = anamnesisService.insert(anamnesis);
             pacientService.setPacientAnamnesis(anamnesis, pacient_id);
         } catch (RuntimeException e) {

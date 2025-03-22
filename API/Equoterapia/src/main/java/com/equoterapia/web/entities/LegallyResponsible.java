@@ -22,7 +22,10 @@ public class LegallyResponsible {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+
+    @Column(unique = true)
     private String cpf;
+
     private Character gender;
     @ManyToMany
     @JoinTable(

@@ -30,7 +30,6 @@ public class PacientService {
     
     public Pacient findById(Long id){
         if (!pacientRepository.existsById(id)){
-            log.error("Pacient NotFoundException");
             throw new NotFoundException("Paciente não encontrado");
         }
 
