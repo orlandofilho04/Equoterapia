@@ -31,7 +31,7 @@ public class LegallyResponsibleResource{
         return ResponseEntity.ok().body(legallyResponsibles);
     }
     @PostMapping
-    public ResponseEntity<LegallyResponsible> insert(@RequestBody LegallyResponsible legallyResponsible, @RequestParam(required = true) List<Long> pacient_ids){
+    public ResponseEntity<LegallyResponsible> insert(@RequestBody LegallyResponsible legallyResponsible, @RequestParam List<Long> pacient_ids){
         try {
             List<Pacient> associatedPacient = pacientService.findAllById(pacient_ids);
 
