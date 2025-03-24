@@ -1,7 +1,9 @@
 package com.equoterapia.web.resources;
 
 import com.equoterapia.web.entities.Equitor;
+import com.equoterapia.web.entities.Session;
 import com.equoterapia.web.services.EquitorService;
+import com.equoterapia.web.services.SessionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -20,6 +22,8 @@ public class EquitorResource {
 
     @Autowired
     private EquitorService equitorService;
+    @Autowired
+    private SessionService sessionService;
 
     @Operation(description = "Rota reponsavel por retornar todos os equitadores")
     @ApiResponses(value = {
@@ -30,6 +34,16 @@ public class EquitorResource {
     public ResponseEntity<List<Equitor>> findAll() {
         List<Equitor> equitors = equitorService.findAll();
         return ResponseEntity.ok().body(equitors);
+    }
+    @Operation(description = "Rota reponsavel por retornar a agendo do equitador")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Agenda retornada com sucesso"),
+            @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
+    })
+    @GetMapping(value = "/schedules")
+    public ResponseEntity<List<Session>> findAllSessionsByEquitor(@RequestParam Long equitor_id) {
+        List<Session> sessionsByEquitor = sessionService.findAllByEquitorId(equitor_id);
+        return ResponseEntity.ok().body(sessionsByEquitor);
     }
 
     @Operation(description = "Rota responsavel por criar um novo equitador")

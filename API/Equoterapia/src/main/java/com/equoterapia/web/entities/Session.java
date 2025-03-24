@@ -39,4 +39,8 @@ public class Session {
     @ManyToOne
     @JoinColumn(name = "horse_id")
     private Horse equine = new Horse();
+
+    @ManyToOne
+    @JoinColumn(name = "equitor_id")
+    private Equitor equitor = new Equitor();
 }
