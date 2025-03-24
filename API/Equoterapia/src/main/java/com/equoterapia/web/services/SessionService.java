@@ -1,9 +1,6 @@
 package com.equoterapia.web.services;
 
-import com.equoterapia.web.entities.Horse;
-import com.equoterapia.web.entities.Pacient;
-import com.equoterapia.web.entities.Professional;
-import com.equoterapia.web.entities.Session;
+import com.equoterapia.web.entities.*;
 import com.equoterapia.web.exceptions.NotFoundException;
 import com.equoterapia.web.repositories.SessionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +20,8 @@ public class SessionService {
     private HorseService horseService;
     @Autowired
     private ProfessionalService professionalService;
+    @Autowired
+    private EquitorService equitorService;
 
     public List<Session> findAll() {
         return sessionRepository.findAll();
@@ -40,14 +39,16 @@ public class SessionService {
         return sessionRepository.save(session);
     }
 
-    public Session cadastrarSessao(Session session,Long pacient_id, Long horse_id, Long professional_id) {
+    public Session registerSession(Session session, Long pacient_id, Long horse_id, Long professional_id, Long equitor_id) {
         Pacient pacient = pacientService.findById(pacient_id);
         Horse horse = horseService.findById(horse_id);
         Professional professional = professionalService.findById(professional_id);
+        Equitor equitor = equitorService.findById(equitor_id);
 
         session.getProfessionals().add(professional);
         session.setEquine(horse);
         session.setPacient(pacient);
+        session.setEquitor(equitor);
 
         return sessionRepository.save(session);
     }
@@ -65,5 +66,10 @@ public class SessionService {
             throw new NotFoundException("Sessao não encontrada");
         }
         sessionRepository.deleteById(id);
+    }
+
+    public List<Session> findAllByEquitorId(Long equitor_id) {
+        equitorService.findById(equitor_id);
+        return sessionRepository.findAllByEquitorId(equitor_id);
     }
 }
