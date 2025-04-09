@@ -8,10 +8,10 @@
 ## 🛠️ Pré-requisitos
 Antes de iniciar, certifique-se de ter os seguintes itens instalados:
 
-- [Docker](https://www.docker.com/)
+- [Docker](https://www.docker.com/) (se utilizar Windows, opte pelo Docker Desktop)
 - [Docker Compose](https://docs.docker.com/compose/)
 - [Maven](https://maven.apache.org/)
-- [Java JDK 17+](https://adoptium.net/)
+- [Java JDK 20+](https://adoptium.net/) (opcional caso utilize Intelij IDEA)
 
 ## 📌 Passo a Passo para Execução
 
@@ -40,7 +40,7 @@ docker-compose up -d
 > 🔹 Isso iniciará os containers da API e do banco de dados no Docker.
 
 ### 4️⃣ Verificar os Containers em Execução
-Para garantir que os containers estão rodando corretamente, utilize:
+Para garantir que os containers estão a rodar corretamente, utilize:
 
 ```sh
 docker ps
