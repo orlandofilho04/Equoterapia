@@ -3,18 +3,37 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import logo from "./imgs/icone.png";
 import "./Login.css";
 import { Link, useNavigate } from "react-router-dom";
+import api from "../services/api";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
   const togglePasswordVisibility = () => {
     setShowPassword((prevState) => !prevState);
   };
 
-  const handleLogin = (event) => {
+  const handleLogin = async (event) => {
     event.preventDefault();
-    navigate("/");
+
+    try {
+      const response = await api.post("/auth/login", {
+        username,
+        password,
+      });
+
+      const { token } = response.data;
+
+      localStorage.setItem("token", token);
+      api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+
+      navigate("/"); // troque para a rota desejada
+    } catch (error) {
+      console.error("Erro ao fazer login:", error);
+      alert("Usuário ou senha incorretos");
+    }
   };
 
   return (
@@ -32,6 +51,9 @@ const Login = () => {
               id="username"
               className="form-control input-field"
               placeholder="Digite seu usuário"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
             />
           </div>
           <div className="mb-3 text-start w-100 position-relative">
@@ -43,6 +65,9 @@ const Login = () => {
               id="password"
               className="form-control input-field pr-5"
               placeholder="Digite sua senha"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
             />
             <span className="eye-icon" onClick={togglePasswordVisibility}>
               {showPassword ? <FaEyeSlash /> : <FaEye />}
@@ -56,12 +81,6 @@ const Login = () => {
           <button type="submit" className="btn btn-primary w-100 rounded-pill">
             Entrar
           </button>
-          {/* Link temporário, apenas para ter acesso às telas */}
-          <div className="text-center mt-3">
-            <Link to="/equitador/" className="btn btn-link">
-              Ir para telas do Equitador
-            </Link>
-          </div>
         </form>
       </div>
       <div className="login-image col-7"></div>
