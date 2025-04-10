@@ -14,8 +14,8 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
-@CrossOrigin("*")
 @RequestMapping("auth")
 public class AuthResource {
     @Autowired
@@ -24,6 +24,7 @@ public class AuthResource {
     private ProfessionalRepository professionalRepository;
     @Autowired
     private TokenService tokenService;
+
 
     @PostMapping(value = "/login")
     public ResponseEntity<LoginResponseDTO> login(@RequestBody @Valid AuthenticationDTO user){
@@ -49,3 +50,4 @@ public class AuthResource {
     }
 
 }
+

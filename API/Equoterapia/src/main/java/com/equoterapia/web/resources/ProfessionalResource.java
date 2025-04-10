@@ -12,7 +12,7 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-@CrossOrigin("*")
+@CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping(value = "/professional")
 public class ProfessionalResource {
 

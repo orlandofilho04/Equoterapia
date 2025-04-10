@@ -15,7 +15,7 @@ import com.equoterapia.web.entities.Pacient;
 import com.equoterapia.web.services.LegallyResponsibleService;
 
 @RestController
-@CrossOrigin("*")
+@CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping(value = "/legallyResponsible")
 public class LegallyResponsibleResource{
     @Autowired
