@@ -31,9 +31,11 @@ public class AuthResource {
         var usernamePassword = new UsernamePasswordAuthenticationToken(user.username(),user.password());
         var auth = this.authenticationProvider.authenticate(usernamePassword);
 
+        Professional professional = professionalRepository.findProfessionalByUsername(user.username());
+
         var token = tokenService.generateToken((Professional)auth.getPrincipal());
 
-        return ResponseEntity.ok(new LoginResponseDTO(token, ((Professional) auth.getPrincipal()).getUsername()));
+        return ResponseEntity.ok(new LoginResponseDTO(token, ((Professional) auth.getPrincipal()).getUsername(), professional.getName()));
     }
     @PostMapping(value = "/register")
     public ResponseEntity<Professional> register(@RequestBody @Valid RegisterDTO user){
