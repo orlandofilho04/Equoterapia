@@ -10,4 +10,6 @@ public interface ProfessionalRepository extends JpaRepository<Professional, Long
     UserDetails findByUsername(String username);
 
     Professional findProfessionalByUsername(String username);
+
+    Boolean existsProfessionalByUsername(String username);
 }

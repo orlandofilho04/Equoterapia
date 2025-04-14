@@ -36,6 +36,13 @@ public class ProfessionalService {
         return professionalRepository.findById(id).orElseThrow();
     }
 
+    public Professional findProfessionalByUsername(String username) {
+        if (!professionalRepository.existsProfessionalByUsername(username)){
+            throw new NotFoundException("Profissional não encontrado");
+        }
+        return professionalRepository.findProfessionalByUsername(username);
+    }
+
     public Professional insert(Professional professional) {
         return professionalRepository.save(professional);
     }
