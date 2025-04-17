@@ -1,6 +1,5 @@
 package com.equoterapia.web.services;
 
-import com.equoterapia.web.entities.Anamnesis;
 import com.equoterapia.web.entities.Pacient;
 import com.equoterapia.web.entities.Professional;
 import com.equoterapia.web.entities.Appointment;

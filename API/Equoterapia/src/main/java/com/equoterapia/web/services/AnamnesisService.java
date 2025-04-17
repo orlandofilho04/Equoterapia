@@ -1,6 +1,7 @@
 package com.equoterapia.web.services;
 
 import com.equoterapia.web.entities.Anamnesis;
+import com.equoterapia.web.exceptions.ApiExceptionHandler;
 import com.equoterapia.web.exceptions.NotFoundException;
 import com.equoterapia.web.repositories.AnamnesisRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,7 @@ public class AnamnesisService {
             throw new NotFoundException("Anamnese não encontrada");
         }
 
-        return anamnesisRepository.findById(id).orElseThrow(RuntimeException::new);
+        return anamnesisRepository.findById(id).orElseThrow(NotFoundException::new);
     }
 
     public Anamnesis insert(Anamnesis anamnesis){ return anamnesisRepository.save(anamnesis);}
