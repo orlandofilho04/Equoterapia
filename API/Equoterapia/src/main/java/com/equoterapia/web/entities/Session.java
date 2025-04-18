@@ -43,4 +43,7 @@ public class Session {
     @ManyToOne
     @JoinColumn(name = "equitor_id")
     private Equitor equitor = new Equitor();
+    @ManyToOne
+    @JoinColumn(name = "mediator_id")
+    private Mediator mediator = new Mediator();
 }

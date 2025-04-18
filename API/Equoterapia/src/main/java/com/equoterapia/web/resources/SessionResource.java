@@ -45,8 +45,9 @@ public class SessionResource {
                                                    @RequestParam Long pacient_id,
                                                    @RequestParam Long horse_id,
                                                    @RequestParam Long professional_id,
-                                                   @RequestParam Long equitor_id) {
-        session = sessionService.registerSession(session, pacient_id, horse_id, professional_id, equitor_id);
+                                                   @RequestParam Long equitor_id,
+                                                   @RequestParam Long mediator_id) {
+        session = sessionService.registerSession(session, pacient_id, horse_id, professional_id, equitor_id, mediator_id);
         URI uri = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/{id}")
