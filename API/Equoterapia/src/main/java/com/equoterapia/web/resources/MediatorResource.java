@@ -46,9 +46,9 @@ public class MediatorResource {
         return ResponseEntity.ok().body(sessionsByMediator);
     }
 
-    @Operation(description = "Rota responsavel por criar um novo equitador")
+    @Operation(description = "Rota responsavel por criar um novo Mediador")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Equitador criado com sucesso"),
+            @ApiResponse(responseCode = "201", description = "Mediador criado com sucesso"),
             @ApiResponse(responseCode = "500", description = "Erro interno do servidor")
     })
     @PostMapping
