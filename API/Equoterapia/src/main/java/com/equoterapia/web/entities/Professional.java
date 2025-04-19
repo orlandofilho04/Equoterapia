@@ -53,12 +53,12 @@ public class Professional implements UserDetails {
         this.password = encryptedPassword;
         this.role = role;
     }
-
+    @JsonIgnore
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("ADMIN"));
     }
-
+    @JsonIgnore
     @Override
     public String getPassword() {
         return this.password;
@@ -69,21 +69,25 @@ public class Professional implements UserDetails {
         return this.username;
     }
 
+    @JsonIgnore
     @Override
     public boolean isAccountNonExpired() {
         return UserDetails.super.isAccountNonExpired();
     }
 
+    @JsonIgnore
     @Override
     public boolean isAccountNonLocked() {
         return UserDetails.super.isAccountNonLocked();
     }
 
+    @JsonIgnore
     @Override
     public boolean isCredentialsNonExpired() {
         return UserDetails.super.isCredentialsNonExpired();
     }
-
+    
+    @JsonIgnore
     @Override
     public boolean isEnabled() {
         return UserDetails.super.isEnabled();
