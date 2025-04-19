@@ -4,7 +4,7 @@
     font-size: 24px;
 }
 
-.btnC,
+.btnB,
 .btnA {
     border-radius: 5px;
     border-width: 0px;
@@ -13,7 +13,7 @@
     min-width: 120px;
 }
 
-.btnC {
+.btnB {
     background-color: #032437 !important;
 }
 
@@ -29,7 +29,7 @@
 /* Ajuste para telas pequenas */
 @media (max-width: 576px) {
 
-    .btnC,
+    .btnB,
     .btnA {
         min-width: 100%;
         /* Botões ocupando 100% da largura */
