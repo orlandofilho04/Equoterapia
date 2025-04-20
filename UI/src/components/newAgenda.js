@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { Alert } from 'react-bootstrap';
 import './newAgenda.css';
 import { Form, Row, Col } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
@@ -22,6 +23,8 @@ function NewAgenda() {
     const [selectedDate, setSelectedDate] = useState('');
     const [selectedTime, setSelectedTime] = useState('');
     const [sessions, setSessions] = useState([]);
+    const [showSuccess, setShowSuccess] = useState(false);
+    const [showError, setShowError] = useState(false);
     const username = localStorage.getItem('username');
     const token = localStorage.getItem('token');
     
@@ -58,26 +61,20 @@ function NewAgenda() {
     }, []);
 
     // BUSCAR PROFISSIONAL LOGADO
+    // (OBTER O ID DO PROFISSIONAL LOGADO)
     useEffect(() => {
-        api.get('/professional/' + username)
-        .then(response => {
-            setProfessionalId(response.data.id);
-            console.log('ID do profissional:', response.data.id);
-            console.log(localStorage.getItem('token'));
-            console.log(localStorage.getItem('username'));
-        })
-        .catch(error => {
-            console.error('Erro ao buscar profissional:', error);
-        });
-    }, []);
+        if (username) {
+            api.get('/professional/?username=' + username)
+            .then(response => setProfessionalId(response.data.id))
+            .catch(error => console.error('Erro ao buscar profissional:', error));
+        }
+    }, [username]);
 
     // BUSCAR PACIENTES, EQUITADORES, CAVALOS E MEDIADORES
     useEffect(() => {
         api.get('/pacients')
         .then(response => {
             setPacients(response.data);
-            console.log(localStorage.getItem('token'));
-            console.log(localStorage.getItem('username'));
         })
         .catch(error => {
             console.error('Erro ao buscar pacientes:', error);
@@ -119,28 +116,39 @@ function NewAgenda() {
     const handleAgendamento = async (event) => {
         event.preventDefault();
 
-        try {
-            const response = await api.post('/sessions/registerSession', {
-                pacient_id: selectedPacientId,
-                horse_id: selectedHorseId,
-                professional_id: professional_id,
-                equitor_id: selectedEquitorId,
-                mediator_id: selectedMediatorId,
-                sessionHour: `${selectedDate}T${selectedTime}:00`,
-                duration: "01:00:00",
-                sessionStatus: "AGENDADA",
-            },
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            });
+        const sessionData = {
+            sessionHour: `${selectedDate}T${selectedTime}:00`,
+            duration: "01:00:00",
+            sessionStatus: "AGENDADA"
+        };
 
-            alert("Agendamento criado com sucesso!");
-            navigate('/');
+        const params = new URLSearchParams({
+            pacient_id: selectedPacientId,
+            horse_id: selectedHorseId,
+            professional_id: professional_id,
+            equitor_id: selectedEquitorId,
+            mediator_id: selectedMediatorId
+        }).toString();
+
+        try {
+            const response = await api.post(
+                `/sessions/registerSession?${params}`,
+                sessionData,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            );
+
+            setShowSuccess(true);
+            setTimeout(() => {
+                setShowSuccess(false);
+                navigate('/');
+            }, 2000); // espera 2 segundos antes de navegar
         } catch (error) {
             console.error("Erro ao criar agendamento:", error);
-            alert("Erro ao criar agendamento. Verifique os campos e tente novamente.");
+            setShowError(true);
         }
     };
 
@@ -188,6 +196,18 @@ function NewAgenda() {
 
     return (
         <div className="container my-5">
+            <div>
+                {showSuccess && (
+                    <Alert variant="success" onClose={() => setShowSuccess(false)} dismissible>
+                        Agendamento criado com sucesso!
+                    </Alert>
+                )}
+                {showError && (
+                    <Alert variant="danger" onClose={() => setShowError(false)} dismissible>
+                        Erro ao criar agendamento. Verifique os campos e tente novamente.
+                    </Alert>
+                )}
+            </div>
             <div className='agendamento mb-4'>
                 Novo Agendamento
             </div>
@@ -301,11 +321,11 @@ function NewAgenda() {
 
                 <Row className='mt-3'>
                     <div className='d-flex justify-content-end flex-wrap'>
-                        <Link to="/" className='btnB btn mx-2' role="button" aria-pressed="true">
+                        <Link to="/" className='btnB btn mx-2' aria-pressed="true">
                             Cancelar
                         </Link>
 
-                        <button type="submit" className='btnA btn mx-2' role="button" aria-pressed="true">
+                        <button type="submit" className='btnA btn mx-2' aria-pressed="true">
                             Agendar nova sessão
                         </button>
                     </div>
