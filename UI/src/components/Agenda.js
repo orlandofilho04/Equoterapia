@@ -3,18 +3,11 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import "./Agenda.css";
 import SearchBar from "./SearchBar.js";
 import DateNavigator from './DateNavigator.js';
+import api from "../services/api";
 import { Link } from 'react-router-dom';
 
 function Agenda() {
-    const [agendaData] = useState([
-        { segunda: "08:00 - 09:00 | João Pedro Martins", terca: "08:00 - 09:00 | João Pedro Martins", quarta: "08:00 - 09:00 | Márcio da Silva", quinta: "08:00 - 09:00 | João Pedro Martins", sexta: "08:00 - 09:00 | Márcio da Silva" },
-        { segunda: "09:00 - 10:00 | Márcio da Silva", terca: "", quarta: "09:00 - 10:00 | Carlos Batista dos Santos", quinta: "09:00 - 10:00 | César Abreu Pimenta", sexta: "09:00 - 10:00 | César Abreu Pimenta" },
-        { segunda: "10:00 - 11:00 | Carlos Batista dos Santos", terca: "", quarta: "10:00 - 11:00 | Carlos Batista dos Santos", quinta: "", sexta: "" },
-        { segunda: "11:00 - 12:00 | César Abreu Pimenta", terca: "", quarta: "", quinta: "", sexta: "" },
-        { segunda: "", terca: "", quarta: "", quinta: "", sexta: "" },
-        { segunda: "", terca: "", quarta: "", quinta: "", sexta: "" },
-    ]);
-
+    const [agendaMap, setAgendaMap] = useState({});
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [weekDates, setWeekDates] = useState([]);
 
@@ -32,14 +25,54 @@ function Agenda() {
         return dates;
     };
 
-    // Atualiza a semana sempre que a data for alterada
-    useEffect(() => {
-        setWeekDates(calculateWeekDates(selectedDate));
-    }, [selectedDate]);
-
     const handleDateChange = (date) => {
         setSelectedDate(date);
     };
+
+    // Atualiza as datas da semana e busca as sessões quando a data selecionada muda
+    useEffect(() => {
+        const week = calculateWeekDates(selectedDate);
+        setWeekDates(week);
+
+        const fetchSessions = async () => {
+            try {
+            const response = await api.get('/sessions');
+            const fetchedSessions = response.data;
+            const agenda = {};
+
+            week.forEach((date) => {
+                const dateStr = date.toISOString().split('T')[0];
+                agenda[dateStr] = {};
+            });
+
+            fetchedSessions.forEach((session) => {
+                const sessionDate = new Date(session.sessionHour);
+                const dateStr = sessionDate.toISOString().split('T')[0];
+                const hour = sessionDate.getHours().toString().padStart(2, '0') + ':00';
+
+                if (agenda[dateStr]) {
+                    agenda[dateStr][hour] ={
+                        name: session.pacient?.name || "Paciente", 
+                        status: session.sessionStatus || "AGENDADA"
+                    };
+                }
+            });
+
+            setAgendaMap(agenda);
+            } catch (error) {
+            console.error('Erro ao buscar sessões:', error);
+            }
+        };
+
+        fetchSessions();
+    }, [selectedDate]);
+
+    // Gera os horários disponíveis (7h às 16h) podendo ser alterado para o que for necessário
+    // Aqui, os horários são gerados de 7h às 16h (10 slots de 1 hora)
+    const horarios = Array.from({ length: 10 }, (_, i) => {
+        const hour = (7 + i).toString().padStart(2, '0');
+        return `${hour}:00`;
+    });
 
     return (
         <div className="container my-5">
@@ -71,29 +104,62 @@ function Agenda() {
                         ))}
                     </tr>
                 </thead>
-                <tbody className='text-center'>
-                    {agendaData.map((row, rowIndex) => (
-                        <tr key={rowIndex}>
-                            {["segunda", "terca", "quarta", "quinta", "sexta"].map((day) => {
-                                const session = row[day];
-                                const [time, patient] = session ? session.split(" | ") : ["", ""];
+                <tbody className="text-center">
+                    {horarios.map((horario) => (
+                        <tr key={horario}>
+                        {weekDates.map((date) => {
+                            const dateStr = date.toISOString().split('T')[0];
+                            const sessao = agendaMap[dateStr]?.[horario];
 
-                                return (
-                                    <td key={day} className={session ? "session-cell" : "empty-cell"}>
-                                        {session ? (
-                                            <>
-                                                <small>{time}</small>
-                                                <div>{patient}</div>
-                                            </>
-                                        ) : (
-                                            <div>-</div>
-                                        )}
-                                    </td>
-                                );
-                            })}
+                            let statusClass = "empty-cell";
+                            let statusLabel = "";
+
+                            // Verifica o status da sessão e define a classe e o rótulo apropriados
+                            if (sessao) {
+                                switch (sessao.status) {
+                                    case "AGENDADA":
+                                    statusClass = "session-agendada";
+                                    statusLabel = "Agendado";
+                                    break;
+                                    case "CONCLUIDA":
+                                    statusClass = "session-concluida";
+                                    statusLabel = "Concluído";
+                                    break;
+                                    case "CANCELADA":
+                                    statusClass = "session-cancelada";
+                                    statusLabel = "Cancelado";
+                                    break;
+                                    default:
+                                    statusClass = "session-agendada";
+                                    statusLabel = "Agendada";
+                                }
+                            }
+
+                            return (
+                            <td key={dateStr + horario} className={statusClass}>
+                                {sessao ? (
+                                <>
+                                    <small>{horario}</small>
+                                    <div className='div-cell' title={sessao.name}>
+                                        {sessao.name.length > 10 ? `${sessao.name.slice(0, 10)}...` : sessao.name}
+                                    </div>
+                                    <span className={`badge ${
+                                        sessao.status === "AGENDADA" ? "bg-primary" :
+                                        sessao.status === "CONCLUIDA" ? "bg-success" :
+                                        "bg-danger"
+                                        }`}>
+                                        {statusLabel}
+                                    </span>
+                                </>
+                                ) : (
+                                <div>-</div>
+                                )}
+                            </td>
+                            );
+                        })}
                         </tr>
                     ))}
-                </tbody>
+                    </tbody>
             </table>
         </div>
     );

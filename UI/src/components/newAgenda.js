@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Alert } from 'react-bootstrap';
+import { Toast, ToastContainer, Spinner } from 'react-bootstrap';
 import './newAgenda.css';
 import { Form, Row, Col } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
@@ -25,6 +25,7 @@ function NewAgenda() {
     const [sessions, setSessions] = useState([]);
     const [showSuccess, setShowSuccess] = useState(false);
     const [showError, setShowError] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const username = localStorage.getItem('username');
     const token = localStorage.getItem('token');
     
@@ -72,43 +73,25 @@ function NewAgenda() {
 
     // BUSCAR PACIENTES, EQUITADORES, CAVALOS E MEDIADORES
     useEffect(() => {
-        api.get('/pacients')
-        .then(response => {
-            setPacients(response.data);
-        })
-        .catch(error => {
-            console.error('Erro ao buscar pacientes:', error);
-        });
-    }, []);
+        const fetchData = async () => {
+            try {
+                const [pRes, eRes, hRes, mRes] = await Promise.all([
+                    api.get('/pacients'),
+                    api.get('/equitors'),
+                    api.get('/horses'),
+                    api.get('/mediators')
+                ]);
 
-    useEffect(() => {
-        api.get('/equitors')
-        .then(response => {
-            setEquitors(response.data);
-        })
-        .catch(error => {
-            console.error('Erro ao buscar equitadores:', error);
-        });
-    }, []);
+                setPacients(pRes.data);
+                setEquitors(eRes.data);
+                setHorses(hRes.data);
+                setMediators(mRes.data);
+            } catch (err) {
+                console.error('Erro ao buscar dados:', err);
+            }
+        };
 
-    useEffect(() => {
-        api.get('/horses')
-        .then(response => {
-            setHorses(response.data);
-        })
-        .catch(error => {
-            console.error('Erro ao buscar cavalos:', error);
-        });
-    }, []);
-
-    useEffect(() => {
-        api.get('/mediators')
-        .then(response => {
-            setMediators(response.data);
-        })
-        .catch(error => {
-            console.error('Erro ao buscar mediadores:', error);
-        });
+        fetchData();
     }, []);
 
     // FUNÇÃO PARA CRIAR O AGENDAMENTO
@@ -119,7 +102,7 @@ function NewAgenda() {
         const sessionData = {
             sessionHour: `${selectedDate}T${selectedTime}:00`,
             duration: "01:00:00",
-            sessionStatus: "AGENDADA"
+            sessionStatus: "AGENDADA",
         };
 
         const params = new URLSearchParams({
@@ -130,8 +113,10 @@ function NewAgenda() {
             mediator_id: selectedMediatorId
         }).toString();
 
+        setIsSubmitting(true);
+
         try {
-            const response = await api.post(
+            await api.post(
                 `/sessions/registerSession?${params}`,
                 sessionData,
                 {
@@ -143,35 +128,32 @@ function NewAgenda() {
 
             setShowSuccess(true);
             setTimeout(() => {
-                setShowSuccess(false);
                 navigate('/');
             }, 2000); // espera 2 segundos antes de navegar
         } catch (error) {
             console.error("Erro ao criar agendamento:", error);
             setShowError(true);
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
     // FUNÇÕES PARA SELECIONAR PACIENTE, EQUITADOR, CAVALO E MEDIADOR
     // (ATUALIZAR O ESTADO COM O ID SELECIONADO)
     const handleSelectPacient = (event) => {
-        const idPacient = event.target.value;
-        setSelectedPacientId(idPacient);
+        setSelectedPacientId(Number(event.target.value));
     };
 
     const handleSelectEquitor = (event) => {
-        const idEquitor = event.target.value;
-        setSelectedEquitorId(idEquitor);
+        setSelectedEquitorId(Number(event.target.value));
     };
 
     const handleSelectHorse = (event) => {
-        const idHorse = event.target.value;
-        setSelectedHorseId(idHorse);
+        setSelectedHorseId(Number(event.target.value));
     }
 
     const handleSelectMediator = (event) => {
-        const idMediator = event.target.value;
-        setSelectedMediatorId(idMediator);
+        setSelectedMediatorId(Number(event.target.value));
     }
 
     // FUNÇÃO PARA OBTER HORÁRIOS DISPONÍVEIS
@@ -195,19 +177,28 @@ function NewAgenda() {
     };
 
     return (
-        <div className="container my-5">
-            <div>
-                {showSuccess && (
-                    <Alert variant="success" onClose={() => setShowSuccess(false)} dismissible>
-                        Agendamento criado com sucesso!
-                    </Alert>
-                )}
-                {showError && (
-                    <Alert variant="danger" onClose={() => setShowError(false)} dismissible>
-                        Erro ao criar agendamento. Verifique os campos e tente novamente.
-                    </Alert>
-                )}
-            </div>
+        <div className="container my-5 p-4 rounded shadow-sm bg-white">
+            <ToastContainer position="top-end" className="p-3" style={{ zIndex: 9999 }}>
+                <Toast
+                    bg="success"
+                    onClose={() => setShowSuccess(false)}
+                    show={showSuccess}
+                    delay={2000}
+                    autohide
+                >
+                    <Toast.Body className="text-white text-center">Agendamento criado com sucesso!</Toast.Body>
+                </Toast>
+
+                <Toast
+                    bg="danger"
+                    onClose={() => setShowError(false)}
+                    show={showError}
+                    delay={3000}
+                    autohide
+                >
+                    <Toast.Body className="text-white texte-center">Erro ao criar agendamento. Verifique os campos.</Toast.Body>
+                </Toast>
+            </ToastContainer>
             <div className='agendamento mb-4'>
                 Novo Agendamento
             </div>
@@ -227,12 +218,19 @@ function NewAgenda() {
 
                     <Form.Group as={Col} xs={12} sm={6} md={4} controlId="formGridDatas" className='mb-3'>
                         <Form.Label>Datas Disponíveis</Form.Label>
-                        <Form.Select value={selectedDate} onChange={(e) => setSelectedDate(e.target.value)}>
+                        {/*<Form.Select value={selectedDate} onChange={(e) => setSelectedDate(e.target.value)}>
                             <option value="">Selecione uma Data</option>
                             {weekdays.map((date) => (
                             <option key={date} value={date}>{date}</option>
                             ))}
-                        </Form.Select>
+                        </Form.Select>*/}
+                        <Form.Control
+                            type="date"
+                            value={selectedDate}
+                            onChange={(e) => setSelectedDate(e.target.value)}
+                            min={weekdays[0]}
+                            max={weekdays[weekdays.length - 1]}
+                        />
                     </Form.Group>
 
                     <Form.Group as={Col} xs={12} md={4} controlId="formGridHorarios" className='mb-3'>
@@ -325,8 +323,27 @@ function NewAgenda() {
                             Cancelar
                         </Link>
 
-                        <button type="submit" className='btnA btn mx-2' aria-pressed="true">
-                            Agendar nova sessão
+                        <button
+                            type="submit"
+                            className="btnA btn mx-2"
+                            disabled={
+                                !selectedPacientId ||
+                                !selectedHorseId ||
+                                !selectedEquitorId ||
+                                !selectedMediatorId ||
+                                !selectedDate ||
+                                !selectedTime ||
+                                isSubmitting
+                            }
+                            >
+                            {isSubmitting ? (
+                                <>
+                                <Spinner animation="border" size="sm" className="me-2" />
+                                Agendando...
+                                </>
+                            ) : (
+                                'Agendar nova sessão'
+                            )}
                         </button>
                     </div>
                 </Row>

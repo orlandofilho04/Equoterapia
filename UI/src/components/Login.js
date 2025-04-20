@@ -28,7 +28,6 @@ const Login = () => {
 
       localStorage.setItem("token", token);
       localStorage.setItem("username", returnedUsername);
-      api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
       navigate("/"); // troque para a rota desejada
     } catch (error) {

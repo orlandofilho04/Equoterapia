@@ -11,8 +11,8 @@ function SearchBar({ className = "" }) {
 
     return (
         <div className={`container ${className}`}>
-            <div className="inputGroup search-bar">
-                <span className="search-icon" id="basic-addon1">
+            <div className="inputGroup searche-bar">
+                <span className="search-icone" id="basic-addon1">
                     <svg width="16" height="16" viewBox="0 0 20 20">
                         <path
                             d="M14.386 14.386l4.0877 4.0877-4.0877-4.0877c-2.9418 2.9419-7.7115 2.9419-10.6533 0-2.9419-2.9418-2.9419-7.7115 0-10.6533 2.9418-2.9419 7.7115-2.9419 10.6533 0 2.9419 2.9418 2.9419 7.7115 0 10.6533z"
@@ -26,7 +26,7 @@ function SearchBar({ className = "" }) {
                 </span>
                 <input
                     type="text"
-                    className="form-control search-input"
+                    className="form-control searche-input"
                     placeholder="Procurar um Praticante"
                     aria-label="Procurar um Praticante"
                     value={searchTerm}
