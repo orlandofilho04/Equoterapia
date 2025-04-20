@@ -184,7 +184,7 @@ function NewAgenda() {
             .map((s) => new Date(s.sessionHour).getHours());
 
         const hours = [];
-        for (let h = 8; h <= 16; h++) {
+        for (let h = 7; h <= 16; h++) {
             if (!busyHours.includes(h)) {
             const hour = h.toString().padStart(2, '0');
             hours.push(`${hour}:00`);
