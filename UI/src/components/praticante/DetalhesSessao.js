@@ -42,88 +42,111 @@ const DetalhesSessao = () => {
     }
   }, [id]);
 
+  const finalizarSessao = async () => {
+    try {
+      const response = await api.post(`/api/sessions/${id}/finalizar`);
+      if (response.status === 200) {
+        alert('Sessão finalizada com sucesso!');
+        setSessao({ ...sessao, finalizada: true }); // Atualiza o estado da sessão
+      } else {
+        throw new Error('Erro ao finalizar a sessão');
+      }
+    } catch (err) {
+      console.error('Erro ao finalizar sessão:', err);
+      alert('Não foi possível finalizar a sessão. Tente novamente.');
+    }
+  };
+
   if (loading) {
     return (
-        <div style={estilos.container}>
-          <CabecalhoSessao />
-          <div style={estilos.loadingContainer}>
-            <p>Carregando dados da sessão...</p>
-          </div>
+      <div style={estilos.container}>
+        <CabecalhoSessao />
+        <div style={estilos.loadingContainer}>
+          <p>Carregando dados da sessão...</p>
         </div>
+      </div>
     );
   }
 
   if (error) {
     return (
-        <div style={estilos.container}>
-          <CabecalhoSessao />
-          <div style={estilos.contentContainer}>
-            <div style={estilos.errorContainer}>
-              <p style={estilos.error}>{error}</p>
-              <button onClick={() => navigate('/sessoes')} style={estilos.button}>
-                Voltar para lista
-              </button>
-            </div>
-          </div>
-        </div>
-    );
-  }
-
-  if (!sessao) {
-    return (
-        <div style={estilos.container}>
-          <CabecalhoSessao />
-          <div style={estilos.contentContainer}>
-            <p style={estilos.error}>Sessão não encontrada.</p>
+      <div style={estilos.container}>
+        <CabecalhoSessao />
+        <div style={estilos.contentContainer}>
+          <div style={estilos.errorContainer}>
+            <p style={estilos.error}>{error}</p>
             <button onClick={() => navigate('/sessoes')} style={estilos.button}>
               Voltar para lista
             </button>
           </div>
         </div>
+      </div>
+    );
+  }
+
+  if (!sessao) {
+    return (
+      <div style={estilos.container}>
+        <CabecalhoSessao />
+        <div style={estilos.contentContainer}>
+          <p style={estilos.error}>Sessão não encontrada.</p>
+          <button onClick={() => navigate('/sessoes')} style={estilos.button}>
+            Voltar para lista
+          </button>
+        </div>
+      </div>
     );
   }
 
   return (
-      <div style={estilos.container}>
-        <CabecalhoSessao />
-        <div style={estilos.contentContainer}>
-          <div style={estilos.section}>
-            <h3 style={{...estilos.tituloVerde, fontSize: tamanhoTituloVerde}}>
-              Detalhes da Sessão
-            </h3>
+    <div style={estilos.container}>
+      <CabecalhoSessao />
+      <div style={estilos.contentContainer}>
+        <div style={estilos.section}>
+          <h3 style={{ ...estilos.tituloVerde, fontSize: tamanhoTituloVerde }}>
+            Detalhes da Sessão
+          </h3>
 
-            <div style={estilos.infoGrid}>
-              <p style={{...estilos.textoPreto, fontSize: tamanhoTextoPreto}}>
-                <strong>Condutor:</strong> {sessao?.condutor || 'Não informado'}
-              </p>
-              <p style={{...estilos.textoPreto, fontSize: tamanhoTextoPreto}}>
-                <strong>Mediador(es):</strong> {sessao?.mediadores?.join(", ") || 'Não informado'}
-              </p>
-              <p style={{...estilos.textoPreto, fontSize: tamanhoTextoPreto}}>
-                <strong>Encilhamento:</strong> {sessao?.encilhamento || 'Não informado'}
-              </p>
-              <p style={{...estilos.textoPreto, fontSize: tamanhoTextoPreto}}>
-                <strong>Cavalo:</strong> {sessao?.cavalo || 'Não informado'}
-              </p>
-            </div>
-          </div>
-
-          <div style={estilos.section}>
-            <h4 style={{...estilos.tituloVerde, fontSize: tamanhoTituloVerde}}>
-              Observações
-            </h4>
-            <p style={{...estilos.textoPreto, fontSize: tamanhoTextoPreto}}>
-              {sessao?.observacoes || 'Sem observações registradas'}
+          <div style={estilos.infoGrid}>
+            <p style={{ ...estilos.textoPreto, fontSize: tamanhoTextoPreto }}>
+              <strong>Condutor:</strong> {sessao?.condutor || 'Não informado'}
+            </p>
+            <p style={{ ...estilos.textoPreto, fontSize: tamanhoTextoPreto }}>
+              <strong>Mediador(es):</strong> {sessao?.mediadores?.join(", ") || 'Não informado'}
+            </p>
+            <p style={{ ...estilos.textoPreto, fontSize: tamanhoTextoPreto }}>
+              <strong>Encilhamento:</strong> {sessao?.encilhamento || 'Não informado'}
+            </p>
+            <p style={{ ...estilos.textoPreto, fontSize: tamanhoTextoPreto }}>
+              <strong>Cavalo:</strong> {sessao?.cavalo || 'Não informado'}
             </p>
           </div>
+        </div>
 
-          <div style={estilos.buttonContainer}>
-            <button onClick={() => navigate(-1)} style={estilos.button}>
-              Voltar
+        <div style={estilos.section}>
+          <h4 style={{ ...estilos.tituloVerde, fontSize: tamanhoTituloVerde }}>
+            Observações
+          </h4>
+          <p style={{ ...estilos.textoPreto, fontSize: tamanhoTextoPreto }}>
+            {sessao?.observacoes || 'Sem observações registradas'}
+          </p>
+        </div>
+
+        <div style={estilos.buttonContainer}>
+          <button onClick={() => navigate(-1)} style={estilos.button}>
+            Voltar
+          </button>
+          {!sessao.finalizada && (
+            <button
+              onClick={finalizarSessao}
+              style={{ ...estilos.button, backgroundColor: '#07C158', color: '#fff' }}
+            >
+              Finalizar Sessão
             </button>
-          </div>
+          )}
         </div>
       </div>
+    </div>
   );
 };
 
