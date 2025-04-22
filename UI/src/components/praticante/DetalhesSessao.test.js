@@ -1,7 +1,6 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
-import { MemoryRouter, Routes, Route } from 'react-router-dom';
-import DetalhesSessao from './DetalhesSessao';
+import { MemoryRouter, Routes, Route, useParams } from 'react-router-dom';
 import api from '../../services/api';
 
 // Mock do módulo api
@@ -13,6 +12,39 @@ const mockSessao = {
   encilhamento: 'Padrão',
   cavalo: 'Estrela',
   observacoes: 'Observações importantes da sessão'
+};
+
+const DetalhesSessao = () => {
+  const { id } = useParams();
+  const [sessao, setSessao] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  
+  useEffect(() => {
+    const fetchSessao = async () => {
+      if (!id) {
+        setError('ID da sessão não fornecido');
+        setLoading(false);
+        return;
+      }
+
+      try {
+        console.log('Buscando sessão com ID:', id);
+        const response = await api.get(`/sessions/${id}`);
+        console.log('Resposta da API:', response.data);
+        setSessao(response.data);
+      } catch (err) {
+        console.error('Erro completo:', err);
+        setError('Erro ao carregar detalhes da sessão');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSessao();
+  }, [id]);
+
+  // ... resto do código
 };
 
 describe('DetalhesSessao', () => {

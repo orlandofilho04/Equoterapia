@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link, useNavigate, Route } from 'react-router-dom'; // Adicionando a importação do Route
 import CabecalhoSessao from './CabecalhoSessao';
 import api from '../../services/api';
 
 const DetalhesSessao = () => {
   const { id } = useParams();
+  const navigate = useNavigate(); // Mover o useNavigate para o nível superior
   const [sessao, setSessao] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -48,6 +49,12 @@ const DetalhesSessao = () => {
           <h4 style={{...estilos.tituloVerde, fontSize: tamanhoTituloVerde, fontWeight: 'bold'}}>Observações para a sessão</h4>
           <p style={{...estilos.textoPreto, fontSize: tamanhoTextoPreto}}>{sessao.observacoes}</p>
         </div>
+
+        {/* Exemplo usando Link */}
+        <Link to={`/detalhes-sessao/${sessao.id}`}>Ver Detalhes</Link>
+
+        {/* Corrigir o uso do navigate */}
+        <button onClick={() => navigate(`/detalhes-sessao/${sessao.id}`)}>Ver Detalhes</button>
       </div>
     </div>
   );
@@ -81,3 +88,6 @@ const estilos = {
 };
 
 export default DetalhesSessao;
+
+// src/App.js ou arquivo de rotas
+<Route path="/detalhes-sessao/:id" element={<DetalhesSessao />} />
