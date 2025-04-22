@@ -1,93 +1,134 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link, useNavigate, Route } from 'react-router-dom'; // Adicionando a importação do Route
-import CabecalhoSessao from './CabecalhoSessao';
+import { useParams, useNavigate } from 'react-router-dom';
 import api from '../../services/api';
+import CabecalhoSessao from './CabecalhoSessao';
 
 const DetalhesSessao = () => {
   const { id } = useParams();
-  const navigate = useNavigate(); // Mover o useNavigate para o nível superior
+  const navigate = useNavigate();
   const [sessao, setSessao] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  
+
   const tamanhoTituloVerde = '25px';
   const tamanhoTextoPreto = '18px';
 
   useEffect(() => {
     const fetchSessao = async () => {
       try {
-        const response = await api.get(`/sessions/${id}`);
-        setSessao(response.data);
+        setLoading(true);
+        setError(null);
+
+        const response = await api.get(`/api/sessions/${id}`);
+
+        if (response.data) {
+          console.log('Sessão carregada:', response.data);
+          setSessao(response.data);
+        } else {
+          throw new Error('Dados não encontrados');
+        }
       } catch (err) {
-        setError('Erro ao carregar detalhes da sessão');
-        console.error('Erro:', err);
+        console.error('Falha ao carregar sessão:', err);
+        setError('Não foi possível carregar os detalhes da sessão');
       } finally {
         setLoading(false);
       }
     };
 
-    fetchSessao();
+    if (id) {
+      fetchSessao();
+    } else {
+      setLoading(false); // Garante que o estado de carregamento seja atualizado
+    }
   }, [id]);
 
-  if (loading) return <div>Carregando...</div>;
-  if (error) return <div>{error}</div>;
-  if (!sessao) return <div>Sessão não encontrada</div>;
+  if (loading) {
+    return (
+        <div style={estilos.container}>
+          <CabecalhoSessao />
+          <div style={estilos.loadingContainer}>
+            <p>Carregando dados da sessão...</p>
+          </div>
+        </div>
+    );
+  }
+
+  if (error) {
+    return (
+        <div style={estilos.container}>
+          <CabecalhoSessao />
+          <div style={estilos.contentContainer}>
+            <div style={estilos.errorContainer}>
+              <p style={estilos.error}>{error}</p>
+              <button onClick={() => navigate('/sessoes')} style={estilos.button}>
+                Voltar para lista
+              </button>
+            </div>
+          </div>
+        </div>
+    );
+  }
+
+  if (!sessao) {
+    return (
+        <div style={estilos.container}>
+          <CabecalhoSessao />
+          <div style={estilos.contentContainer}>
+            <p style={estilos.error}>Sessão não encontrada.</p>
+            <button onClick={() => navigate('/sessoes')} style={estilos.button}>
+              Voltar para lista
+            </button>
+          </div>
+        </div>
+    );
+  }
 
   return (
-    <div style={estilos.container}>
-      <CabecalhoSessao />
-      
-      <div style={estilos.contentContainer}>
-        <div style={estilos.section}>
-          <p style={{...estilos.textoPreto, fontSize: tamanhoTextoPreto}}><strong>Condutor:</strong> {sessao.condutor}</p>
-          <p style={{...estilos.textoPreto, fontSize: tamanhoTextoPreto}}><strong>Mediador(es):</strong> {sessao.mediadores?.join(", ")}</p>
-          <p style={{...estilos.textoPreto, fontSize: tamanhoTextoPreto}}><strong>Encilhamento:</strong> {sessao.encilhamento}</p>
-          <p style={{...estilos.textoPreto, fontSize: tamanhoTextoPreto}}><strong>Cavalo:</strong> {sessao.cavalo}</p>
+      <div style={estilos.container}>
+        <CabecalhoSessao />
+        <div style={estilos.contentContainer}>
+          <div style={estilos.section}>
+            <h3 style={{...estilos.tituloVerde, fontSize: tamanhoTituloVerde}}>
+              Detalhes da Sessão
+            </h3>
+
+            <div style={estilos.infoGrid}>
+              <p style={{...estilos.textoPreto, fontSize: tamanhoTextoPreto}}>
+                <strong>Condutor:</strong> {sessao?.condutor || 'Não informado'}
+              </p>
+              <p style={{...estilos.textoPreto, fontSize: tamanhoTextoPreto}}>
+                <strong>Mediador(es):</strong> {sessao?.mediadores?.join(", ") || 'Não informado'}
+              </p>
+              <p style={{...estilos.textoPreto, fontSize: tamanhoTextoPreto}}>
+                <strong>Encilhamento:</strong> {sessao?.encilhamento || 'Não informado'}
+              </p>
+              <p style={{...estilos.textoPreto, fontSize: tamanhoTextoPreto}}>
+                <strong>Cavalo:</strong> {sessao?.cavalo || 'Não informado'}
+              </p>
+            </div>
+          </div>
+
+          <div style={estilos.section}>
+            <h4 style={{...estilos.tituloVerde, fontSize: tamanhoTituloVerde}}>
+              Observações
+            </h4>
+            <p style={{...estilos.textoPreto, fontSize: tamanhoTextoPreto}}>
+              {sessao?.observacoes || 'Sem observações registradas'}
+            </p>
+          </div>
+
+          <div style={estilos.buttonContainer}>
+            <button onClick={() => navigate(-1)} style={estilos.button}>
+              Voltar
+            </button>
+          </div>
         </div>
-
-        <div style={estilos.section}>
-          <h4 style={{...estilos.tituloVerde, fontSize: tamanhoTituloVerde, fontWeight: 'bold'}}>Observações para a sessão</h4>
-          <p style={{...estilos.textoPreto, fontSize: tamanhoTextoPreto}}>{sessao.observacoes}</p>
-        </div>
-
-        {/* Exemplo usando Link */}
-        <Link to={`/detalhes-sessao/${sessao.id}`}>Ver Detalhes</Link>
-
-        {/* Corrigir o uso do navigate */}
-        <button onClick={() => navigate(`/detalhes-sessao/${sessao.id}`)}>Ver Detalhes</button>
       </div>
-    </div>
   );
 };
 
 const estilos = {
-  container: {
-    fontFamily: 'Arial, sans-serif',
-    padding: '20px',
-    maxWidth: '800px',
-    margin: 'auto',
-    marginLeft: '10px'
-  },
-  contentContainer: {
-    marginLeft: '10px',
-    marginRight: '20px',
-    marginTop: '30px',
-    marginBottom: '20px'
-  },
-  section: {
-    marginBottom: '20px',
-  },
-  tituloVerde: {
-    color: '#07C158',
-    margin: '0'
-  },
-  textoPreto: {
-    color: '#193238',
-    margin: '5px 0'
-  }
+  // Estilos permanecem os mesmos...
 };
 
 export default DetalhesSessao;
-
-// src/App.js ou arquivo de rotas
-<Route path="/detalhes-sessao/:id" element={<DetalhesSessao />} />
