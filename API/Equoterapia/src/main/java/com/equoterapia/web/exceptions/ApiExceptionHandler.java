@@ -16,43 +16,53 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<Object> notFoundExceptionHandler(NotFoundException e){
-        HttpStatus notFound = HttpStatus.NOT_FOUND;
+        HttpStatus statusCode = HttpStatus.NOT_FOUND;
         ExceptionPayload exceptionPayload = new ExceptionPayload(
                 e.getMessage(),
-                notFound,
+                statusCode,
                 ZonedDateTime.now(ZoneId.of("America/Sao_Paulo"))
 
         );
-        return new ResponseEntity<>(exceptionPayload, notFound);
+        return new ResponseEntity<>(exceptionPayload, statusCode);
     }
     @ExceptionHandler(ApiUsernameNotFoundException.class)
     public ResponseEntity<Object> usernameNotFoundExceptionHandler(ApiUsernameNotFoundException usernameNotFoundException){
-        HttpStatus forbidden = HttpStatus.FORBIDDEN;
+        HttpStatus statusCode = HttpStatus.FORBIDDEN;
         ExceptionPayload exceptionPayload = new ExceptionPayload(
                 usernameNotFoundException.getMessage(),
-                forbidden,
+                statusCode,
                 ZonedDateTime.now(ZoneId.of("America/Sao_Paulo"))
         );
-        return new ResponseEntity<>(exceptionPayload, forbidden);
+        return new ResponseEntity<>(exceptionPayload, statusCode);
     }
     @ExceptionHandler(JWTVerificationException.class)
     public ResponseEntity<Object> jwtVerificationHandler(JWTVerificationException jwtVerificationException){
-        HttpStatus unauthorized =  HttpStatus.UNAUTHORIZED;
+        HttpStatus statusCode =  HttpStatus.UNAUTHORIZED;
         ExceptionPayload exceptionPayload = new ExceptionPayload(
                 jwtVerificationException.getMessage(),
-                unauthorized,
+                statusCode,
                 ZonedDateTime.now(ZoneId.of("America/Sao_Paulo"))
         );
-        return new ResponseEntity<>(exceptionPayload, unauthorized);
+        return new ResponseEntity<>(exceptionPayload, statusCode);
     }
     @ExceptionHandler(TokenExpiredException.class)
     public ResponseEntity<Object> jwtExpirationHandler(TokenExpiredException expiredException){
-        HttpStatus forbidden =  HttpStatus.FORBIDDEN;
+        HttpStatus statusCode =  HttpStatus.FORBIDDEN;
         ExceptionPayload exceptionPayload = new ExceptionPayload(
                 expiredException.getMessage(),
-                forbidden,
+                statusCode,
                 ZonedDateTime.now(ZoneId.of("America/Sao_Paulo"))
         );
-        return new ResponseEntity<>(exceptionPayload, forbidden);
+        return new ResponseEntity<>(exceptionPayload, statusCode);
+    }
+    @ExceptionHandler(UnavailableDateException.class)
+    public ResponseEntity<Object> unavailableDateHandler(UnavailableDateException unavailableDateException){
+        HttpStatus statusCode =  HttpStatus.BAD_REQUEST;
+        ExceptionPayload exceptionPayload = new ExceptionPayload(
+                unavailableDateException.getMessage(),
+                statusCode,
+                ZonedDateTime.now(ZoneId.of("America/Sao_Paulo"))
+        );
+        return new ResponseEntity<>(exceptionPayload, statusCode);
     }
 }

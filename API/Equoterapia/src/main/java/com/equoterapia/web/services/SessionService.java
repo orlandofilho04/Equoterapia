@@ -2,6 +2,7 @@ package com.equoterapia.web.services;
 
 import com.equoterapia.web.entities.*;
 import com.equoterapia.web.exceptions.NotFoundException;
+import com.equoterapia.web.exceptions.UnavailableDateException;
 import com.equoterapia.web.repositories.SessionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -43,12 +44,14 @@ public class SessionService {
     }
 
     public Session registerSession(Session session, Long pacient_id, Long horse_id, Long professional_id, Long equitor_id, Long mediator_id) {
+        if (sessionRepository.existsSessionBySessionHour(session.getSessionHour())) throw new UnavailableDateException("Data indisponivel para agendamento !");
+
+
         Pacient pacient = pacientService.findById(pacient_id);
         Horse horse = horseService.findById(horse_id);
         Professional professional = professionalService.findById(professional_id);
         Equitor equitor = equitorService.findById(equitor_id);
         Mediator mediator = mediatorService.findById(mediator_id);
-
 
         session.getProfessionals().add(professional);
         session.setEquine(horse);

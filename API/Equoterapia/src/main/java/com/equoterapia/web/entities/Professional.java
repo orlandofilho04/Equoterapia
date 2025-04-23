@@ -86,7 +86,7 @@ public class Professional implements UserDetails {
     public boolean isCredentialsNonExpired() {
         return UserDetails.super.isCredentialsNonExpired();
     }
-    
+
     @JsonIgnore
     @Override
     public boolean isEnabled() {
