@@ -50,7 +50,7 @@ Ou verifique visualmente no **Docker Desktop**.
 ### 5️⃣ Testar a API
 Com a API rodando, você pode testar as rotas disponíveis acessando a **documentação Swagger**:
 
-📌 [Swagger UI - Documentação da API](http://localhost:8080/swagger-ui/)
+📌 [Swagger UI - Documentação da API](http://localhost:8080/swagger-ui/index.html)
 
 > ⚠️ **Nota:** O corpo das requisições exibidas na documentação **não** são os utilizados para testes. Certifique-se de validar os formatos corretos antes de realizar chamadas reais à API.
 
