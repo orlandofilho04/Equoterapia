@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
-class HorseResourceTest {
+class HorseTest {
 
     @Mock
     private HorseService horseService;
