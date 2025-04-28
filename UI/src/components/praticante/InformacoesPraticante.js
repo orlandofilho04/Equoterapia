@@ -1,62 +1,151 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import api from '../../services/api';
 import CabecalhoSessao from './CabecalhoSessao';
+
 const InformacoesPraticante = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const [praticante, setPraticante] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [errorDetail, setErrorDetail] = useState(null);
+
   const tamanhoTituloVerde = '25px';
   const tamanhoTextoPreto = '18px';
 
-  const dadosPraticante = {
-    nomeCompleto: "João Pedro Martins",
-    sexo: "Masculino", 
-    cartaoSUS: "99 99999 9999",
-    dataNascimento: "10/06/2017",
-    idade: "7 Anos",
-    telefone: "(62) 99999-9999",
-    email: "exemplo@exemplo.com",
-    endereco: "Av. Pres. Vargas 220, Setor Central 459, Ceres - GO",
-    cuidador: "Mãe",
-    nomePai: "Carlos Eduardo Martins",
-    nomeMae: "Maria Fernanda Martins"
-  };
+  useEffect(() => {
+    const fetchPraticante = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        setErrorDetail(null);
 
-  const dadosEscolaridade = {
-    escola: "Escola Bernardo Sayão (Privada)",
-    anoSerie: "Ensino Fundamental – 2º ano",
-    turma: "Inclusão",
-    periodo: "Matutino"
-  };
+        // Incluindo logs para melhor diagnóstico
+        console.log(`Buscando praticante com ID: ${id}`);
+        
+        const response = await api.get(`/api/praticantes/${id}`);
 
-  const diagnosticoClinico = "João Pedro apresenta diagnóstico de Transtorno do Déficit de Atenção com Hiperatividade (TDAH), caracterizado por sintomas de desatenção, impulsividade e hiperatividade. Esses sintomas afetam tanto o desempenho escolar quanto as interações sociais, além de dificultarem o foco em atividades cotidianas.\n\nNo campo motor, João apresenta dificuldades leves de coordenação e equilíbrio, que foram notadas desde a primeira infância. Atraso no desenvolvimento motor foi relatado pelos pais, com dificuldades iniciais em caminhar e manter-se estável sem apoio até aproximadamente 2 anos e meio.\n\nAtualmente, essas dificuldades refletem-se na capacidade de realizar atividades físicas que demandam maior controle postural e coordenação motora fina.";
+        if (response.data) {
+          console.log('Praticante carregado com sucesso:', response.data);
+          setPraticante(response.data);
+        } else {
+          console.warn('API retornou resposta vazia');
+          throw new Error('Dados não encontrados');
+        }
+      } catch (err) {
+        console.error('Falha ao carregar praticante:', err);
+        
+        // Detalhes adicionais para diagnóstico
+        let mensagemErro = 'Não foi possível carregar os detalhes do praticante';
+        let detalhesErro = '';
+        
+        if (err.response) {
+          mensagemErro += ` (Erro ${err.response.status})`;
+          detalhesErro = JSON.stringify(err.response.data);
+          console.error('Detalhes do erro:', {
+            status: err.response.status,
+            data: err.response.data
+          });
+        } else if (err.request) {
+          mensagemErro += ' (Servidor não respondeu)';
+          detalhesErro = 'O servidor não retornou uma resposta. Verifique se o backend está rodando na porta 8080.';
+          console.error('Sem resposta do servidor');
+        } else {
+          detalhesErro = err.message;
+        }
+        
+        setError(mensagemErro);
+        setErrorDetail(detalhesErro);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (id) {
+      fetchPraticante();
+    } else {
+      setLoading(false);
+    }
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div style={estilos.container}>
+        <CabecalhoSessao />
+        <div style={estilos.contentContainer}>
+          <p>Carregando dados do praticante...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div style={estilos.container}>
+        <CabecalhoSessao />
+        <div style={estilos.contentContainer}>
+          <p style={estilos.textoPreto}>{error}</p>
+          {errorDetail && (
+            <p style={{...estilos.textoPreto, fontSize: '14px', color: '#666'}}>
+              Detalhes: {errorDetail}
+            </p>
+          )}
+          <div style={estilos.buttonContainer}>
+            <button onClick={() => navigate('/praticantes')} style={estilos.button}>
+              Voltar para lista
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!praticante) {
+    return (
+      <div style={estilos.container}>
+        <CabecalhoSessao />
+        <div style={estilos.contentContainer}>
+          <p style={estilos.textoPreto}>Praticante não encontrado.</p>
+          <div style={estilos.buttonContainer}>
+            <button onClick={() => navigate('/praticantes')} style={estilos.button}>
+              Voltar para lista
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div style={estilos.container}>
       <CabecalhoSessao />
-      
       <div style={estilos.contentContainer}>
         <div style={estilos.section}>
-          <h4 style={{...estilos.tituloVerde, fontSize: tamanhoTituloVerde, fontWeight: 'bold'}}>Dados de Identificação</h4>
-          <p style={{...estilos.textoPreto, fontSize: tamanhoTextoPreto}}><strong>Nome Completo:</strong> {dadosPraticante.nomeCompleto}</p>
-          <p style={{...estilos.textoPreto, fontSize: tamanhoTextoPreto}}><strong>Sexo:</strong> {dadosPraticante.sexo}</p>
-          <p style={{...estilos.textoPreto, fontSize: tamanhoTextoPreto}}><strong>Nº Cartão SUS:</strong> {dadosPraticante.cartaoSUS}</p>
-          <p style={{...estilos.textoPreto, fontSize: tamanhoTextoPreto}}><strong>Data de Nascimento:</strong> {dadosPraticante.dataNascimento} ({dadosPraticante.idade})</p>
-          <p style={{...estilos.textoPreto, fontSize: tamanhoTextoPreto}}><strong>Telefone:</strong> {dadosPraticante.telefone}</p>
-          <p style={{...estilos.textoPreto, fontSize: tamanhoTextoPreto}}><strong>E-mail:</strong> {dadosPraticante.email}</p>
-          <p style={{...estilos.textoPreto, fontSize: tamanhoTextoPreto}}><strong>Endereço:</strong> {dadosPraticante.endereco}</p>
-          <p style={{...estilos.textoPreto, fontSize: tamanhoTextoPreto}}><strong>Cuidador:</strong> {dadosPraticante.cuidador}</p>
-          <p style={{...estilos.textoPreto, fontSize: tamanhoTextoPreto}}><strong>Nome do Pai:</strong> {dadosPraticante.nomePai}</p>
-          <p style={{...estilos.textoPreto, fontSize: tamanhoTextoPreto}}><strong>Nome da Mãe:</strong> {dadosPraticante.nomeMae}</p>
+          <h4 style={{ ...estilos.tituloVerde, fontSize: tamanhoTituloVerde, fontWeight: 'bold' }}>Dados de Identificação</h4>
+          <p style={{ ...estilos.textoPreto, fontSize: tamanhoTextoPreto }}><strong>Nome Completo:</strong> {praticante.nomeCompleto}</p>
+          <p style={{ ...estilos.textoPreto, fontSize: tamanhoTextoPreto }}><strong>Sexo:</strong> {praticante.sexo}</p>
+          <p style={{ ...estilos.textoPreto, fontSize: tamanhoTextoPreto }}><strong>Nº Cartão SUS:</strong> {praticante.cartaoSUS}</p>
+          <p style={{ ...estilos.textoPreto, fontSize: tamanhoTextoPreto }}><strong>Data de Nascimento:</strong> {praticante.dataNascimento} ({praticante.idade})</p>
+          <p style={{ ...estilos.textoPreto, fontSize: tamanhoTextoPreto }}><strong>Telefone:</strong> {praticante.telefone}</p>
+          <p style={{ ...estilos.textoPreto, fontSize: tamanhoTextoPreto }}><strong>E-mail:</strong> {praticante.email}</p>
+          <p style={{ ...estilos.textoPreto, fontSize: tamanhoTextoPreto }}><strong>Endereço:</strong> {praticante.endereco}</p>
+          <p style={{ ...estilos.textoPreto, fontSize: tamanhoTextoPreto }}><strong>Cuidador:</strong> {praticante.cuidador}</p>
+          <p style={{ ...estilos.textoPreto, fontSize: tamanhoTextoPreto }}><strong>Nome do Pai:</strong> {praticante.nomePai}</p>
+          <p style={{ ...estilos.textoPreto, fontSize: tamanhoTextoPreto }}><strong>Nome da Mãe:</strong> {praticante.nomeMae}</p>
         </div>
 
         <div style={estilos.section}>
-          <h4 style={{...estilos.tituloVerde, fontSize: tamanhoTituloVerde, fontWeight: 'bold'}}>Escolaridade do Praticante</h4>
-          <p style={{...estilos.textoPreto, fontSize: tamanhoTextoPreto}}><strong>Escolaridade do Praticante:</strong> {dadosEscolaridade.escola}</p>
-          <p style={{...estilos.textoPreto, fontSize: tamanhoTextoPreto}}><strong>Ano/Série:</strong> {dadosEscolaridade.anoSerie}</p>
-          <p style={{...estilos.textoPreto, fontSize: tamanhoTextoPreto}}><strong>Turma:</strong> {dadosEscolaridade.turma}</p>
-          <p style={{...estilos.textoPreto, fontSize: tamanhoTextoPreto}}><strong>Período:</strong> {dadosEscolaridade.periodo}</p>
+          <h4 style={{ ...estilos.tituloVerde, fontSize: tamanhoTituloVerde, fontWeight: 'bold' }}>Escolaridade do Praticante</h4>
+          <p style={{ ...estilos.textoPreto, fontSize: tamanhoTextoPreto }}><strong>Escolaridade do Praticante:</strong> {praticante.escolaridade?.escola}</p>
+          <p style={{ ...estilos.textoPreto, fontSize: tamanhoTextoPreto }}><strong>Ano/Série:</strong> {praticante.escolaridade?.anoSerie}</p>
+          <p style={{ ...estilos.textoPreto, fontSize: tamanhoTextoPreto }}><strong>Turma:</strong> {praticante.escolaridade?.turma}</p>
+          <p style={{ ...estilos.textoPreto, fontSize: tamanhoTextoPreto }}><strong>Período:</strong> {praticante.escolaridade?.periodo}</p>
         </div>
 
         <div style={estilos.section}>
-          <h4 style={{...estilos.tituloVerde, fontSize: tamanhoTituloVerde, fontWeight: 'bold'}}>Diagnóstico Clínico</h4>
-          <p style={{...estilos.textoPreto, fontSize: tamanhoTextoPreto, whiteSpace: 'pre-wrap'}}>{diagnosticoClinico}</p>
+          <h4 style={{ ...estilos.tituloVerde, fontSize: tamanhoTituloVerde, fontWeight: 'bold' }}>Diagnóstico Clínico</h4>
+          <p style={{ ...estilos.textoPreto, fontSize: tamanhoTextoPreto, whiteSpace: 'pre-wrap' }}>{praticante.diagnosticoClinico}</p>
         </div>
       </div>
     </div>
@@ -85,9 +174,24 @@ const estilos = {
     margin: '0'
   },
   textoPreto: {
-    color: '#193238',
+    color: '#000',
     margin: '5px 0'
+  },
+  buttonContainer: {
+    display: 'flex',
+    gap: '10px',
+    marginTop: '20px'
+  },
+  button: {
+    padding: '10px 15px',
+    backgroundColor: '#0275d8',
+    color: 'white',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'pointer',
+    fontSize: '16px'
   }
 };
 
 export default InformacoesPraticante;
+
