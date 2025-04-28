@@ -213,6 +213,17 @@ function App() {
             }
           />
           <Route
+            path="/administrador/agenda"
+            element={
+              <div className="app-content">
+                <SidebarAdministrador />
+                <div className="content">
+                  <AgendaAdministrador />
+                </div>
+              </div>
+            }
+          />
+          <Route
             path="/agenda"
             element={
               <div className="app-content">

@@ -3,8 +3,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "./ListarFuncionarios.css";
 import { Link, useNavigate } from 'react-router-dom';
 import { api } from '../../services/api';
-import { Alert, Spinner, Button, Badge, Pagination, Form, Table } from 'react-bootstrap';
-import AdministradorLayout from './AdministradorLayout';
+import { Alert, Spinner } from 'react-bootstrap';
 
 function ListarFuncionariosAtivos() {
   const [profissionais, setProfissionais] = useState([]);
@@ -12,10 +11,6 @@ function ListarFuncionariosAtivos() {
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [archiveLoading, setArchiveLoading] = useState({});
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(10);
-  const [sortField, setSortField] = useState('name');
-  const [sortDirection, setSortDirection] = useState('asc');
   const [success, setSuccess] = useState(false);
   const navigate = useNavigate();
 
@@ -26,7 +21,7 @@ function ListarFuncionariosAtivos() {
   const fetchProfissionais = async () => {
     try {
       setLoading(true);
-      const response = await api.get('/professional');
+      const response = await api.get('/professionals/active');
       setProfissionais(response.data);
       setError(null);
     } catch (err) {
@@ -40,7 +35,6 @@ function ListarFuncionariosAtivos() {
 
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
-    setCurrentPage(1);
   };
 
   const handleArchive = async (id) => {
@@ -48,7 +42,7 @@ function ListarFuncionariosAtivos() {
       setArchiveLoading(prev => ({ ...prev, [id]: true }));
       setError(null);
       setSuccess(false);
-      await api.put(`/professional/${id}/archive`);
+      await api.put(`/professionals/${id}/archive`);
       setProfissionais(profissionais.filter(prof => prof.id !== id));
       setSuccess(true);
     } catch (err) {
@@ -60,35 +54,10 @@ function ListarFuncionariosAtivos() {
     }
   };
 
-  const handleSort = (field) => {
-    if (field === sortField) {
-      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
-    } else {
-      setSortField(field);
-      setSortDirection('asc');
-    }
-  };
-
-  const filteredProfissionais = profissionais
-    .filter(profissional =>
-      profissional.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      profissional.role.toLowerCase().includes(searchTerm.toLowerCase())
-    )
-    .sort((a, b) => {
-      const aValue = a[sortField];
-      const bValue = b[sortField];
-      const direction = sortDirection === 'asc' ? 1 : -1;
-
-      if (typeof aValue === 'string') {
-        return aValue.localeCompare(bValue) * direction;
-      }
-      return (aValue - bValue) * direction;
-    });
-
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredProfissionais.slice(indexOfFirstItem, indexOfLastItem);
-  const totalPages = Math.ceil(filteredProfissionais.length / itemsPerPage);
+  const filteredProfissionais = profissionais.filter(profissional =>
+    profissional.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    profissional.role.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const getRoleDisplay = (role) => {
     switch (role) {
@@ -101,34 +70,13 @@ function ListarFuncionariosAtivos() {
     }
   };
 
-  const renderSortIcon = (field) => {
-    if (field !== sortField) return null;
-    return sortDirection === 'asc' ? '↑' : '↓';
-  };
-
   return (
-    <AdministradorLayout>
-      <div className="container my-5">
-        <div className="d-flex justify-content-between align-items-center mb-4">
-          <h1 className="page-title">Funcionários Ativos</h1>
-          <div>
-            <Button 
-              variant="outline-secondary" 
-              className="me-2"
-              onClick={() => navigate('/listar-funcionarios-arquivados')}
-            >
-              Funcionários Arquivados
-            </Button>
-            <Button 
-              className="button-add btn"
-              onClick={() => navigate('/cadastro-profissional')}
-            >
-              Cadastrar Novo
-            </Button>
-          </div>
+    <div className="listar-funcionarios-container container my-5">
+      {/* Conteúdo principal */}
+      <div className="content">
+        <div className="cor-padrao-funcionario header d-flex justify-content-between align-items-center my-3">
+          <h2>Funcionários Cadastrados</h2>
         </div>
-        
-        <hr className="divider" />
 
         {error && (
           <Alert variant="danger" className="mb-3">
@@ -142,138 +90,104 @@ function ListarFuncionariosAtivos() {
           </Alert>
         )}
 
-        <Form.Control
-          type="text"
-          placeholder="Buscar por nome ou função..."
-          value={searchTerm}
-          onChange={handleSearch}
-          className="mb-4"
-        />
+        {/* Filtro */}
+        <div className="search-bar mb-3">
+          <input
+            type="text"
+            className="form-control"
+            placeholder="Procurar um Funcionário Ativo"
+            value={searchTerm}
+            onChange={handleSearch}
+          />
+        </div>
 
+        {/* Aba de status */}
+        <div className="tabs mb-3 header d-flex">
+          <button className="cor-padrao-btn-funcionario btn me-2">Funcionários Ativos</button>
+          <button className="btn btn-light" onClick={() => navigate('/listar-funcionarios-arquivados')}>
+            Funcionários Arquivados
+          </button>
+          <button 
+            className="cor-padrao-btn-funcionario btn ms-auto"
+            onClick={() => navigate('/cadastro-profissional')}
+          >
+            Cadastre um novo Funcionário
+          </button>
+        </div>
+
+        {/* Lista de funcionarios */}
         {loading ? (
-          <div className="text-center">
+          <div className="text-center my-5">
             <Spinner animation="border" role="status">
               <span className="visually-hidden">Carregando...</span>
             </Spinner>
           </div>
         ) : (
-          <>
-            <Table hover responsive>
-              <thead>
-                <tr>
-                  <th style={{ width: '50px' }}></th>
-                  <th 
-                    style={{ cursor: 'pointer' }}
-                    onClick={() => handleSort('name')}
-                  >
-                    Nome {renderSortIcon('name')}
-                  </th>
-                  <th 
-                    style={{ cursor: 'pointer' }}
-                    onClick={() => handleSort('role')}
-                  >
-                    Função {renderSortIcon('role')}
-                  </th>
-                  <th 
-                    style={{ cursor: 'pointer' }}
-                    onClick={() => handleSort('createdAt')}
-                  >
-                    Data de Cadastro {renderSortIcon('createdAt')}
-                  </th>
-                  <th>Ações</th>
-                </tr>
-              </thead>
-              <tbody>
-                {currentItems.length === 0 ? (
-                  <tr>
-                    <td colSpan="5" className="text-center">
-                      <Alert variant="info">
-                        Nenhum funcionário encontrado.
-                      </Alert>
-                    </td>
-                  </tr>
-                ) : (
-                  currentItems.map((profissional) => (
-                    <tr key={profissional.id}>
-                      <td>
-                        <Link to={`/dados-${profissional.role.toLowerCase()}-adm/${profissional.id}`}>
-                          <img
-                            src={profissional.photoUrl || "https://img.freepik.com/fotos-premium/icone-plano-isolado-no-fundo_1258715-220844.jpg?semt=ais_hybrid"}
-                            alt="Funcionário"
-                            className="rounded-circle img-perfil"
-                            style={{ width: '40px', height: '40px' }}
-                          />
-                        </Link>
-                      </td>
-                      <td>
+          <div className="conteudo-lista list-group">
+            {filteredProfissionais.length === 0 ? (
+              <div className="alert alert-info">
+                Nenhum funcionário encontrado.
+              </div>
+            ) : (
+              filteredProfissionais.map((profissional) => (
+                <div
+                  key={profissional.id}
+                  className="bg-praticante list-group-item d-flex justify-content-between align-items-center"
+                >
+                  <div className="d-flex align-items-center">
+                    <Link to={`/dados-${profissional.role.toLowerCase()}-adm/${profissional.id}`}>
+                      <img
+                        src={profissional.photoUrl || "https://img.freepik.com/fotos-premium/icone-plano-isolado-no-fundo_1258715-220844.jpg?semt=ais_hybrid"}
+                        alt="Funcionário"
+                        className="rounded-circle me-3 img-perfil"
+                      />
+                    </Link>
+                    <div className="me-5">
+                      <h5 className="mb-0">
                         <Link 
                           to={`/dados-${profissional.role.toLowerCase()}-adm/${profissional.id}`}
-                          className="text-decoration-none"
+                          className="text-decoration-none text-dark"
                         >
                           {profissional.name}
                         </Link>
-                      </td>
-                      <td>
-                        <Badge bg="info">{getRoleDisplay(profissional.role)}</Badge>
-                      </td>
-                      <td>
-                        {new Date(profissional.createdAt).toLocaleDateString()}
-                      </td>
-                      <td>
-                        <Button 
-                          variant="outline-danger"
-                          size="sm"
-                          onClick={() => handleArchive(profissional.id)}
-                          disabled={archiveLoading[profissional.id]}
-                        >
-                          {archiveLoading[profissional.id] ? (
-                            <Spinner
-                              as="span"
-                              animation="border"
-                              size="sm"
-                              role="status"
-                              aria-hidden="true"
-                              className="me-2"
-                            />
-                          ) : null}
-                          Arquivar
-                        </Button>
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </Table>
+                      </h5>
+                    </div>
 
-            {totalPages > 1 && (
-              <div className="d-flex justify-content-center mt-4">
-                <Pagination>
-                  <Pagination.First onClick={() => setCurrentPage(1)} />
-                  <Pagination.Prev 
-                    onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                    disabled={currentPage === 1}
-                  />
-                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
-                    <Pagination.Item
-                      key={page}
-                      active={page === currentPage}
-                      onClick={() => setCurrentPage(page)}
+                    <div className="me-5">
+                      <p className="mb-0">{getRoleDisplay(profissional.role)}</p>
+                    </div>
+
+                    <div className="me-5">
+                      <p className="mb-0">Data {new Date(profissional.createdAt).toLocaleDateString()}</p>
+                    </div>
+                  </div>
+                  <div className="d-flex align-items-center">
+                    <span className="status-ativo badge me-3">Status: Ativo</span>
+                    <button 
+                      className="btn btn-light btn-sm"
+                      onClick={() => handleArchive(profissional.id)}
+                      disabled={archiveLoading[profissional.id]}
                     >
-                      {page}
-                    </Pagination.Item>
-                  ))}
-                  <Pagination.Next
-                    onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                    disabled={currentPage === totalPages}
-                  />
-                  <Pagination.Last onClick={() => setCurrentPage(totalPages)} />
-                </Pagination>
-              </div>
+                      {archiveLoading[profissional.id] ? (
+                        <Spinner
+                          as="span"
+                          animation="border"
+                          size="sm"
+                          role="status"
+                          aria-hidden="true"
+                          className="me-2"
+                        />
+                      ) : null}
+                      Arquivar funcionário
+                    </button>
+                  </div>
+                </div>
+              ))
             )}
-          </>
+          </div>
         )}
       </div>
-    </AdministradorLayout>
+    </div>
   );
 }
 

@@ -23,14 +23,13 @@ const DadosEquoterapeutaAdm = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        // Ajustando para o endpoint correto do backend
         const [equoterapeutaResponse, pacientesResponse] = await Promise.all([
-          api.get(`/professional/${id}`),
-          api.get(`/pacients/professional/${id}`)
+          api.get(`/professionals/${id}`),
+          api.get(`/patients/equoterapeuta/${id}`)
         ]);
         setEquoterapeuta(equoterapeutaResponse.data);
         setFormData(equoterapeutaResponse.data);
-        setPacientes(pacientesResponse.data || []);
+        setPacientes(pacientesResponse.data);
         setError(null);
       } catch (err) {
         const errorMessage = err.response?.data?.message || 'Erro ao carregar dados. Por favor, tente novamente.';
@@ -116,8 +115,7 @@ const DadosEquoterapeutaAdm = () => {
       setLoading(true);
       setError(null);
       setSuccess(false);
-      // Ajustando para o endpoint correto do backend
-      await api.put(`/professional/${id}`, formData);
+      await api.put(`/professionals/${id}`, formData);
       setEquoterapeuta(formData);
       setIsEditing(false);
       setSuccess(true);
@@ -134,8 +132,7 @@ const DadosEquoterapeutaAdm = () => {
     try {
       setLoading(true);
       setError(null);
-      // Ajustando para o endpoint correto do backend
-      await api.put(`/professional/${id}`, { archived: true });
+      await api.put(`/professionals/${id}/archive`);
       navigate('/listar-funcionarios-arquivados');
     } catch (err) {
       const errorMessage = err.response?.data?.message || 'Erro ao arquivar profissional. Por favor, tente novamente.';

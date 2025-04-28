@@ -1,13 +1,12 @@
-.cadastro-title,
-.section-title,
-.page-title,
-.title {
-    color: #4E3B31 !important;
+.cadastro-title {
+    color: #9B2D20 !important;
     font-weight: bold;
     font-size: 24px;
 }
 
 .section-title {
+    color: #9B2D20 !important;
+    font-weight: bold;
     font-size: 18px;
     margin-top: 20px;
     margin-bottom: 20px;
@@ -22,7 +21,7 @@
     height: 20px;
     margin: 0;
     cursor: pointer;
-    border: 2px solid #4E3B31 !important;
+    border: 2px solid #9B2D20 !important;
 }
 
 .input-field {
@@ -42,69 +41,34 @@
     height: 80px;
     background-color: #f8f9fa;
     border: 2px dashed #B3B5B6;
-    border-radius: 8px;
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    overflow: hidden;
-    position: relative;
 }
 
 .add-photo {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
     font-size: 30px;
     color: #B3B5B6;
 }
 
-.add-photo::after {
-    content: '+';
-    position: absolute;
-    bottom: 0px;
-    right: 0px;
-    font-size: 20px;
-    color: #fff;
-    background-color: #4E3B31;
-    border-radius: 50%;
-    width: 20px;
-    height: 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.preview-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.btn-cancelar,
-.btnC {
-    background-color: #FFFFFF;
-    border: 1px solid #4E3B31;
-    color: #4E3B31;
-    padding: 8px 24px;
-    border-radius: 5px;
-    min-width: 120px;
-    font-weight: 500;
-}
-
-.btn-concluir,
-.btnA {
-    background-color: #4E3B31 !important;
+.btn-cancelar {
+    background-color: #032437;
     border: none;
-    color: #FFFFFF;
+    color: #FAFAFA;
     padding: 8px 24px;
     border-radius: 5px;
     min-width: 120px;
-    font-weight: 500;
+}
+
+.btn-concluir {
+    background-color: #9B2D20 !important;
+    border: none;
+    color: #FAFAFA;
+    padding: 8px 24px;
+    border-radius: 5px;
+    min-width: 200px;
 }
 
 .radio-group {
@@ -112,14 +76,13 @@
 }
 
 .custom-radio .form-check-input:checked {
-    background-color: #4E3B31 !important;
-    border-color: #4E3B31 !important;
+    background-color: #9B2D20 !important;
+    border-color: #9B2D20 !important;
 }
 
 /* Responsividade */
 @media (max-width: 768px) {
-    .cadastro-title,
-    .title {
+    .cadastro-title {
         font-size: 20px;
     }
 
@@ -132,9 +95,7 @@
     }
 
     .btn-cancelar,
-    .btn-concluir,
-    .btnA,
-    .btnC {
+    .btn-concluir {
         width: 100%;
         margin-bottom: 10px;
     }

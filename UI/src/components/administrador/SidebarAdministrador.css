@@ -25,6 +25,38 @@
     color: white;
 }
 
+/* Menu hamburger e responsividade */
+.hamburger-menu {
+    display: none;
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    z-index: 1050;
+    width: 45px;
+    height: 45px;
+    border: none;
+    border-radius: 4px;
+    background-color: #9B2D20;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1020;
+}
+
 /* Responsividade específica para o administrador */
 @media (max-width: 768px) {
     .sidebar {
@@ -37,5 +69,56 @@
 
     .sidebar-button {
         font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 992px) {
+    .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        width: 280px;
+        z-index: 1030;
+        overflow-y: auto;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .show-mobile-sidebar {
+        transform: translateX(0);
+    }
+
+    .hamburger-menu {
+        display: flex;
+    }
+
+    .username-administrador {
+        font-size: 1rem;
+    }
+
+    .sidebar-button {
+        font-size: 0.9rem;
+    }
+    
+    .app-content {
+        margin-left: 0 !important;
+        width: 100% !important;
+    }
+}
+
+@media (min-width: 993px) {
+    .sidebar {
+        width: 350px;
+        height: 100vh;
+        position: fixed;
+        top: 0;
+        left: 0;
+    }
+    
+    .app-content {
+        margin-left: 350px;
+        width: calc(100% - 350px);
     }
 }
