@@ -1,65 +1,276 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./ListarFuncionarios.css";
+import { Link, useNavigate } from 'react-router-dom';
+import { api } from '../../services/api';
+import { Alert, Spinner, Button, Badge, Pagination, Form, Card, Table } from 'react-bootstrap';
 
 function ListarFuncionariosArquivados() {
+  const [profissionais, setProfissionais] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [reactivateLoading, setReactivateLoading] = useState({});
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(10);
+  const [sortField, setSortField] = useState('name');
+  const [sortDirection, setSortDirection] = useState('asc');
+  const [success, setSuccess] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    fetchProfissionais();
+  }, []);
+
+  const fetchProfissionais = async () => {
+    try {
+      setLoading(true);
+      const response = await api.get('/professionals/archived');
+      setProfissionais(response.data);
+      setError(null);
+    } catch (err) {
+      const errorMessage = err.response?.data?.message || 'Erro ao carregar profissionais arquivados. Por favor, tente novamente.';
+      setError(errorMessage);
+      console.error('Erro ao buscar profissionais arquivados:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSearch = (e) => {
+    setSearchTerm(e.target.value);
+    setCurrentPage(1);
+  };
+
+  const handleReactivate = async (id) => {
+    try {
+      setReactivateLoading(prev => ({ ...prev, [id]: true }));
+      setError(null);
+      setSuccess(false);
+      await api.put(`/professionals/${id}/reactivate`);
+      setProfissionais(profissionais.filter(prof => prof.id !== id));
+      setSuccess(true);
+    } catch (err) {
+      const errorMessage = err.response?.data?.message || 'Erro ao reativar profissional. Por favor, tente novamente.';
+      setError(errorMessage);
+      console.error('Erro ao reativar profissional:', err);
+    } finally {
+      setReactivateLoading(prev => ({ ...prev, [id]: false }));
+    }
+  };
+
+  const handleSort = (field) => {
+    if (field === sortField) {
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortField(field);
+      setSortDirection('asc');
+    }
+  };
+
+  const filteredProfissionais = profissionais
+    .filter(profissional =>
+      profissional.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      profissional.role.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+    .sort((a, b) => {
+      const aValue = a[sortField];
+      const bValue = b[sortField];
+      const direction = sortDirection === 'asc' ? 1 : -1;
+
+      if (typeof aValue === 'string') {
+        return aValue.localeCompare(bValue) * direction;
+      }
+      return (aValue - bValue) * direction;
+    });
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredProfissionais.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(filteredProfissionais.length / itemsPerPage);
+
+  const getRoleDisplay = (role) => {
+    switch (role) {
+      case 'equoterapeuta':
+        return 'Equoterapeuta';
+      case 'equitador':
+        return 'Equitador';
+      default:
+        return role;
+    }
+  };
+
+  const renderSortIcon = (field) => {
+    if (field !== sortField) return null;
+    return sortDirection === 'asc' ? '↑' : '↓';
+  };
+
   return (
-    <div className="listar-funcionarios-container container my-5">
-      {/* Conteúdo principal */}
-      <div className="content">
-        <div className="cor-padrao-funcionario header d-flex justify-content-between align-items-center my-3">
-          <h2>Funcionários Cadastrados</h2>
-        </div>
-
-        {/* Filtro */}
-        <div className="search-bar mb-3">
-          <input
-            type="text"
-            className="form-control"
-            placeholder="Procurar um Funcionário Arquivado"
-          />
-        </div>
-
-        {/* Aba de status */}
-        <div className="tabs mb-3 header d-flex">
-          <button className="btn-light btn me-2">Funcionários Ativos</button>
-          <button className="btn cor-padrao-btn-funcionario">Funcionários Arquivados</button>
-          <button className="cor-padrao-btn-funcionario btn ms-auto">Cadastre um novo Funcionário</button>
-        </div>
-
-        {/* Lista de funcionarios */}
-        <div className="conteudo-lista list-group">
-          {Array.from({ length: 4 }).map((_, index) => (
-            <div
-              key={index}
-              className="bg-praticante list-group-item d-flex justify-content-between align-items-center"
+    <div className="container my-5">
+      <Card className="shadow-sm">
+        <Card.Header className="bg-primary text-white d-flex justify-content-between align-items-center">
+          <h4 className="mb-0">Funcionários Arquivados</h4>
+          <div>
+            <Button 
+              variant="outline-light" 
+              className="me-2"
+              onClick={() => navigate('/listar-funcionarios-ativos')}
             >
-              <div className="d-flex align-items-center">
-                <img
-                  src="https://img.freepik.com/fotos-premium/icone-plano-isolado-no-fundo_1258715-220844.jpg?semt=ais_hybrid"
-                  alt="Funcionário"
-                  className="rounded-circle me-3 img-perfil"
-                />
-                <div className="me-5">
-                  <h5 className="mb-0">NOME</h5>
-                </div>
+              Funcionários Ativos
+            </Button>
+            <Button 
+              variant="success" 
+              onClick={() => navigate('/cadastro-profissional')}
+            >
+              Cadastrar Novo
+            </Button>
+          </div>
+        </Card.Header>
+        <Card.Body>
+          {error && (
+            <Alert variant="danger" className="mb-3">
+              {error}
+            </Alert>
+          )}
 
-                <div className="ms-5 me-5">
-                  <p className="mb-0">FUNÇÃO</p>
-                </div>
+          {success && (
+            <Alert variant="success" className="mb-3">
+              Profissional reativado com sucesso!
+            </Alert>
+          )}
 
-                <div className="ms-5 me-5">
-                  <p className="mb-0">Data 01/01/2024</p>
-                </div>
-              </div>
-              <div className="d-flex align-items-center">
-                <span className="status-arquivado badge me-3">Status: Arquivado</span>
-                <button className="btn btn-light btn-sm">Reativar funcionário</button>
-              </div>
+          <Form.Control
+            type="text"
+            placeholder="Buscar por nome ou função..."
+            value={searchTerm}
+            onChange={handleSearch}
+            className="mb-4"
+          />
+
+          {loading ? (
+            <div className="text-center">
+              <Spinner animation="border" role="status">
+                <span className="visually-hidden">Carregando...</span>
+              </Spinner>
             </div>
-          ))}
-        </div>
-      </div>
+          ) : (
+            <>
+              <Table hover responsive>
+                <thead>
+                  <tr>
+                    <th style={{ width: '50px' }}></th>
+                    <th 
+                      style={{ cursor: 'pointer' }}
+                      onClick={() => handleSort('name')}
+                    >
+                      Nome {renderSortIcon('name')}
+                    </th>
+                    <th 
+                      style={{ cursor: 'pointer' }}
+                      onClick={() => handleSort('role')}
+                    >
+                      Função {renderSortIcon('role')}
+                    </th>
+                    <th 
+                      style={{ cursor: 'pointer' }}
+                      onClick={() => handleSort('createdAt')}
+                    >
+                      Data de Cadastro {renderSortIcon('createdAt')}
+                    </th>
+                    <th>Ações</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {currentItems.length === 0 ? (
+                    <tr>
+                      <td colSpan="5" className="text-center">
+                        <Alert variant="info">
+                          Nenhum funcionário arquivado encontrado.
+                        </Alert>
+                      </td>
+                    </tr>
+                  ) : (
+                    currentItems.map((profissional) => (
+                      <tr key={profissional.id}>
+                        <td>
+                          <Link to={`/dados-${profissional.role.toLowerCase()}-adm/${profissional.id}`}>
+                            <img
+                              src={profissional.photoUrl || "https://img.freepik.com/fotos-premium/icone-plano-isolado-no-fundo_1258715-220844.jpg?semt=ais_hybrid"}
+                              alt="Funcionário"
+                              className="rounded-circle img-perfil"
+                              style={{ width: '40px', height: '40px' }}
+                            />
+                          </Link>
+                        </td>
+                        <td>
+                          <Link 
+                            to={`/dados-${profissional.role.toLowerCase()}-adm/${profissional.id}`}
+                            className="text-decoration-none"
+                          >
+                            {profissional.name}
+                          </Link>
+                        </td>
+                        <td>
+                          <Badge bg="info">{getRoleDisplay(profissional.role)}</Badge>
+                        </td>
+                        <td>
+                          {new Date(profissional.createdAt).toLocaleDateString()}
+                        </td>
+                        <td>
+                          <Button 
+                            variant="outline-success"
+                            size="sm"
+                            onClick={() => handleReactivate(profissional.id)}
+                            disabled={reactivateLoading[profissional.id]}
+                          >
+                            {reactivateLoading[profissional.id] ? (
+                              <Spinner
+                                as="span"
+                                animation="border"
+                                size="sm"
+                                role="status"
+                                aria-hidden="true"
+                                className="me-2"
+                              />
+                            ) : null}
+                            Reativar
+                          </Button>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </Table>
+
+              {totalPages > 1 && (
+                <div className="d-flex justify-content-center mt-4">
+                  <Pagination>
+                    <Pagination.First onClick={() => setCurrentPage(1)} />
+                    <Pagination.Prev 
+                      onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                      disabled={currentPage === 1}
+                    />
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                      <Pagination.Item
+                        key={page}
+                        active={page === currentPage}
+                        onClick={() => setCurrentPage(page)}
+                      >
+                        {page}
+                      </Pagination.Item>
+                    ))}
+                    <Pagination.Next
+                      onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                      disabled={currentPage === totalPages}
+                    />
+                    <Pagination.Last onClick={() => setCurrentPage(totalPages)} />
+                  </Pagination>
+                </div>
+              )}
+            </>
+          )}
+        </Card.Body>
+      </Card>
     </div>
   );
 }

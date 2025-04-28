@@ -1,69 +1,271 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './DadosEquitadorAdm.css';
-import { Row, Col } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { Row, Col, Alert, Button, Spinner, Badge } from 'react-bootstrap';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import 'bootstrap-icons/font/bootstrap-icons.css';
-
-
+import { api } from '../../services/api';
 
 const DadosEquitadorAdm = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
   const [conteudoAtivo, setConteudoAtivo] = useState('dadosPessoais');
+  const [equitador, setEquitador] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [formData, setFormData] = useState({});
+  const [equinos, setEquinos] = useState([]);
+  const [showArchiveModal, setShowArchiveModal] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [validationErrors, setValidationErrors] = useState({});
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const [equitadorResponse, equinosResponse] = await Promise.all([
+          api.get(`/professionals/${id}`),
+          api.get(`/horses/equitador/${id}`)
+        ]);
+        setEquitador(equitadorResponse.data);
+        setFormData(equitadorResponse.data);
+        setEquinos(equinosResponse.data);
+        setError(null);
+      } catch (err) {
+        const errorMessage = err.response?.data?.message || 'Erro ao carregar dados. Por favor, tente novamente.';
+        setError(errorMessage);
+        console.error('Erro ao buscar dados:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [id]);
+
+  const validateForm = () => {
+    const errors = {};
+    const cpfRegex = /^\d{3}\.\d{3}\.\d{3}-\d{2}$/;
+    const phoneRegex = /^\(\d{2}\) \d \d{4}-\d{4}$/;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!formData.name?.trim()) {
+      errors.name = 'Nome é obrigatório';
+    }
+
+    if (!formData.gender) {
+      errors.gender = 'Sexo é obrigatório';
+    }
+
+    if (!cpfRegex.test(formData.cpf)) {
+      errors.cpf = 'CPF inválido. Formato esperado: 000.000.000-00';
+    }
+
+    if (!emailRegex.test(formData.email)) {
+      errors.email = 'Email inválido';
+    }
+
+    if (!formData.birthDate) {
+      errors.birthDate = 'Data de nascimento é obrigatória';
+    }
+
+    if (!formData.address?.trim()) {
+      errors.address = 'Endereço é obrigatório';
+    }
+
+    if (!phoneRegex.test(formData.phone)) {
+      errors.phone = 'Telefone inválido. Formato esperado: (00) 0 0000-0000';
+    }
+
+    if (!formData.formation?.trim()) {
+      errors.formation = 'Formação é obrigatória';
+    }
+
+    if (!formData.formationDate) {
+      errors.formationDate = 'Data de conclusão é obrigatória';
+    }
+
+    setValidationErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+    // Clear validation error when user starts typing
+    if (validationErrors[name]) {
+      setValidationErrors(prev => ({
+        ...prev,
+        [name]: null
+      }));
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!validateForm()) {
+      return;
+    }
+
+    try {
+      setLoading(true);
+      setError(null);
+      setSuccess(false);
+      await api.put(`/professionals/${id}`, formData);
+      setEquitador(formData);
+      setIsEditing(false);
+      setSuccess(true);
+    } catch (err) {
+      const errorMessage = err.response?.data?.message || 'Erro ao atualizar dados. Por favor, tente novamente.';
+      setError(errorMessage);
+      console.error('Erro ao atualizar profissional:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleArchive = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      await api.put(`/professionals/${id}/archive`);
+      navigate('/listar-funcionarios-arquivados');
+    } catch (err) {
+      const errorMessage = err.response?.data?.message || 'Erro ao arquivar profissional. Por favor, tente novamente.';
+      setError(errorMessage);
+      console.error('Erro ao arquivar profissional:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleHorseStatusChange = async (horseId, newStatus) => {
+    try {
+      setLoading(true);
+      setError(null);
+      await api.put(`/horses/${horseId}/status`, { status: newStatus });
+      setEquinos(equinos.map(horse => 
+        horse.id === horseId 
+          ? { ...horse, status: newStatus }
+          : horse
+      ));
+    } catch (err) {
+      const errorMessage = err.response?.data?.message || 'Erro ao atualizar status do cavalo. Por favor, tente novamente.';
+      setError(errorMessage);
+      console.error('Erro ao atualizar status do cavalo:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading && !equitador) {
+    return (
+      <div className="text-center">
+        <Spinner animation="border" role="status">
+          <span className="visually-hidden">Carregando...</span>
+        </Spinner>
+      </div>
+    );
+  }
+
+  if (error && !equitador) {
+    return (
+      <Alert variant="danger">
+        {error}
+      </Alert>
+    );
+  }
+
+  if (!equitador) {
+    return (
+      <Alert variant="warning">
+        Profissional não encontrado.
+      </Alert>
+    );
+  }
 
   const renderDadosPessoais = () => (
     <>
       <div className="mt-5">
         <h5 className="title-adm mb-4">Dados de Identificação</h5>
         <ul className="list-unstyled">
-          <li><strong className="color-brown">Nome Completo:</strong> Mario Brito Martins</li>
-          <li><strong className="color-brown">Sexo:</strong> Masculino</li>
-          <li><strong className="color-brown">CPF:</strong> 123.456.789-00</li>
-          <li><strong className="color-brown">E-mail:</strong> exemplo@exemplo.com</li>
-          <li><strong className="color-brown">Telefone:</strong> (62) 9.9999-9999</li>
-          <li><strong className="color-brown">Endereço:</strong> Rua Exemplo, 123 - Cidade, Estado</li>
-          <li><strong className="color-brown">Data de Nascimento:</strong> 01/01/1990</li>
+          <li><strong className="color-brown">Nome Completo:</strong> {equitador.name}</li>
+          <li><strong className="color-brown">Sexo:</strong> {equitador.gender === 'M' ? 'Masculino' : equitador.gender === 'F' ? 'Feminino' : 'Outro'}</li>
+          <li><strong className="color-brown">CPF:</strong> {equitador.cpf}</li>
+          <li><strong className="color-brown">E-mail:</strong> {equitador.email}</li>
+          <li><strong className="color-brown">Telefone:</strong> {equitador.phone}</li>
+          <li><strong className="color-brown">Endereço:</strong> {equitador.address}</li>
+          <li><strong className="color-brown">Data de Nascimento:</strong> {new Date(equitador.birthDate).toLocaleDateString()}</li>
         </ul>
       </div>
       <div className="mt-5">
         <h5 className="title-adm mb-4">Dados Profissionais</h5>
         <ul className="list-unstyled">
-          <li><strong className="color-brown">Formação:</strong> Agronomia</li>
-          <li><strong className="color-brown">Data de Conclusão:</strong> 10/10/2022</li>
+          <li><strong className="color-brown">Formação:</strong> {equitador.formation}</li>
+          <li><strong className="color-brown">Data de Conclusão:</strong> {new Date(equitador.formationDate).toLocaleDateString()}</li>
         </ul>
       </div>
     </>
   );
 
-  const equinosCadastrados = [
-    { id: 1, nome: "Rajado", sexo: "Masculino", data: "05 Dez 2024 15:59 PM", status: "Ativo" },
-    { id: 2, nome: "Chumbinho", sexo: "Masculino", data: "17 Nov 2024 07:27 AM", status: "Ativo" },
-    { id: 3, nome: "Estrela", sexo: "Feminino", data: "09 Mar 2024 14:30 PM", status: "Ativo" },
-    { id: 4, nome: "Rabisco", sexo: "Masculino", data: "21 Jan 2024 10:14 AM", status: "Arquivado" },
-    { id: 5, nome: "Princesa", sexo: "Feminino", data: "25 Fev 2024 16:02 PM", status: "Arquivado" },
-  ];
-
   const renderEquinosCadastrados = (equinos) =>
-  equinos.map((equi) => (
-    <div key={equi.id} className="sessao-item d-flex align-items-center mb-3 p-3">
-      <img src="https://img.freepik.com/fotos-gratis/bela-vista-de-um-magnifico-cavalo-branco-com-o-campo-verde_181624-14424.jpg?t=st=1732245856~exp=1732249456~hmac=04d8eb3ea75eb418bdfca534b6ad1dcdf726f0a8155d9011bac86f34e12f7aaa&w=740" alt="Avatar" className="sessao-avatar me-3" />
-      <div className="sessao-info flex-grow-1 d-flex justify-content-between align-items-center">
-        <p className="mb-0"><strong>{equi.nome}</strong></p>
-        <p className="mb-0">Idade: {equi.sexo} Anos</p>
-        <p className="mb-0">Data da sessão: {equi.data}</p>
+    equinos.map((equi) => (
+      <div key={equi.id} className="sessao-item d-flex align-items-center mb-3 p-3">
+        <img src={equi.photoUrl || "https://img.freepik.com/fotos-gratis/bela-vista-de-um-magnifico-cavalo-branco-com-o-campo-verde_181624-14424.jpg"} alt="Avatar" className="sessao-avatar me-3" />
+        <div className="sessao-info flex-grow-1 d-flex justify-content-between align-items-center">
+          <p className="mb-0"><strong>{equi.name}</strong></p>
+          <p className="mb-0">Sexo: {equi.gender === 'M' ? 'Masculino' : 'Feminino'}</p>
+          <p className="mb-0">Data de cadastro: {new Date(equi.createdAt).toLocaleDateString()}</p>
+        </div>
+        <div className="d-flex align-items-center">
+          <Badge bg={equi.status === "active" ? "success" : "secondary"} className="me-3">
+            Status: {equi.status === "active" ? "Ativo" : "Arquivado"}
+          </Badge>
+          <Button
+            variant={equi.status === "active" ? "outline-danger" : "outline-success"}
+            size="sm"
+            onClick={() => handleHorseStatusChange(equi.id, equi.status === "active" ? "archived" : "active")}
+            disabled={loading}
+          >
+            {loading ? (
+              <Spinner
+                as="span"
+                animation="border"
+                size="sm"
+                role="status"
+                aria-hidden="true"
+                className="me-2"
+              />
+            ) : null}
+            {equi.status === "active" ? "Arquivar" : "Reativar"}
+          </Button>
+        </div>
       </div>
-      <p className={`status ${equi.status === "Ativo" ? "text-success" : "text-danger"} mb-0`}>
-        Status: {equi.status}
-      </p>
-      <i className="bi bi-three-dots" style={{ cursor: 'pointer', fontSize: '1.5rem' }}></i>
-    </div>
-  ));
+    ));
 
   return (
     <div className="container my-5">
+      {error && (
+        <Alert variant="danger" className="mb-3">
+          {error}
+        </Alert>
+      )}
+
+      {success && (
+        <Alert variant="success" className="mb-3">
+          Dados atualizados com sucesso!
+        </Alert>
+      )}
+
       <Row className="mb-3">
         <Col md={2}>
           <img
-            src="https://pics.loveplanet.ru/2/foto/15/ce/15cee737/eEoqpJw==_.jpg?p=aWN@+bVjT@mkJ_"
+            src={equitador.photoUrl || "https://pics.loveplanet.ru/2/foto/15/ce/15cee737/eEoqpJw==_.jpg"}
             alt="Foto do usuário"
             className="img-fluid rounded-circle img-adm"
           />
@@ -72,40 +274,272 @@ const DadosEquitadorAdm = () => {
         <Col>
           <div className="d-flex justify-content-between">
             <div>
-              <h3 className="title-adm">Mario Brito</h3>
+              <h3 className="title-adm">{equitador.name}</h3>
               <p className="sub-title-adm">Equitador</p>
             </div>
             <p className="color-brown">
-              <strong>Data de cadastro:</strong> 17 Nov 2024 13:46 PM
+              <strong>Data de cadastro:</strong> {new Date(equitador.createdAt).toLocaleDateString()}
             </p>
           </div>
-          <Link className="btn btnC-adm text-white" role="button" aria-pressed="true">
-            Editar informações
-          </Link>
+          <div className="d-flex gap-2">
+            <Button 
+              variant="primary"
+              onClick={() => setIsEditing(!isEditing)}
+              disabled={loading}
+            >
+              {isEditing ? 'Cancelar' : 'Editar informações'}
+            </Button>
+            <Button
+              variant="danger"
+              onClick={handleArchive}
+              disabled={loading}
+            >
+              {loading ? (
+                <Spinner
+                  as="span"
+                  animation="border"
+                  size="sm"
+                  role="status"
+                  aria-hidden="true"
+                  className="me-2"
+                />
+              ) : null}
+              Arquivar Profissional
+            </Button>
+          </div>
         </Col>
       </Row>
 
- 
-    <div className="btn-container">
+      <div className="btn-container">
         <div
-            className={`title-div-adm ${conteudoAtivo === 'dadosPessoais' ? 'active-btn' : ''}`}
-            onClick={() => setConteudoAtivo('dadosPessoais')}
-            style={{ cursor: 'pointer' }}>
-            Dados Pessoais
+          className={`title-div-adm ${conteudoAtivo === 'dadosPessoais' ? 'active-btn' : ''}`}
+          onClick={() => setConteudoAtivo('dadosPessoais')}
+          style={{ cursor: 'pointer' }}>
+          Dados Pessoais
         </div>
 
         <div
-            className={`title-div-adm ${conteudoAtivo === 'equinosCadastrados' ? 'active-btn' : ''}`}
-            onClick={() => setConteudoAtivo('equinosCadastrados')}
-            style={{ cursor: 'pointer' }}>
-            Equinos Cadastrados
+          className={`title-div-adm ${conteudoAtivo === 'equinosCadastrados' ? 'active-btn' : ''}`}
+          onClick={() => setConteudoAtivo('equinosCadastrados')}
+          style={{ cursor: 'pointer' }}>
+          Equinos Cadastrados
         </div>
-    </div>
-
-
+      </div>
 
       <div className="mt-5">
-        {conteudoAtivo === 'dadosPessoais' ? renderDadosPessoais() : renderEquinosCadastrados(equinosCadastrados)}
+        {conteudoAtivo === 'dadosPessoais' ? (
+          isEditing ? (
+            <form onSubmit={handleSubmit}>
+              <div className="mt-5">
+                <h5 className="title-adm mb-4">Dados de Identificação</h5>
+                <div className="row">
+                  <div className="col-md-6 mb-3">
+                    <label className="form-label">Nome Completo</label>
+                    <input
+                      type="text"
+                      className={`form-control ${validationErrors.name ? 'is-invalid' : ''}`}
+                      name="name"
+                      value={formData.name || ''}
+                      onChange={handleChange}
+                      required
+                    />
+                    {validationErrors.name && (
+                      <div className="invalid-feedback">
+                        {validationErrors.name}
+                      </div>
+                    )}
+                  </div>
+                  <div className="col-md-6 mb-3">
+                    <label className="form-label">Sexo</label>
+                    <select
+                      className={`form-control ${validationErrors.gender ? 'is-invalid' : ''}`}
+                      name="gender"
+                      value={formData.gender || ''}
+                      onChange={handleChange}
+                      required
+                    >
+                      <option value="">Selecione o sexo</option>
+                      <option value="M">Masculino</option>
+                      <option value="F">Feminino</option>
+                      <option value="O">Outro</option>
+                    </select>
+                    {validationErrors.gender && (
+                      <div className="invalid-feedback">
+                        {validationErrors.gender}
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <div className="row">
+                  <div className="col-md-6 mb-3">
+                    <label className="form-label">CPF</label>
+                    <input
+                      type="text"
+                      className={`form-control ${validationErrors.cpf ? 'is-invalid' : ''}`}
+                      name="cpf"
+                      value={formData.cpf || ''}
+                      onChange={handleChange}
+                      placeholder="000.000.000-00"
+                      required
+                    />
+                    {validationErrors.cpf && (
+                      <div className="invalid-feedback">
+                        {validationErrors.cpf}
+                      </div>
+                    )}
+                  </div>
+                  <div className="col-md-6 mb-3">
+                    <label className="form-label">E-mail</label>
+                    <input
+                      type="email"
+                      className={`form-control ${validationErrors.email ? 'is-invalid' : ''}`}
+                      name="email"
+                      value={formData.email || ''}
+                      onChange={handleChange}
+                      required
+                    />
+                    {validationErrors.email && (
+                      <div className="invalid-feedback">
+                        {validationErrors.email}
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <div className="row">
+                  <div className="col-md-6 mb-3">
+                    <label className="form-label">Telefone</label>
+                    <input
+                      type="text"
+                      className={`form-control ${validationErrors.phone ? 'is-invalid' : ''}`}
+                      name="phone"
+                      value={formData.phone || ''}
+                      onChange={handleChange}
+                      placeholder="(00) 0 0000-0000"
+                      required
+                    />
+                    {validationErrors.phone && (
+                      <div className="invalid-feedback">
+                        {validationErrors.phone}
+                      </div>
+                    )}
+                  </div>
+                  <div className="col-md-6 mb-3">
+                    <label className="form-label">Data de Nascimento</label>
+                    <input
+                      type="date"
+                      className={`form-control ${validationErrors.birthDate ? 'is-invalid' : ''}`}
+                      name="birthDate"
+                      value={formData.birthDate || ''}
+                      onChange={handleChange}
+                      required
+                    />
+                    {validationErrors.birthDate && (
+                      <div className="invalid-feedback">
+                        {validationErrors.birthDate}
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <div className="row">
+                  <div className="col-12 mb-3">
+                    <label className="form-label">Endereço</label>
+                    <input
+                      type="text"
+                      className={`form-control ${validationErrors.address ? 'is-invalid' : ''}`}
+                      name="address"
+                      value={formData.address || ''}
+                      onChange={handleChange}
+                      required
+                    />
+                    {validationErrors.address && (
+                      <div className="invalid-feedback">
+                        {validationErrors.address}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-5">
+                <h5 className="title-adm mb-4">Dados Profissionais</h5>
+                <div className="row">
+                  <div className="col-md-6 mb-3">
+                    <label className="form-label">Formação</label>
+                    <input
+                      type="text"
+                      className={`form-control ${validationErrors.formation ? 'is-invalid' : ''}`}
+                      name="formation"
+                      value={formData.formation || ''}
+                      onChange={handleChange}
+                      required
+                    />
+                    {validationErrors.formation && (
+                      <div className="invalid-feedback">
+                        {validationErrors.formation}
+                      </div>
+                    )}
+                  </div>
+                  <div className="col-md-6 mb-3">
+                    <label className="form-label">Data de Conclusão</label>
+                    <input
+                      type="date"
+                      className={`form-control ${validationErrors.formationDate ? 'is-invalid' : ''}`}
+                      name="formationDate"
+                      value={formData.formationDate || ''}
+                      onChange={handleChange}
+                      required
+                    />
+                    {validationErrors.formationDate && (
+                      <div className="invalid-feedback">
+                        {validationErrors.formationDate}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <div className="d-flex justify-content-end mt-4">
+                <Button 
+                  variant="secondary" 
+                  className="me-2"
+                  onClick={() => setIsEditing(false)}
+                >
+                  Cancelar
+                </Button>
+                <Button 
+                  variant="primary" 
+                  type="submit"
+                  disabled={loading}
+                >
+                  {loading ? (
+                    <Spinner
+                      as="span"
+                      animation="border"
+                      size="sm"
+                      role="status"
+                      aria-hidden="true"
+                      className="me-2"
+                    />
+                  ) : null}
+                  Salvar Alterações
+                </Button>
+              </div>
+            </form>
+          ) : (
+            renderDadosPessoais()
+          )
+        ) : (
+          <div>
+            <h5 className="title-adm mb-4">Equinos Cadastrados</h5>
+            {equinos.length === 0 ? (
+              <Alert variant="info">
+                Nenhum equino cadastrado.
+              </Alert>
+            ) : (
+              renderEquinosCadastrados(equinos)
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
