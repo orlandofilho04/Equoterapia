@@ -18,15 +18,33 @@ public class Horse {
     @GeneratedValue(strategy = GenerationType.IDENTITY) 
     private Long id;
 
+    @Column(nullable = false, unique = true)
+    private String registerCode;
+
     @Column(length = 100, nullable = false)
     private String name;
 
     @Column(nullable = false)
+    private Integer age;
+
+    @Column(nullable = false)
+    private String breed;
+
+    @Column(nullable = false)
     private Double height;
+
+    @Column(nullable = false)
+    private Double weight;
 
     @Column(length = 50, nullable = false)
     private String gait;
 
     @Column(length = 200, nullable = false)
     private String equipment;
+
+    @Column(length = 250, nullable = false)
+    private String specialsTraits;
+
+    @Column(length = 50, nullable = false)
+    private String coatColor;
 }

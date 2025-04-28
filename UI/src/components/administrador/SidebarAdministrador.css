@@ -1,22 +1,41 @@
 .username-administrador {
-    color: #9B2D20 !important;
+    color: #9B2D20;
     text-align: center;
 }
 
 .active-button-administrador {
-    background-color: #9B2D20 !important;
-    color: white !important;
+    background-color: #9B2D20;
+    color: white;
+}
+
+.sidebar-button {
+    background-color: #f8f9fa;
+    color: #333;
+    border: 1px solid #dee2e6;
+    transition: all 0.3s ease;
 }
 
 .sidebar-button:hover {
-    background-color: #f8f9fa !important;
-}
-
-.btn-light {
-    background-color: #f8f9fa !important;
+    background-color: #e9ecef;
+    color: #333;
 }
 
 .active-button-administrador:hover {
-    background-color: #9B2D20 !important;
-    color: white !important;
+    background-color: #8a2519;
+    color: white;
+}
+
+/* Responsividade específica para o administrador */
+@media (max-width: 768px) {
+    .sidebar {
+        z-index: 1000;
+    }
+
+    .username-administrador {
+        font-size: 1rem;
+    }
+
+    .sidebar-button {
+        font-size: 0.9rem;
+    }
 }

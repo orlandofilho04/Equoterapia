@@ -1,28 +1,45 @@
-.search-bar {
+.searche-bar {
     max-width: 400px;
-    border-radius: 5px;
     background-color: #FFFFFF;
-    border: 1 solid #B3B5B6;
+    border: 1px solid #B3B5B6;
+
+    /* Arredonda apenas o lado direito */
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+
+    /* Garante que o lado esquerdo fique reto */
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
 }
 
-.search-input {
+.searche-input {
     border: 1 solid #B3B5B6;
     border-left: none;
-    border-radius: 5px;
     background-color: #FFFFFF;
     padding-left: 15px;
     height: 40px;
+
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
 }
 
-.search-icon {
+.search-icone {
     background-color: #07C158 !important;
     height: 40px;
     color: #FFFFFF;
     align-content: center;
     box-shadow: none;
-    border-radius: 5px;
     width: 30px;
     text-align: center;
+
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+
+    border-top-left-radius: 1px;
+    border-bottom-left-radius: 1px;
 }
 
 .search-input:focus {

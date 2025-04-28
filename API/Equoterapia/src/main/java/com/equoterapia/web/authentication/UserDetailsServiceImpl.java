@@ -1,6 +1,7 @@
 package com.equoterapia.web.authentication;
 
 
+import com.equoterapia.web.exceptions.ApiUsernameNotFoundException;
 import com.equoterapia.web.repositories.ProfessionalRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -17,7 +18,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         UserDetails professional = professionalRepository.findByUsername(username);
         if(professional == null){
-            throw new UsernameNotFoundException("Usuário não encontrado!");
+            throw new ApiUsernameNotFoundException("Usuário não encontrado!");
         }
         return professionalRepository.findByUsername(username);
     }

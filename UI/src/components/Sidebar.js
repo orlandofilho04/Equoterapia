@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { RxExit } from "react-icons/rx";
 import { Link, useNavigate } from "react-router-dom";
 import { FaBars } from "react-icons/fa";
@@ -7,7 +7,15 @@ import "./Sidebar.css";
 const Sidebar = () => {
   const [activeButton, setActiveButton] = useState(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [username, setUsername] = useState("Nome do Usuário");
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const storedUsername = localStorage.getItem("username");
+    if (storedUsername) {
+      setUsername(storedUsername);
+    }
+  }, []);
 
   const handleButtonClick = (button) => {
     setActiveButton(button);
@@ -51,7 +59,7 @@ const Sidebar = () => {
         </div>
 
         <h5 className="text-center mb-2 fw-bold">Bem Vindo!</h5>
-        <h6 className="username mb-5 fw-bold">Nome do Usuário</h6>
+        <h6 className="username mb-5 fw-bold">{username}</h6>
 
         <button
           className={`btn sidebar-button mb-4 fw-bold ${

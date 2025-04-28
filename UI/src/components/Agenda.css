@@ -27,6 +27,40 @@
     text-align: center;
 }
 
+td.session-agendada {
+    background-color: #2196f3 !important;
+    color: white !important;
+    border-radius: 2px;
+}
+
+td.session-concluida {
+    background-color: #4caf50 !important;
+    color: white !important;
+    border-radius: 2px;
+}
+
+td.session-cancelada {
+    background-color: #f44336 !important;
+    color: white !important;
+    border-radius: 2px;
+}
+
+td.empty-cell {
+    background-color: #f5f5f5 !important;
+    color: #aaa !important;
+}
+
+.session-cell {
+    background-color: #e0f7fa;
+    font-weight: bold;
+}
+
+.div-cell {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .th {
     text-align: center;
     font-size: 16px;

@@ -33,7 +33,7 @@ public class PacientService {
             throw new NotFoundException("Paciente não encontrado");
         }
 
-        return pacientRepository.findById(id).orElseThrow();
+        return pacientRepository.findById(id).orElseThrow(NotFoundException::new);
     }
 
     public void setPacientAnamnesis(Anamnesis anamnesis, Long pacient_id){

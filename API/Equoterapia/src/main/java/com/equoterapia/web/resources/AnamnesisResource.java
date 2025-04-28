@@ -1,6 +1,8 @@
 package com.equoterapia.web.resources;
 
 import com.equoterapia.web.entities.Anamnesis;
+import com.equoterapia.web.exceptions.ApiExceptionHandler;
+import com.equoterapia.web.exceptions.NotFoundException;
 import com.equoterapia.web.services.AnamnesisService;
 import com.equoterapia.web.services.PacientService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -58,14 +60,12 @@ public class AnamnesisResource {
             @ApiResponse(responseCode = "404", description = "Paciente não encontrado"),
             @ApiResponse(responseCode = "500", description = "Erro Interno do Servidor")
     })
-    public  ResponseEntity<Anamnesis> insertAnamnesis(@RequestBody Anamnesis anamnesis, @RequestParam(required = true) Long pacient_id){
-        try {
-            pacientService.findById(pacient_id);
-            anamnesis = anamnesisService.insert(anamnesis);
-            pacientService.setPacientAnamnesis(anamnesis, pacient_id);
-        } catch (RuntimeException e) {
-            throw new RuntimeException(e);
-        }
+    public  ResponseEntity<Anamnesis> insertAnamnesis(@RequestBody Anamnesis anamnesis, @RequestParam Long pacient_id){
+
+        pacientService.findById(pacient_id);
+        anamnesis = anamnesisService.insert(anamnesis);
+        pacientService.setPacientAnamnesis(anamnesis, pacient_id);
+
 
         URI uri = ServletUriComponentsBuilder
                 .fromCurrentRequest()

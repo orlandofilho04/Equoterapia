@@ -31,6 +31,12 @@ public class ProfessionalResource {
         return ResponseEntity.ok().body(professional);
     }
 
+    @GetMapping(value = "/")
+    public ResponseEntity<Professional> findProfessionalByUsername(@RequestParam String username) {
+        Professional professional = professionalService.findProfessionalByUsername(username);
+        return ResponseEntity.ok().body(professional);
+    }
+
     @PostMapping
     public ResponseEntity<Professional> insert(@RequestBody Professional professional) {
         professional = professionalService.insert(professional);

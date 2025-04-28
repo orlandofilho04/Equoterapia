@@ -16,7 +16,7 @@ import CadastroPraticante2 from "./components/praticante/CadastroPraticante2";
 import ProximasSessoes from "./components/praticante/ProximasSessoes";
 import CadastrarEquino from "./components/equitador/CadastrarEquino.js";
 import DadosEquino from "./components/equitador/DadosEquino.js";
-import CadastroProfissional1 from "./components/administrador/CadastroProfissional1";
+import CadastroEquoterapeuta from "./components/administrador/CadastroEquoterapeuta";
 import CadastroEquitador from "./components/administrador/CadastroEquitador";
 import ListarPraticantesAtivos from "./components/praticante/ListarPraticantesAtivos";
 import ListarPraticantesArquivados from "./components/praticante/ListarPraticantesArquivados";
@@ -163,7 +163,7 @@ function App() {
               <div className="app-content">
                 <Sidebar />
                 <div className="content">
-                  <CadastroProfissional1 />
+                  <CadastroEquoterapeuta />
                 </div>
               </div>
             }

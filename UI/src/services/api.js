@@ -1,5 +1,6 @@
 import axios from 'axios';
 
+
 // Rotas que não precisam de token de autenticação
 const ignoreTokenRoutes = ['/auth/login', '/auth/register'];
 
@@ -18,6 +19,7 @@ api.interceptors.request.use((config) => {
   console.log('Enviando requisição:', config);
   
   // Verificar se a rota atual requer token de autenticação
+
   if (!ignoreTokenRoutes.includes(config.url)) {
     const token = localStorage.getItem('token');
     if (token) {
@@ -28,6 +30,7 @@ api.interceptors.request.use((config) => {
 }, (error) => {
   return Promise.reject(error);
 });
+
 
 // Interceptor para logging das respostas
 api.interceptors.response.use(
@@ -69,3 +72,4 @@ api.interceptors.response.use(
 
 export { api };
 export default api;
+

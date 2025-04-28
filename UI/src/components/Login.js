@@ -24,10 +24,10 @@ const Login = () => {
         password,
       });
 
-      const { token } = response.data;
+      const { token, username: returnedUsername } = response.data;
 
       localStorage.setItem("token", token);
-      api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+      localStorage.setItem("username", returnedUsername);
 
       navigate("/"); // troque para a rota desejada
     } catch (error) {

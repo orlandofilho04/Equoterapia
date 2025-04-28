@@ -1,6 +1,5 @@
 package com.equoterapia.web.services;
 
-import com.equoterapia.web.entities.Anamnesis;
 import com.equoterapia.web.entities.Pacient;
 import com.equoterapia.web.entities.Professional;
 import com.equoterapia.web.entities.Appointment;
@@ -34,6 +33,13 @@ public class ProfessionalService {
             throw new NotFoundException("Profissional não encontrado");
         }
         return professionalRepository.findById(id).orElseThrow();
+    }
+
+    public Professional findProfessionalByUsername(String username) {
+        if (!professionalRepository.existsProfessionalByUsername(username)){
+            throw new NotFoundException("Profissional não encontrado");
+        }
+        return professionalRepository.findProfessionalByUsername(username);
     }
 
     public Professional insert(Professional professional) {
