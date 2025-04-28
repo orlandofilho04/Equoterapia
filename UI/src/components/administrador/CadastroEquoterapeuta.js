@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { api } from '../../services/api';
 import './CadastroProfissional.css';
 
-const CadastroEquitador = ({ initialRole, onError, hideHeader = false }) => {
+const CadastroEquoterapeuta = ({ initialRole, onError, hideHeader = false }) => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: '',
@@ -14,9 +14,9 @@ const CadastroEquitador = ({ initialRole, onError, hideHeader = false }) => {
     birthDate: '',
     address: '',
     phone: '',
-    role: initialRole || 'equitador',
-    formation: '',
-    formationDate: ''
+    role: initialRole || 'equoterapeuta',
+    professionalRegistry: '',
+    andeCourse: 'sim'
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -71,12 +71,8 @@ const CadastroEquitador = ({ initialRole, onError, hideHeader = false }) => {
       errors.phone = 'Telefone inválido. Formato esperado: (00) 0 0000-0000';
     }
 
-    if (!formData.formation.trim()) {
-      errors.formation = 'Formação é obrigatória';
-    }
-
-    if (!formData.formationDate) {
-      errors.formationDate = 'Data de conclusão é obrigatória';
+    if (!formData.professionalRegistry) {
+      errors.professionalRegistry = 'Registro profissional é obrigatório';
     }
 
     setValidationErrors(errors);
@@ -84,7 +80,7 @@ const CadastroEquitador = ({ initialRole, onError, hideHeader = false }) => {
   };
 
   const handleChange = (e) => {
-    const { name, value, files } = e.target;
+    const { name, value, files, type } = e.target;
     
     if (files && files[0]) {
       const file = files[0];
@@ -186,7 +182,7 @@ const CadastroEquitador = ({ initialRole, onError, hideHeader = false }) => {
                   value={formData.role}
                   onChange={handleChange}
                 >
-                  <option value="equitador">Equitador</option>
+                  <option value="equoterapeuta">Equoterapeuta</option>
                 </Form.Select>
               </Form.Group>
             </Col>
@@ -366,39 +362,56 @@ const CadastroEquitador = ({ initialRole, onError, hideHeader = false }) => {
         <Row className="mb-4">
           <Col xs={12} md={8}>
             <Form.Group>
-              <Form.Label>Formação</Form.Label>
-              <Form.Control 
-                type="text"
-                name="formation"
-                value={formData.formation}
+              <Form.Label>Registro Profissional</Form.Label>
+              <Form.Select 
+                className={`input-field ${validationErrors.professionalRegistry ? 'is-invalid' : ''}`}
+                name="professionalRegistry"
+                value={formData.professionalRegistry}
                 onChange={handleChange}
-                placeholder="Digite a formação do equitador"
-                className={`input-field ${validationErrors.formation ? 'is-invalid' : ''}`}
                 required
-              />
-              {validationErrors.formation && (
+              >
+                <option value="">Selecione o Registro Profissional</option>
+                <option value="Fisioterapeuta">Fisioterapeuta - COFFITO</option>
+                <option value="Fonoaudiólogo">Fonoaudiólogo - CREFONO</option>
+                <option value="Psicólogo">Psicólogo - CRP</option>
+                <option value="Psicopedagogo">Psicopedagogo - CFEP</option>
+                <option value="Terapeuta Ocupacional">Terapeuta Ocupacional - COFFITO</option>
+                <option value="Educador Físico">Educador Físico - CREF</option>
+                <option value="Assistente Social">Assistente Social - CFESS</option>
+                <option value="Pedagogo">Pedagogo</option>
+              </Form.Select>
+              {validationErrors.professionalRegistry && (
                 <Form.Control.Feedback type="invalid">
-                  {validationErrors.formation}
+                  {validationErrors.professionalRegistry}
                 </Form.Control.Feedback>
               )}
             </Form.Group>
           </Col>
-          <Col xs={12} md={4}>
-            <Form.Group>
-              <Form.Label>Data de conclusão</Form.Label>
-              <Form.Control 
-                type="date"
-                name="formationDate"
-                value={formData.formationDate}
-                onChange={handleChange}
-                className={`input-field ${validationErrors.formationDate ? 'is-invalid' : ''}`}
-                required
-              />
-              {validationErrors.formationDate && (
-                <Form.Control.Feedback type="invalid">
-                  {validationErrors.formationDate}
-                </Form.Control.Feedback>
-              )}
+          <Col xs={12} md={4} className="d-flex align-items-center">
+            <Form.Group className="radio-group">
+              <Form.Label>Realizou o curso da ANDE-BRASIL</Form.Label>
+              <div className="d-flex gap-4">
+                <Form.Check
+                  type="radio"
+                  label="Sim"
+                  name="andeCourse"
+                  id="curso-sim"
+                  value="sim"
+                  onChange={handleChange}
+                  className="custom-radio"
+                  defaultChecked={formData.andeCourse === 'sim'}
+                />
+                <Form.Check
+                  type="radio"
+                  label="Não"
+                  name="andeCourse"
+                  id="curso-nao"
+                  value="nao"
+                  onChange={handleChange}
+                  className="custom-radio"
+                  defaultChecked={formData.andeCourse === 'nao'}
+                />
+              </div>
             </Form.Group>
           </Col>
         </Row>
@@ -428,4 +441,4 @@ const CadastroEquitador = ({ initialRole, onError, hideHeader = false }) => {
   );
 };
 
-export default CadastroEquitador;
+export default CadastroEquoterapeuta;

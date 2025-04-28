@@ -24,13 +24,14 @@ const DadosEquitadorAdm = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
+        // Usando os endpoints corretos do backend
         const [equitadorResponse, equinosResponse] = await Promise.all([
-          api.get(`/professionals/${id}`),
-          api.get(`/horses/equitador/${id}`)
+          api.get(`/professional/${id}`),
+          api.get(`/equitors/horses?equitor_id=${id}`)
         ]);
         setEquitador(equitadorResponse.data);
         setFormData(equitadorResponse.data);
-        setEquinos(equinosResponse.data);
+        setEquinos(equinosResponse.data || []);
         setError(null);
       } catch (err) {
         const errorMessage = err.response?.data?.message || 'Erro ao carregar dados. Por favor, tente novamente.';
@@ -116,7 +117,8 @@ const DadosEquitadorAdm = () => {
       setLoading(true);
       setError(null);
       setSuccess(false);
-      await api.put(`/professionals/${id}`, formData);
+      // Usando o endpoint correto para atualizar o profissional
+      await api.put(`/professional/${id}`, formData);
       setEquitador(formData);
       setIsEditing(false);
       setSuccess(true);
@@ -133,7 +135,8 @@ const DadosEquitadorAdm = () => {
     try {
       setLoading(true);
       setError(null);
-      await api.put(`/professionals/${id}/archive`);
+      // Usando o endpoint correto para arquivar o profissional
+      await api.put(`/professional/${id}`, { archived: true });
       navigate('/listar-funcionarios-arquivados');
     } catch (err) {
       const errorMessage = err.response?.data?.message || 'Erro ao arquivar profissional. Por favor, tente novamente.';
@@ -148,7 +151,8 @@ const DadosEquitadorAdm = () => {
     try {
       setLoading(true);
       setError(null);
-      await api.put(`/horses/${horseId}/status`, { status: newStatus });
+      // Usando o endpoint correto para mudar o status do cavalo
+      await api.put(`/horses/${horseId}`, { status: newStatus });
       setEquinos(equinos.map(horse => 
         horse.id === horseId 
           ? { ...horse, status: newStatus }

@@ -3,7 +3,8 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "./ListarFuncionarios.css";
 import { Link, useNavigate } from 'react-router-dom';
 import { api } from '../../services/api';
-import { Alert, Spinner, Button, Badge, Pagination, Form, Card, Table } from 'react-bootstrap';
+import { Alert, Spinner, Button, Badge, Pagination, Form, Table } from 'react-bootstrap';
+import AdministradorLayout from './AdministradorLayout';
 
 function ListarFuncionariosAtivos() {
   const [profissionais, setProfissionais] = useState([]);
@@ -25,7 +26,7 @@ function ListarFuncionariosAtivos() {
   const fetchProfissionais = async () => {
     try {
       setLoading(true);
-      const response = await api.get('/professionals/active');
+      const response = await api.get('/professional');
       setProfissionais(response.data);
       setError(null);
     } catch (err) {
@@ -47,7 +48,7 @@ function ListarFuncionariosAtivos() {
       setArchiveLoading(prev => ({ ...prev, [id]: true }));
       setError(null);
       setSuccess(false);
-      await api.put(`/professionals/${id}/archive`);
+      await api.put(`/professional/${id}/archive`);
       setProfissionais(profissionais.filter(prof => prof.id !== id));
       setSuccess(true);
     } catch (err) {
@@ -106,172 +107,173 @@ function ListarFuncionariosAtivos() {
   };
 
   return (
-    <div className="container my-5">
-      <Card className="shadow-sm">
-        <Card.Header className="bg-primary text-white d-flex justify-content-between align-items-center">
-          <h4 className="mb-0">Funcionários Ativos</h4>
+    <AdministradorLayout>
+      <div className="container my-5">
+        <div className="d-flex justify-content-between align-items-center mb-4">
+          <h1 className="page-title">Funcionários Ativos</h1>
           <div>
             <Button 
-              variant="outline-light" 
+              variant="outline-secondary" 
               className="me-2"
               onClick={() => navigate('/listar-funcionarios-arquivados')}
             >
               Funcionários Arquivados
             </Button>
             <Button 
-              variant="success" 
+              className="button-add btn"
               onClick={() => navigate('/cadastro-profissional')}
             >
               Cadastrar Novo
             </Button>
           </div>
-        </Card.Header>
-        <Card.Body>
-          {error && (
-            <Alert variant="danger" className="mb-3">
-              {error}
-            </Alert>
-          )}
+        </div>
+        
+        <hr className="divider" />
 
-          {success && (
-            <Alert variant="success" className="mb-3">
-              Profissional arquivado com sucesso!
-            </Alert>
-          )}
+        {error && (
+          <Alert variant="danger" className="mb-3">
+            {error}
+          </Alert>
+        )}
 
-          <Form.Control
-            type="text"
-            placeholder="Buscar por nome ou função..."
-            value={searchTerm}
-            onChange={handleSearch}
-            className="mb-4"
-          />
+        {success && (
+          <Alert variant="success" className="mb-3">
+            Profissional arquivado com sucesso!
+          </Alert>
+        )}
 
-          {loading ? (
-            <div className="text-center">
-              <Spinner animation="border" role="status">
-                <span className="visually-hidden">Carregando...</span>
-              </Spinner>
-            </div>
-          ) : (
-            <>
-              <Table hover responsive>
-                <thead>
+        <Form.Control
+          type="text"
+          placeholder="Buscar por nome ou função..."
+          value={searchTerm}
+          onChange={handleSearch}
+          className="mb-4"
+        />
+
+        {loading ? (
+          <div className="text-center">
+            <Spinner animation="border" role="status">
+              <span className="visually-hidden">Carregando...</span>
+            </Spinner>
+          </div>
+        ) : (
+          <>
+            <Table hover responsive>
+              <thead>
+                <tr>
+                  <th style={{ width: '50px' }}></th>
+                  <th 
+                    style={{ cursor: 'pointer' }}
+                    onClick={() => handleSort('name')}
+                  >
+                    Nome {renderSortIcon('name')}
+                  </th>
+                  <th 
+                    style={{ cursor: 'pointer' }}
+                    onClick={() => handleSort('role')}
+                  >
+                    Função {renderSortIcon('role')}
+                  </th>
+                  <th 
+                    style={{ cursor: 'pointer' }}
+                    onClick={() => handleSort('createdAt')}
+                  >
+                    Data de Cadastro {renderSortIcon('createdAt')}
+                  </th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                {currentItems.length === 0 ? (
                   <tr>
-                    <th style={{ width: '50px' }}></th>
-                    <th 
-                      style={{ cursor: 'pointer' }}
-                      onClick={() => handleSort('name')}
-                    >
-                      Nome {renderSortIcon('name')}
-                    </th>
-                    <th 
-                      style={{ cursor: 'pointer' }}
-                      onClick={() => handleSort('role')}
-                    >
-                      Função {renderSortIcon('role')}
-                    </th>
-                    <th 
-                      style={{ cursor: 'pointer' }}
-                      onClick={() => handleSort('createdAt')}
-                    >
-                      Data de Cadastro {renderSortIcon('createdAt')}
-                    </th>
-                    <th>Ações</th>
+                    <td colSpan="5" className="text-center">
+                      <Alert variant="info">
+                        Nenhum funcionário encontrado.
+                      </Alert>
+                    </td>
                   </tr>
-                </thead>
-                <tbody>
-                  {currentItems.length === 0 ? (
-                    <tr>
-                      <td colSpan="5" className="text-center">
-                        <Alert variant="info">
-                          Nenhum funcionário encontrado.
-                        </Alert>
+                ) : (
+                  currentItems.map((profissional) => (
+                    <tr key={profissional.id}>
+                      <td>
+                        <Link to={`/dados-${profissional.role.toLowerCase()}-adm/${profissional.id}`}>
+                          <img
+                            src={profissional.photoUrl || "https://img.freepik.com/fotos-premium/icone-plano-isolado-no-fundo_1258715-220844.jpg?semt=ais_hybrid"}
+                            alt="Funcionário"
+                            className="rounded-circle img-perfil"
+                            style={{ width: '40px', height: '40px' }}
+                          />
+                        </Link>
+                      </td>
+                      <td>
+                        <Link 
+                          to={`/dados-${profissional.role.toLowerCase()}-adm/${profissional.id}`}
+                          className="text-decoration-none"
+                        >
+                          {profissional.name}
+                        </Link>
+                      </td>
+                      <td>
+                        <Badge bg="info">{getRoleDisplay(profissional.role)}</Badge>
+                      </td>
+                      <td>
+                        {new Date(profissional.createdAt).toLocaleDateString()}
+                      </td>
+                      <td>
+                        <Button 
+                          variant="outline-danger"
+                          size="sm"
+                          onClick={() => handleArchive(profissional.id)}
+                          disabled={archiveLoading[profissional.id]}
+                        >
+                          {archiveLoading[profissional.id] ? (
+                            <Spinner
+                              as="span"
+                              animation="border"
+                              size="sm"
+                              role="status"
+                              aria-hidden="true"
+                              className="me-2"
+                            />
+                          ) : null}
+                          Arquivar
+                        </Button>
                       </td>
                     </tr>
-                  ) : (
-                    currentItems.map((profissional) => (
-                      <tr key={profissional.id}>
-                        <td>
-                          <Link to={`/dados-${profissional.role.toLowerCase()}-adm/${profissional.id}`}>
-                            <img
-                              src={profissional.photoUrl || "https://img.freepik.com/fotos-premium/icone-plano-isolado-no-fundo_1258715-220844.jpg?semt=ais_hybrid"}
-                              alt="Funcionário"
-                              className="rounded-circle img-perfil"
-                              style={{ width: '40px', height: '40px' }}
-                            />
-                          </Link>
-                        </td>
-                        <td>
-                          <Link 
-                            to={`/dados-${profissional.role.toLowerCase()}-adm/${profissional.id}`}
-                            className="text-decoration-none"
-                          >
-                            {profissional.name}
-                          </Link>
-                        </td>
-                        <td>
-                          <Badge bg="info">{getRoleDisplay(profissional.role)}</Badge>
-                        </td>
-                        <td>
-                          {new Date(profissional.createdAt).toLocaleDateString()}
-                        </td>
-                        <td>
-                          <Button 
-                            variant="outline-danger"
-                            size="sm"
-                            onClick={() => handleArchive(profissional.id)}
-                            disabled={archiveLoading[profissional.id]}
-                          >
-                            {archiveLoading[profissional.id] ? (
-                              <Spinner
-                                as="span"
-                                animation="border"
-                                size="sm"
-                                role="status"
-                                aria-hidden="true"
-                                className="me-2"
-                              />
-                            ) : null}
-                            Arquivar
-                          </Button>
-                        </td>
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </Table>
+                  ))
+                )}
+              </tbody>
+            </Table>
 
-              {totalPages > 1 && (
-                <div className="d-flex justify-content-center mt-4">
-                  <Pagination>
-                    <Pagination.First onClick={() => setCurrentPage(1)} />
-                    <Pagination.Prev 
-                      onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                      disabled={currentPage === 1}
-                    />
-                    {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
-                      <Pagination.Item
-                        key={page}
-                        active={page === currentPage}
-                        onClick={() => setCurrentPage(page)}
-                      >
-                        {page}
-                      </Pagination.Item>
-                    ))}
-                    <Pagination.Next
-                      onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                      disabled={currentPage === totalPages}
-                    />
-                    <Pagination.Last onClick={() => setCurrentPage(totalPages)} />
-                  </Pagination>
-                </div>
-              )}
-            </>
-          )}
-        </Card.Body>
-      </Card>
-    </div>
+            {totalPages > 1 && (
+              <div className="d-flex justify-content-center mt-4">
+                <Pagination>
+                  <Pagination.First onClick={() => setCurrentPage(1)} />
+                  <Pagination.Prev 
+                    onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                    disabled={currentPage === 1}
+                  />
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                    <Pagination.Item
+                      key={page}
+                      active={page === currentPage}
+                      onClick={() => setCurrentPage(page)}
+                    >
+                      {page}
+                    </Pagination.Item>
+                  ))}
+                  <Pagination.Next
+                    onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                    disabled={currentPage === totalPages}
+                  />
+                  <Pagination.Last onClick={() => setCurrentPage(totalPages)} />
+                </Pagination>
+              </div>
+            )}
+          </>
+        )}
+      </div>
+    </AdministradorLayout>
   );
 }
 
