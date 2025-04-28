@@ -70,18 +70,6 @@ const DetalhesSessao = () => {
     }
   }, [id]);
 
-  // Dados de teste para quando a API não está disponível
-  const testeSessao = {
-    id: "123",
-    condutor: "João Silva (Dados de Teste)",
-    mediadores: ["Maria Oliveira", "Carlos Santos"],
-    encilhamento: "Convencional",
-    cavalo: "Trovão",
-    observacoes: "Sessão de teste para visualização quando a API não está disponível. Exibindo dados fictícios para avaliação do layout e funcionamento do componente.",
-    finalizada: false,
-    dataHora: "25/04/2025 14:30"
-  };
-
   const finalizarSessao = async () => {
     try {
       const response = await api.post(`/api/sessions/${id}/finalizar`);
@@ -95,13 +83,6 @@ const DetalhesSessao = () => {
       console.error('Erro ao finalizar sessão:', err);
       alert('Não foi possível finalizar a sessão. Tente novamente.');
     }
-  };
-
-  // Função para testar o componente com dados fictícios
-  const exibirDadosTeste = () => {
-    setSessao(testeSessao);
-    setError(null);
-    setLoading(false);
   };
 
   if (loading) {
@@ -131,9 +112,6 @@ const DetalhesSessao = () => {
               <button onClick={() => navigate('/sessoes')} style={estilos.button}>
                 Voltar para lista
               </button>
-              <button onClick={exibirDadosTeste} style={{...estilos.button, backgroundColor: '#ffc107', color: '#000'}}>
-                Exibir Dados de Teste
-              </button>
             </div>
           </div>
         </div>
@@ -150,9 +128,6 @@ const DetalhesSessao = () => {
           <div style={estilos.buttonContainer}>
             <button onClick={() => navigate('/sessoes')} style={estilos.button}>
               Voltar para lista
-            </button>
-            <button onClick={exibirDadosTeste} style={{...estilos.button, backgroundColor: '#ffc107', color: '#000'}}>
-              Exibir Dados de Teste
             </button>
           </div>
         </div>

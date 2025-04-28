@@ -24,15 +24,6 @@ const InformacoesPraticante = () => {
         // Incluindo logs para melhor diagnóstico
         console.log(`Buscando praticante com ID: ${id}`);
         
-        // Teste direto de conexão para diagnóstico
-        try {
-          const testResponse = await api.get('/api');
-          console.log('Teste de conexão com API bem sucedido:', testResponse);
-        } catch (testErr) {
-          console.warn('Teste inicial de API falhou:', testErr.message);
-        }
-
-        // Tentativa com endpoint específico
         const response = await api.get(`/api/praticantes/${id}`);
 
         if (response.data) {
@@ -78,35 +69,6 @@ const InformacoesPraticante = () => {
     }
   }, [id]);
 
-  // Template de dados para teste (apenas se não houver dados da API)
-  const testePraticante = {
-    nomeCompleto: "Carlos Silva (Dados de Teste)",
-    sexo: "Masculino",
-    cartaoSUS: "123456789012345",
-    dataNascimento: "01/02/2010",
-    idade: "15 anos",
-    telefone: "(11) 98765-4321",
-    email: "responsavel@exemplo.com",
-    endereco: "Rua Exemplo, 123 - Bairro - Cidade/UF",
-    cuidador: "João Silva",
-    nomePai: "José Silva",
-    nomeMae: "Maria Silva",
-    escolaridade: {
-      escola: "Escola Municipal",
-      anoSerie: "5º Ano",
-      turma: "A",
-      periodo: "Matutino"
-    },
-    diagnosticoClinico: "Teste diagnóstico para visualização de dados quando a API não está disponível."
-  };
-
-  // Função para testar o componente com dados fictícios
-  const exibirDadosTeste = () => {
-    setPraticante(testePraticante);
-    setError(null);
-    setLoading(false);
-  };
-
   if (loading) {
     return (
       <div style={estilos.container}>
@@ -133,9 +95,6 @@ const InformacoesPraticante = () => {
             <button onClick={() => navigate('/praticantes')} style={estilos.button}>
               Voltar para lista
             </button>
-            <button onClick={exibirDadosTeste} style={{...estilos.button, backgroundColor: '#ffc107', color: '#000'}}>
-              Exibir Dados de Teste
-            </button>
           </div>
         </div>
       </div>
@@ -151,9 +110,6 @@ const InformacoesPraticante = () => {
           <div style={estilos.buttonContainer}>
             <button onClick={() => navigate('/praticantes')} style={estilos.button}>
               Voltar para lista
-            </button>
-            <button onClick={exibirDadosTeste} style={{...estilos.button, backgroundColor: '#ffc107', color: '#000'}}>
-              Exibir Dados de Teste
             </button>
           </div>
         </div>

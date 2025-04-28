@@ -70,25 +70,6 @@ const FeedbackSessaoAnterior = () => {
     }
   }, [id]);
 
-  // Dados de teste para quando a API não está disponível
-  const testeFeedback = {
-    id: "456",
-    observacoesGerais: "O praticante apresentou ótima evolução durante a sessão de teste. Demonstrou maior controle postural e melhor interação com o animal. (Dados de Teste)",
-    observacoesProximaSessao: "Para a próxima sessão, sugerimos continuar com exercícios de equilíbrio e adicionar atividades de coordenação motora fina.",
-    condutor: "Ana Pereira (Dados de Teste)",
-    mediadores: ["Paulo Costa", "Carla Mendes"],
-    encilhamento: "Manta terapêutica",
-    cavalo: "Luna",
-    dataSessao: "20/04/2025"
-  };
-
-  // Função para testar o componente com dados fictícios
-  const exibirDadosTeste = () => {
-    setFeedback(testeFeedback);
-    setError(null);
-    setLoading(false);
-  };
-
   if (loading) {
     return (
       <div style={estilos.container}>
@@ -115,9 +96,6 @@ const FeedbackSessaoAnterior = () => {
             <button onClick={() => navigate('/sessoes')} style={estilos.button}>
               Voltar para lista
             </button>
-            <button onClick={exibirDadosTeste} style={{...estilos.button, backgroundColor: '#ffc107', color: '#000'}}>
-              Exibir Dados de Teste
-            </button>
           </div>
         </div>
       </div>
@@ -133,9 +111,6 @@ const FeedbackSessaoAnterior = () => {
           <div style={estilos.buttonContainer}>
             <button onClick={() => navigate('/sessoes')} style={estilos.button}>
               Voltar para lista
-            </button>
-            <button onClick={exibirDadosTeste} style={{...estilos.button, backgroundColor: '#ffc107', color: '#000'}}>
-              Exibir Dados de Teste
             </button>
           </div>
         </div>
