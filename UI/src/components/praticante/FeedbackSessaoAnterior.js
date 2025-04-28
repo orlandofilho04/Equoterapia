@@ -9,6 +9,7 @@ const FeedbackSessaoAnterior = () => {
   const [feedback, setFeedback] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [errorDetail, setErrorDetail] = useState(null);
 
   const tamanhoTituloVerde = '25px';
   const tamanhoTextoPreto = '18px';
@@ -18,18 +19,45 @@ const FeedbackSessaoAnterior = () => {
       try {
         setLoading(true);
         setError(null);
+        setErrorDetail(null);
 
+        // Incluindo logs para melhor diagnóstico
+        console.log(`Buscando feedback para sessão com ID: ${id}`);
+
+        // Tentativa com endpoint específico
         const response = await api.get(`/api/sessions/${id}/feedback`);
 
         if (response.data) {
-          console.log('Feedback carregado:', response.data);
+          console.log('Feedback carregado com sucesso:', response.data);
           setFeedback(response.data);
         } else {
+          console.warn('API retornou resposta vazia');
           throw new Error('Dados não encontrados');
         }
       } catch (err) {
         console.error('Falha ao carregar feedback:', err);
-        setError('Não foi possível carregar o feedback da sessão anterior');
+        
+        // Detalhes adicionais para diagnóstico
+        let mensagemErro = 'Não foi possível carregar o feedback da sessão anterior';
+        let detalhesErro = '';
+        
+        if (err.response) {
+          mensagemErro += ` (Erro ${err.response.status})`;
+          detalhesErro = JSON.stringify(err.response.data);
+          console.error('Detalhes do erro:', {
+            status: err.response.status,
+            data: err.response.data
+          });
+        } else if (err.request) {
+          mensagemErro += ' (Servidor não respondeu)';
+          detalhesErro = 'O servidor não retornou uma resposta. Verifique se o backend está rodando na porta 8080.';
+          console.error('Sem resposta do servidor');
+        } else {
+          detalhesErro = err.message;
+        }
+        
+        setError(mensagemErro);
+        setErrorDetail(detalhesErro);
       } finally {
         setLoading(false);
       }
@@ -41,6 +69,25 @@ const FeedbackSessaoAnterior = () => {
       setLoading(false);
     }
   }, [id]);
+
+  // Dados de teste para quando a API não está disponível
+  const testeFeedback = {
+    id: "456",
+    observacoesGerais: "O praticante apresentou ótima evolução durante a sessão de teste. Demonstrou maior controle postural e melhor interação com o animal. (Dados de Teste)",
+    observacoesProximaSessao: "Para a próxima sessão, sugerimos continuar com exercícios de equilíbrio e adicionar atividades de coordenação motora fina.",
+    condutor: "Ana Pereira (Dados de Teste)",
+    mediadores: ["Paulo Costa", "Carla Mendes"],
+    encilhamento: "Manta terapêutica",
+    cavalo: "Luna",
+    dataSessao: "20/04/2025"
+  };
+
+  // Função para testar o componente com dados fictícios
+  const exibirDadosTeste = () => {
+    setFeedback(testeFeedback);
+    setError(null);
+    setLoading(false);
+  };
 
   if (loading) {
     return (
@@ -59,9 +106,19 @@ const FeedbackSessaoAnterior = () => {
         <CabecalhoSessao />
         <div style={estilos.contentContainer}>
           <p style={estilos.textoPreto}>{error}</p>
-          <button onClick={() => navigate('/sessoes')} style={estilos.button}>
-            Voltar para lista
-          </button>
+          {errorDetail && (
+            <p style={{...estilos.textoPreto, fontSize: '14px', color: '#666'}}>
+              Detalhes: {errorDetail}
+            </p>
+          )}
+          <div style={estilos.buttonContainer}>
+            <button onClick={() => navigate('/sessoes')} style={estilos.button}>
+              Voltar para lista
+            </button>
+            <button onClick={exibirDadosTeste} style={{...estilos.button, backgroundColor: '#ffc107', color: '#000'}}>
+              Exibir Dados de Teste
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -73,9 +130,14 @@ const FeedbackSessaoAnterior = () => {
         <CabecalhoSessao />
         <div style={estilos.contentContainer}>
           <p style={estilos.textoPreto}>Feedback não encontrado.</p>
-          <button onClick={() => navigate('/sessoes')} style={estilos.button}>
-            Voltar para lista
-          </button>
+          <div style={estilos.buttonContainer}>
+            <button onClick={() => navigate('/sessoes')} style={estilos.button}>
+              Voltar para lista
+            </button>
+            <button onClick={exibirDadosTeste} style={{...estilos.button, backgroundColor: '#ffc107', color: '#000'}}>
+              Exibir Dados de Teste
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -101,6 +163,12 @@ const FeedbackSessaoAnterior = () => {
           <p style={{...estilos.textoPreto, fontSize: tamanhoTextoPreto}}><strong>Mediador(es):</strong> {feedback.mediadores?.join(", ") || 'Não informado'}</p>
           <p style={{...estilos.textoPreto, fontSize: tamanhoTextoPreto}}><strong>Encilhamento:</strong> {feedback.encilhamento || 'Não informado'}</p>
           <p style={{...estilos.textoPreto, fontSize: tamanhoTextoPreto}}><strong>Cavalo:</strong> {feedback.cavalo || 'Não informado'}</p>
+        </div>
+        
+        <div style={estilos.buttonContainer}>
+          <button onClick={() => navigate('/sessoes')} style={estilos.button}>
+            Voltar para lista
+          </button>
         </div>
       </div>
     </div>
@@ -129,8 +197,22 @@ const estilos = {
     margin: '0'
   },
   textoPreto: {
-    color: '#000', // Revertido para preto puro
+    color: '#000', 
     margin: '5px 0'
+  },
+  buttonContainer: {
+    display: 'flex',
+    gap: '10px',
+    marginTop: '20px'
+  },
+  button: {
+    padding: '10px 15px',
+    backgroundColor: '#0275d8',
+    color: 'white',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'pointer',
+    fontSize: '16px'
   }
 };
 

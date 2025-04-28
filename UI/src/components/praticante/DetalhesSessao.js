@@ -165,10 +165,6 @@ const DetalhesSessao = () => {
       <CabecalhoSessao />
       <div style={estilos.contentContainer}>
         <div style={estilos.section}>
-          <h3 style={{ ...estilos.tituloVerde, fontSize: tamanhoTituloVerde }}>
-            Detalhes da Sessão
-          </h3>
-
           <div style={estilos.infoGrid}>
             <p style={{ ...estilos.textoPreto, fontSize: tamanhoTextoPreto }}>
               <strong>Condutor:</strong> {sessao?.condutor || 'Não informado'}
