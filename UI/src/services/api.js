@@ -2,55 +2,21 @@ import axios from 'axios';
 
 // Configuração base da API
 const api = axios.create({
-  // Mudando de localhost:8080 para o path completo
   baseURL: 'http://localhost:8080',
-  timeout: 20000, // Aumentando o timeout para 20 segundos
+  timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json'
   }
 });
 
-// Token de teste fixo
-const TEST_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhdXRoLWFwaSIsInN1YiI6IkpQMCIsImV4cCI6MTc0NTg3OTY0MH0.Pw_UuzjqK8nKRUibr0WfrusO5fOLA1ITieaIMED5u40';
-
-// Teste de conexão com a API
-const testarConexao = async () => {
-  try {
-    console.log('Testando conexão com a API...');
-    const response = await axios.get('http://localhost:8080/actuator/health', {
-      headers: {
-        'Authorization': `Bearer ${TEST_TOKEN}`
-      }
-    });
-    console.log('Conexão bem sucedida:', response.data);
-    return true;
-  } catch (error) {
-    console.error('Falha na conexão com a API:', error.message);
-    // Testar sem o token para verificar se é um problema de autenticação
-    try {
-      const responseWithoutToken = await axios.get('http://localhost:8080/actuator/health');
-      console.log('Conexão sem token bem sucedida:', responseWithoutToken.data);
-      console.warn('O problema parece ser com a autenticação, não com a conexão');
-    } catch (innerError) {
-      console.error('Falha também sem token:', innerError.message);
-    }
-    return false;
-  }
-};
-
-// Executar teste de conexão imediatamente
-testarConexao();
-
+// Interceptor para logging das requisições
 api.interceptors.request.use(request => {
   console.log('Enviando requisição:', request);
-  
-  // Adiciona o token de autenticação em todas as requisições
-  request.headers['Authorization'] = `Bearer ${TEST_TOKEN}`;
-  
   return request;
 });
 
+// Interceptor para logging das respostas
 api.interceptors.response.use(
   response => {
     console.log('Resposta recebida:', response);
