@@ -1,5 +1,8 @@
 import axios from 'axios';
 
+// Rotas que não precisam de token de autenticação
+const ignoreTokenRoutes = ['/auth/login', '/auth/register'];
+
 // Configuração base da API
 const api = axios.create({
   baseURL: 'http://localhost:8080',
@@ -10,10 +13,20 @@ const api = axios.create({
   }
 });
 
-// Interceptor para logging das requisições
-api.interceptors.request.use(request => {
-  console.log('Enviando requisição:', request);
-  return request;
+// Interceptor para adicionar o token de autenticação
+api.interceptors.request.use((config) => {
+  console.log('Enviando requisição:', config);
+  
+  // Verificar se a rota atual requer token de autenticação
+  if (!ignoreTokenRoutes.includes(config.url)) {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+  }
+  return config;
+}, (error) => {
+  return Promise.reject(error);
 });
 
 // Interceptor para logging das respostas
@@ -54,4 +67,5 @@ api.interceptors.response.use(
   }
 );
 
+export { api };
 export default api;
