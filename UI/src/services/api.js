@@ -13,7 +13,7 @@ const api = axios.create({
   }
 });
 
-// Interceptor para adicionar o token de autenticação
+// Interceptor para adicionar o token de autenticação e logging
 api.interceptors.request.use((config) => {
   console.log('Enviando requisição:', config);
   
