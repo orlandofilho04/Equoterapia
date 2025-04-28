@@ -4,11 +4,12 @@ import fotoDefault from "../imgs/foto.jpg";
 import BotaoEfeito from './BotaoEfeito';
 import BotaoVerde from './BotaoArredondado';
 import gear from '../imgs/gear.png';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import api from '../../services/api';
 
 const CabecalhoSessao = (props) => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [sessionData, setSessionData] = useState({
     numeroSessao: "",
     status: "Carregando...",
@@ -149,27 +150,10 @@ const CabecalhoSessao = (props) => {
     return idade;
   };
   
-  // Finalizar sessão
-  const finalizarSessao = async () => {
-    try {
-      const sessionId = id || props.sessionId;
-      if (!sessionId || sessionId === "demo") {
-        alert("Esta é uma sessão de demonstração e não pode ser finalizada");
-        return;
-      }
-      
-      const response = await api.post(`/api/sessions/${sessionId}/finalizar`);
-      if (response.data) {
-        setSessionData({
-          ...sessionData,
-          status: "Finalizada"
-        });
-        alert("Sessão finalizada com sucesso!");
-      }
-    } catch (err) {
-      console.error("Erro ao finalizar sessão:", err);
-      alert("Não foi possível finalizar a sessão. Tente novamente.");
-    }
+  // Redirecionamento para a tela FinalizarSessao
+  const irParaFinalizarSessao = () => {
+    const sessionId = id || props.sessionId || 'demo';
+    navigate(`/finalizar-sessao/${sessionId}`);
   };
 
   return (
@@ -197,8 +181,8 @@ const CabecalhoSessao = (props) => {
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
               {sessionData.status !== "Finalizada" && (
-                <button 
-                  onClick={finalizarSessao}
+                <Link 
+                  to={`/finalizar-sessao/${id || props.sessionId || 'demo'}`}
                   style={{ 
                     padding: '10px 15px',
                     backgroundColor: '#07C158',
@@ -206,11 +190,13 @@ const CabecalhoSessao = (props) => {
                     border: 'none',
                     borderRadius: '20px',
                     cursor: 'pointer',
-                    fontSize: '16px'
+                    fontSize: '16px',
+                    textDecoration: 'none',
+                    textAlign: 'center'
                   }}
                 >
                   Finalizar Sessão
-                </button>
+                </Link>
               )}
               <Link 
                 to="/configuracoes-sessao" 
