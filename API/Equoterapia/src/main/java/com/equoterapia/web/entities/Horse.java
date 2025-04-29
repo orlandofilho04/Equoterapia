@@ -1,10 +1,13 @@
 package com.equoterapia.web.entities;
 
-import jakarta.persistence.*; 
+import com.equoterapia.web.entities.enums.Genders;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -24,8 +27,14 @@ public class Horse {
     @Column(length = 100, nullable = false)
     private String name;
 
+    @Column
+    private String photo;
+
     @Column(nullable = false)
     private Integer age;
+
+    @Column
+    private Genders sex;
 
     @Column(nullable = false)
     private String breed;
@@ -47,4 +56,7 @@ public class Horse {
 
     @Column(length = 50, nullable = false)
     private String coatColor;
+
+    @Column
+    private LocalDateTime createdAt;
 }

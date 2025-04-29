@@ -39,7 +39,6 @@ public class ProfessionalResource {
 
     @PostMapping
     public ResponseEntity<Professional> insert(@RequestBody Professional professional) {
-        professional = professionalService.insert(professional);
         URI uri = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/{id}")

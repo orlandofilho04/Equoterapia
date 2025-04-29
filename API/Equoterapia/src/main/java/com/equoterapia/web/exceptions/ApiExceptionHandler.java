@@ -65,4 +65,14 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         );
         return new ResponseEntity<>(exceptionPayload, statusCode);
     }
+    @ExceptionHandler(AdminAccessDeniedException.class)
+    public ResponseEntity<Object> adminAccessDeniedHandler(AdminAccessDeniedException adminAccessDeniedException){
+        HttpStatus statusCode =  HttpStatus.FORBIDDEN;
+        ExceptionPayload exceptionPayload = new ExceptionPayload(
+                adminAccessDeniedException.getMessage(),
+                statusCode,
+                ZonedDateTime.now(ZoneId.of("America/Sao_Paulo"))
+        );
+        return new ResponseEntity<>(exceptionPayload, statusCode);
+    }
 }

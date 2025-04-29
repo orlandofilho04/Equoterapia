@@ -6,6 +6,7 @@ import com.equoterapia.web.exceptions.UnavailableDateException;
 import com.equoterapia.web.repositories.SessionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -33,7 +34,7 @@ public class SessionService {
     
     public Session findById(Long id) {
         if (!sessionRepository.existsById(id)){
-            throw new NotFoundException("Sessao não encontrada");
+            throw new NotFoundException("Sessão não encontrada");
         }
         Optional<Session> optionalSession = sessionRepository.findById(id);
         return optionalSession.orElseThrow(RuntimeException::new);
@@ -43,9 +44,9 @@ public class SessionService {
         return sessionRepository.save(session);
     }
 
+@Transactional(rollbackFor = {NotFoundException.class, UnavailableDateException.class})
     public Session registerSession(Session session, Long pacient_id, Long horse_id, Long professional_id, Long equitor_id, Long mediator_id) {
-        if (sessionRepository.existsSessionBySessionHour(session.getSessionHour())) throw new UnavailableDateException("Data indisponivel para agendamento !");
-
+        if (sessionRepository.existsSessionBySessionHour(session.getSessionHour())) throw new UnavailableDateException("Data e Hora indisponíveis para agendamento!");
 
         Pacient pacient = pacientService.findById(pacient_id);
         Horse horse = horseService.findById(horse_id);

@@ -23,17 +23,36 @@ import java.util.List;
 @Entity
 @Table(name = "tb_professionals")
 public class Professional implements UserDetails {
+
+    public Professional(String name, String username, LocalDate birthDate, String encryptedPassword, Roles role) {
+        this.name = name;
+        this.username = username;
+        this.birthDate = birthDate;
+        this.password = encryptedPassword;
+        this.role = role;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column
     private String name;
 
     @Column(unique = true)
     private String username;
 
+    @Column
     private LocalDate birthDate;
+
+    @Column
     private String password;
+
+    @Column
     private Roles role;
+
+    @Column
+    private Boolean isAdmin = false;
 
     @ManyToMany
     @JsonIgnore
@@ -46,13 +65,6 @@ public class Professional implements UserDetails {
     @JsonIgnore
     private List<Appointment> appointments = new ArrayList<>();
 
-    public Professional(String name, String username, LocalDate birthDate, String encryptedPassword, Roles role) {
-        this.name = name;
-        this.username = username;
-        this.birthDate = birthDate;
-        this.password = encryptedPassword;
-        this.role = role;
-    }
     @JsonIgnore
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

@@ -3,9 +3,11 @@ package com.equoterapia.web.services;
 import com.equoterapia.web.entities.Pacient;
 import com.equoterapia.web.entities.Professional;
 import com.equoterapia.web.entities.Appointment;
+import com.equoterapia.web.exceptions.AdminAccessDeniedException;
 import com.equoterapia.web.exceptions.NotFoundException;
 import com.equoterapia.web.repositories.ProfessionalRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,7 +15,9 @@ import java.util.stream.Collectors;
 
 @Service
 public class ProfessionalService {
-    
+    @Value("${api.security.admin.secret}")
+    private String adminPass;
+
     @Autowired
     private ProfessionalRepository professionalRepository;
 
@@ -43,6 +47,14 @@ public class ProfessionalService {
     }
 
     public Professional insert(Professional professional) {
+        return professionalRepository.save(professional);
+    }
+
+    public Professional insert(Professional professional, String adminPass) {
+        if (!this.adminPass.equals(adminPass)){
+            throw new AdminAccessDeniedException("Credencial incorreta, contacte um Administrador!");
+        }
+        professional.setIsAdmin(true);
         return professionalRepository.save(professional);
     }
 

@@ -6,6 +6,7 @@ import com.equoterapia.web.authentication.DTOs.RegisterDTO;
 import com.equoterapia.web.authentication.security.TokenService;
 import com.equoterapia.web.entities.Professional;
 import com.equoterapia.web.repositories.ProfessionalRepository;
+import com.equoterapia.web.services.ProfessionalService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +25,8 @@ public class AuthResource {
     private ProfessionalRepository professionalRepository;
     @Autowired
     private TokenService tokenService;
+    @Autowired
+    private ProfessionalService professionalService;
 
 
     @PostMapping(value = "/login")
@@ -35,10 +38,10 @@ public class AuthResource {
 
         var token = tokenService.generateToken((Professional)auth.getPrincipal());
 
-        return ResponseEntity.ok(new LoginResponseDTO(token, ((Professional) auth.getPrincipal()).getUsername(), professional.getName()));
+        return ResponseEntity.ok(new LoginResponseDTO(token, ((Professional) auth.getPrincipal()).getUsername(), professional.getName(), professional.getIsAdmin()));
     }
     @PostMapping(value = "/register")
-    public ResponseEntity<Professional> register(@RequestBody @Valid RegisterDTO user){
+    public ResponseEntity<Professional> register(@RequestBody @Valid RegisterDTO user, @RequestParam(required = false) String adminPass){
         if (this.professionalRepository.findByUsername(user.username()) != null){
             return ResponseEntity.badRequest().build();
         }
@@ -46,7 +49,13 @@ public class AuthResource {
         String encryptedPassword = new BCryptPasswordEncoder().encode(user.password());
         Professional newProfessional = new Professional(user.name(), user.username(),user.birthDate(), encryptedPassword, user.role());
 
-        this.professionalRepository.save(newProfessional);
+        if (adminPass.isEmpty()){
+            professionalService.insert(newProfessional);
+        }else {
+            professionalService.insert(newProfessional, adminPass);
+        }
+
+
 
         return ResponseEntity.ok().build();
     }
