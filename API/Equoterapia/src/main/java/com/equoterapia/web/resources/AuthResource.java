@@ -49,7 +49,7 @@ public class AuthResource {
         String encryptedPassword = new BCryptPasswordEncoder().encode(user.password());
         Professional newProfessional = new Professional(user.name(), user.username(),user.birthDate(), encryptedPassword, user.role());
 
-        if (adminPass.isEmpty()){
+        if (adminPass == null){
             professionalService.insert(newProfessional);
         }else {
             professionalService.insert(newProfessional, adminPass);
