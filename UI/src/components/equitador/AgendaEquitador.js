@@ -3,17 +3,14 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import "./AgendaEquitador.css";
 import SearchBar from "../SearchBar.js";
 import DateNavigator from '../DateNavigator.js';
+import { api } from '../../services/api';
+import { Alert } from 'react-bootstrap';
 
 function AgendaEquitador() {
-    const [agendaData] = useState([
-        { segunda: "08:00 - 09:00 | João Pedro Martins", terca: "08:00 - 09:00 | João Pedro Martins", quarta: "08:00 - 09:00 | Márcio da Silva", quinta: "08:00 - 09:00 | João Pedro Martins", sexta: "08:00 - 09:00 | Márcio da Silva" },
-        { segunda: "09:00 - 10:00 | Márcio da Silva", terca: "", quarta: "09:00 - 10:00 | Carlos Batista dos Santos", quinta: "09:00 - 10:00 | César Abreu Pimenta", sexta: "09:00 - 10:00 | César Abreu Pimenta" },
-        { segunda: "10:00 - 11:00 | Carlos Batista dos Santos", terca: "", quarta: "10:00 - 11:00 | Carlos Batista dos Santos", quinta: "", sexta: "" },
-        { segunda: "11:00 - 12:00 | César Abreu Pimenta", terca: "", quarta: "", quinta: "", sexta: "" },
-        { segunda: "", terca: "", quarta: "", quinta: "", sexta: "" },
-        { segunda: "", terca: "", quarta: "", quinta: "", sexta: "" },
-    ]);
-
+    const [sessions, setSessions] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [searchTerm, setSearchTerm] = useState('');
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [weekDates, setWeekDates] = useState([]);
 
@@ -36,61 +33,122 @@ function AgendaEquitador() {
         setWeekDates(calculateWeekDates(selectedDate));
     }, [selectedDate]);
 
+    // Busca as sessões da API
+    useEffect(() => {
+        const fetchSessions = async () => {
+            try {
+                setLoading(true);
+                const startDate = weekDates[0];
+                const endDate = weekDates[weekDates.length - 1];
+                
+                const response = await api.get('/sessions', {
+                    params: {
+                        startDate: startDate.toISOString(),
+                        endDate: endDate.toISOString(),
+                        search: searchTerm
+                    }
+                });
+                
+                setSessions(response.data);
+                setError(null);
+            } catch (err) {
+                setError('Erro ao carregar agenda. Por favor, tente novamente.');
+                console.error('Erro ao buscar sessões:', err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        if (weekDates.length > 0) {
+            fetchSessions();
+        }
+    }, [weekDates, searchTerm]);
+
     const handleDateChange = (date) => {
         setSelectedDate(date);
     };
+
+    const handleSearch = (term) => {
+        setSearchTerm(term);
+    };
+
+    // Organiza as sessões por dia e horário
+    const organizedSessions = weekDates.reduce((acc, date) => {
+        const dayKey = date.toISOString().split('T')[0];
+        acc[dayKey] = sessions.filter(session => 
+            new Date(session.date).toISOString().split('T')[0] === dayKey
+        );
+        return acc;
+    }, {});
 
     return (
         <div className="container my-5">
             <div className='agenda-equitador mb-2'>
                 Agenda Equitador
             </div>
-            <div className='mb-4 d-flex flex-column flex-md-row  align-items-center'>
+            {error && (
+                <Alert variant="danger" className="mb-4">
+                    {error}
+                </Alert>
+            )}
+            <div className='mb-4 d-flex flex-column flex-md-row align-items-center'>
                 <div className='mb-3 mb-md-0'>
-                    <SearchBar />  
+                    <SearchBar onSearch={handleSearch} />  
                 </div>
                 <div className='mb-3 mb-md-0'>
                     <DateNavigator onDateChange={handleDateChange} />
                 </div>
             </div>
 
-            <table className="table table-bordered rounded tb">
-                <thead>
-                    <tr>
-                        {["Segunda", "Terça", "Quarta", "Quinta", "Sexta"].map((day, index) => (
-                            <th key={day} className="th">
-                                {day} 
-                                <p className='sub'>
-                                    {weekDates[index] ? `${weekDates[index].getDate()}/${weekDates[index].getMonth() + 1}` : "dia/mês"}
-                                </p>
-                            </th>
-                        ))}
-                    </tr>
-                </thead>
-                <tbody className='text-center'>
-                    {agendaData.map((row, rowIndex) => (
-                        <tr key={rowIndex}>
-                            {["segunda", "terca", "quarta", "quinta", "sexta"].map((day) => {
-                                const session = row[day];
-                                const [time, patient] = session ? session.split(" | ") : ["", ""];
-
-                                return (
-                                    <td key={day} className={session ? "session-cell" : "empty-cell"}>
-                                        {session ? (
-                                            <>
-                                                <small>{time}</small>
-                                                <div>{patient}</div>
-                                            </>
-                                        ) : (
-                                            <div>-</div>
-                                        )}
-                                    </td>
-                                );
-                            })}
+            {loading ? (
+                <div className="text-center">
+                    <div className="spinner-border text-primary" role="status">
+                        <span className="visually-hidden">Carregando...</span>
+                    </div>
+                </div>
+            ) : (
+                <table className="table table-bordered rounded tb">
+                    <thead>
+                        <tr>
+                            {weekDates.map((date, index) => (
+                                <th key={date.toISOString()} className="th">
+                                    {["Segunda", "Terça", "Quarta", "Quinta", "Sexta"][index]}
+                                    <p className='sub'>
+                                        {`${date.getDate()}/${date.getMonth() + 1}`}
+                                    </p>
+                                </th>
+                            ))}
                         </tr>
-                    ))}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody className='text-center'>
+                        {Array.from({ length: 6 }).map((_, rowIndex) => (
+                            <tr key={rowIndex}>
+                                {weekDates.map((date) => {
+                                    const dayKey = date.toISOString().split('T')[0];
+                                    const daySessions = organizedSessions[dayKey] || [];
+                                    const session = daySessions[rowIndex];
+
+                                    return (
+                                        <td 
+                                            key={dayKey} 
+                                            className={session ? "session-cell" : "empty-cell"}
+                                        >
+                                            {session ? (
+                                                <>
+                                                    <small>{`${session.startTime} - ${session.endTime}`}</small>
+                                                    <div>{session.patientName}</div>
+                                                </>
+                                            ) : (
+                                                <div>-</div>
+                                            )}
+                                        </td>
+                                    );
+                                })}
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            )}
         </div>
     );
 }

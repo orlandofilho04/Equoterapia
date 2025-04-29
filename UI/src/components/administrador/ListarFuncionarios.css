@@ -51,4 +51,62 @@
       margin-bottom: 10px;
       padding: 15px;
     }
-    
+
+/* Estilos responsivos para dispositivos móveis */
+@media (max-width: 768px) {
+  .listar-funcionarios-container {
+    margin-left: 0;
+    transform: scale(1);
+    padding: 10px;
+  }
+  
+  .cor-padrao-funcionario.header {
+    justify-content: center !important;
+    text-align: center;
+  }
+  
+  .cor-padrao-funcionario h2 {
+    width: 100%;
+    text-align: center;
+  }
+  
+  .tabs {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .tabs button {
+    margin: 5px 0;
+    width: 100%;
+  }
+  
+  .tabs .ms-auto {
+    margin-left: 0 !important;
+    margin-top: 10px;
+  }
+  
+  .list-group-item {
+    flex-direction: column;
+  }
+  
+  .list-group-item > div {
+    width: 100%;
+    justify-content: center;
+    margin-bottom: 10px;
+  }
+  
+  .list-group-item .d-flex.align-items-center {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .list-group-item .me-5 {
+    margin-right: 0 !important;
+    margin-bottom: 5px;
+    text-align: center;
+  }
+  
+  .status-ativo {
+    margin: 10px 0;
+  }
+}

@@ -6,23 +6,45 @@
     width: 350px;
     height: 100vh;
     background-color: #f8f9fa;
-    position: relative;
+    position: fixed;
     top: 0;
     left: 0;
-    transition: transform 0.3s ease;
+    transition: all 0.3s ease;
+    z-index: 1030;
+    overflow-y: auto;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-.sidebar-toggle {
+/* Menu hamburger e responsividade */
+.hamburger-menu {
     display: none;
-    /* Escondido por padrão */
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    font-size: 1.5rem;
-    background: none;
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    z-index: 1050;
+    width: 45px;
+    height: 45px;
     border: none;
-    z-index: 1000;
-    color: #333;
+    border-radius: 4px;
+    background-color: #07C158 !important; 
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1020;
 }
 
 .exit-button {
@@ -51,7 +73,7 @@
 .sidebar-button {
     height: 50px;
     width: 100%;
-    background-color: #e2e6ea;
+    background-color: #e2e6ea ;
     color: black;
     display: flex;
     align-items: center;
@@ -69,7 +91,7 @@
 }
 
 .active-button {
-    background-color: #07C158;
+    background-color: #07C158 !important;
     color: white;
 }
 
@@ -86,22 +108,34 @@
 }
 
 /* Responsividade */
-@media (max-width: 768px) {
+@media (max-width: 992px) {
     .sidebar {
-        width: 100%;
-        height: 100%;
         transform: translateX(-100%);
-        position: fixed;
-        /* Esconde a sidebar fora da tela */
+        transition: transform 0.3s ease;
+        width: 280px;
     }
 
-    .sidebar.open {
+    .show-mobile-sidebar {
         transform: translateX(0);
-        /* Mostra a sidebar */
     }
 
-    .sidebar-toggle {
-        display: block;
-        /* Mostra o botão de menu em telas pequenas */
+    .hamburger-menu {
+        display: flex;
+    }
+    
+    .app-content {
+        margin-left: 0 !important;
+        width: 100% !important;
+    }
+}
+
+@media (min-width: 993px) {
+    .sidebar {
+        width: 350px;
+    }
+    
+    .app-content {
+        margin-left: 350px;
+        width: calc(100% - 350px);
     }
 }

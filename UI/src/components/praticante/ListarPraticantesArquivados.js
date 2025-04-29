@@ -1,14 +1,37 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
+import api from "../../services/api";
 import "./ListarPraticantes.css";
 
 function PraticantesArquivados() {
   const navigate = useNavigate();
+  const [praticantes, setPraticantes] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  useEffect(() => {
+    async function fetchPraticantesArquivados() {
+      try {
+        const response = await api.get("/praticantes-arquivados"); 
+        setPraticantes(response.data);
+      } catch (error) {
+        console.error("Erro ao buscar praticantes arquivados:", error);
+      }
+    }
+
+    fetchPraticantesArquivados();
+  }, []);
+
+  const handleSearch = (event) => {
+    setSearchTerm(event.target.value);
+  };
+
+  const filteredPraticantes = praticantes.filter(praticante =>
+    praticante.nome.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div className="listar-praticantes-container container my-5">
-      {/* Conteúdo principal */}
       <div className="content">
         <div className="cor-padrao-praticante header d-flex justify-content-between align-items-center my-3">
           <h2>Praticantes Arquivados</h2>
@@ -20,6 +43,8 @@ function PraticantesArquivados() {
             type="text"
             className="form-control"
             placeholder="Procurar um Praticante Arquivado"
+            value={searchTerm}
+            onChange={handleSearch}
           />
         </div>
 
@@ -47,27 +72,27 @@ function PraticantesArquivados() {
 
         {/* Lista de praticantes arquivados */}
         <div className="conteudo-lista list-group">
-          {Array.from({ length: 4 }).map((_, index) => (
+          {filteredPraticantes.map((praticante, index) => (
             <div
               key={index}
               className="bg-praticante list-group-item d-flex justify-content-between align-items-center"
             >
               <div className="d-flex align-items-center">
                 <img
-                  src="https://img.freepik.com/fotos-premium/icone-plano-isolado-no-fundo_1258715-220844.jpg?semt=ais_hybrid"
+                  src={praticante.fotoUrl || "https://img.freepik.com/fotos-premium/icone-plano-isolado-no-fundo_1258715-220844.jpg?semt=ais_hybrid"}
                   alt="Praticante"
                   className="rounded-circle me-3 img-perfil"
                 />
                 <div className="me-5">
-                  <h5 className="mb-0">NOME</h5>
+                  <h5 className="mb-0">{praticante.nome}</h5>
                 </div>
 
                 <div className="ms-5 me-5">
-                  <p className="mb-0">IDADE</p>
+                  <p className="mb-0">{praticante.idade ? `${praticante.idade} anos` : "Idade não informada"}</p>
                 </div>
 
                 <div className="ms-5 me-5">
-                  <p className="mb-0">Data 01/01/2024</p>
+                  <p className="mb-0">{praticante.dataCadastro || "Data não informada"}</p>
                 </div>
               </div>
               <div className="d-flex align-items-center">

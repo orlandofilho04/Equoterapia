@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Form } from 'react-bootstrap';
-import CadastroProfissional1 from './CadastroProfissional1';
+import CadastroEquoterapeuta from './CadastroEquoterapeuta';
 import CadastroEquitador from './CadastroEquitador';
-import './CadastroProfissional.css';
+import './CadastroProfissionalForm.css';
 
 const CadastroProfissionalForm = () => {
     const [tipoSelecionado, setTipoSelecionado] = useState('');
@@ -28,7 +28,7 @@ const CadastroProfissionalForm = () => {
                 </Form.Select>
             </Form.Group>
 
-            {tipoSelecionado === 'equoterapeuta' && <CadastroProfissional1 />}
+            {tipoSelecionado === 'equoterapeuta' && <CadastroEquoterapeuta />}
             {tipoSelecionado === 'equitador' && <CadastroEquitador />}
         </div>
     );

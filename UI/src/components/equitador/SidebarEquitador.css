@@ -8,10 +8,44 @@
     color: white;
 }
 
+.active-button-equitador:hover {
+    background-color: #3c2f27;
+    color: white;
+}
+
 .centered {
     display: flex;
     justify-content: center;
     align-items: center;
     width: 100%;
-  }
-  
+}
+
+/* Menu hamburger específico para o equitador */
+.sidebar .hamburger-menu {
+    background-color: #4E3B31;
+}
+
+/* Responsividade específica para o equitador */
+@media (max-width: 992px) {
+    .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        width: 280px;
+        z-index: 1030;
+        overflow-y: auto;
+    }
+
+    .show-mobile-sidebar {
+        transform: translateX(0);
+    }
+    
+    .app-content {
+        margin-left: 0 !important;
+        width: 100% !important;
+    }
+}
+
