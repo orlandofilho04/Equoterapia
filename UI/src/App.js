@@ -2,6 +2,7 @@ import "./App.css";
 import React from "react";
 import Sidebar from "./components/Sidebar.js";
 import "bootstrap/dist/css/bootstrap.min.css";
+import "./services/PrivateRoute.js"
 import Agenda from "./components/Agenda.js";
 import NewAgenda from "./components/newAgenda.js";
 import Login from "./components/Login";
@@ -32,324 +33,384 @@ import FeedbackSessaoAnterior from "./components/praticante/FeedbackSessaoAnteri
 import DetalhesSessao from "./components/praticante/DetalhesSessao.js";
 import InformacoesPraticante from "./components/praticante/InformacoesPraticante.js";
 import FinalizarSessao from "./components/praticante/FinalizarSessao.js";
-
+import PrivateRoute from "./services/PrivateRoute.js";
 
 function App() {
   return (
     <Router>
       <div className="app-container">
         <Routes>
-          {/* Rotas sem Sidebar */}
+          {/* Rotas sem Proteção */}
           <Route path="/login" element={<Login />} />
           <Route path="/esqueceu-senha" element={<EsqueceuSenha />} />
           <Route path="/codigo-verificacao" element={<CodigoVerificacao />} />
           <Route path="/nova-senha" element={<NovaSenha />} />
-          
-          {/* Rotas com Sidebar */}
+
+          {/* Rotas com Proteção */}
           <Route
             path="/"
             element={
-              <div className="app-content">
-                <Sidebar />
-                <div className="content">
-                  <Agenda />
+              <PrivateRoute>
+                <div className="app-content">
+                  <Sidebar />
+                  <div className="content">
+                    <Agenda />
+                  </div>
                 </div>
-              </div>
+              </PrivateRoute>
             }
           />
+
           <Route
             path="/novo-agendamento"
             element={
-              <div className="app-content">
-                <Sidebar />
-                <div className="content">
-                  <NewAgenda />
+              <PrivateRoute>
+                <div className="app-content">
+                  <Sidebar />
+                  <div className="content">
+                    <NewAgenda />
+                  </div>
                 </div>
-              </div>
+              </PrivateRoute>
             }
           />
+
           <Route
             path="/equitador/"
             element={
-              <div className="row">
-                <div className="col-12 col-md-3">
-                  <SidebarEquitador />
+              <PrivateRoute>
+                <div className="row">
+                  <div className="col-12 col-md-3">
+                    <SidebarEquitador />
+                  </div>
                 </div>
-              </div>
+              </PrivateRoute>
             }
           />
+
           <Route
             path="/equitador/agenda"
             element={
-              <div className="app-content">
-                <SidebarEquitador />
-                <div className="content">
-                  <AgendaEquitador />
+              <PrivateRoute>
+                <div className="app-content">
+                  <SidebarEquitador />
+                  <div className="content">
+                    <AgendaEquitador />
+                  </div>
                 </div>
-              </div>
+              </PrivateRoute>
             }
           />
+
           <Route
             path="/equitador/listar-equino"
             element={
-              <div className="row">
-                <div className="col-12 col-md-3">
-                  <SidebarEquitador />
+              <PrivateRoute>
+                <div className="row">
+                  <div className="col-12 col-md-3">
+                    <SidebarEquitador />
+                  </div>
+                  <div className="col-12 col-md-9">
+                    <ListarEquino />
+                  </div>
                 </div>
-                <div className="col-12 col-md-9">
-                  <ListarEquino />
-                </div>
-              </div>
+              </PrivateRoute>
             }
           />
+
           <Route
             path="/cadastrar-equino"
             element={
-              <div className="app-content">
-                <SidebarEquitador />
-                <div className="content">
-                  <CadastrarEquino />
+              <PrivateRoute>
+                <div className="app-content">
+                  <SidebarEquitador />
+                  <div className="content">
+                    <CadastrarEquino />
+                  </div>
                 </div>
-              </div>
+              </PrivateRoute>
             }
           />
+
           <Route
             path="/dados-equino"
             element={
-              <div className="app-content">
-                <SidebarEquitador />
-                <div className="content">
-                  <DadosEquino />
+              <PrivateRoute>
+                <div className="app-content">
+                  <SidebarEquitador />
+                  <div className="content">
+                    <DadosEquino />
+                  </div>
                 </div>
-              </div>
+              </PrivateRoute>
             }
           />
+
           <Route
             path="/cadastro-praticante"
             element={
-              <div className="app-content">
-                <Sidebar />
-                <div className="content">
-                  <CadastroPraticante1 />
+              <PrivateRoute>
+                <div className="app-content">
+                  <Sidebar />
+                  <div className="content">
+                    <CadastroPraticante1 />
+                  </div>
                 </div>
-              </div>
+              </PrivateRoute>
             }
           />
+
           <Route
             path="/cadastro-praticante/2"
             element={
-              <div className="app-content">
-                <Sidebar />
-                <div className="content">
-                  <CadastroPraticante2 />
+              <PrivateRoute>
+                <div className="app-content">
+                  <Sidebar />
+                  <div className="content">
+                    <CadastroPraticante2 />
+                  </div>
                 </div>
-              </div>
+              </PrivateRoute>
             }
           />
+
           <Route
             path="/proximas-sessoes"
             element={
-              <div className="app-content">
-                <Sidebar />
-                <div className="content">
-                  <ProximasSessoes />
+              <PrivateRoute>
+                <div className="app-content">
+                  <Sidebar />
+                  <div className="content">
+                    <ProximasSessoes />
+                  </div>
                 </div>
-              </div>
+              </PrivateRoute>
             }
           />
+
           <Route
             path="/cadastro-profissional1"
             element={
-              <div className="app-content">
-                <Sidebar />
-                <div className="content">
-                  <CadastroEquoterapeuta />
+              <PrivateRoute>
+                <div className="app-content">
+                  <Sidebar />
+                  <div className="content">
+                    <CadastroEquoterapeuta />
+                  </div>
                 </div>
-              </div>
+              </PrivateRoute>
             }
           />
+
           <Route
             path="/cadastro-equitador"
             element={
-              <div className="app-content">
-                <Sidebar />
-                <div className="content">
-                  <CadastroEquitador />
+              <PrivateRoute>
+                <div className="app-content">
+                  <Sidebar />
+                  <div className="content">
+                    <CadastroEquitador />
+                  </div>
                 </div>
-              </div>
+              </PrivateRoute>
             }
           />
+
           <Route
             path="/listar-praticantes"
             element={
-              <div className="app-content">
-                <Sidebar />
-                <div className="content">
-                  <ListarPraticantesAtivos />
+              <PrivateRoute>
+                <div className="app-content">
+                  <Sidebar />
+                  <div className="content">
+                    <ListarPraticantesAtivos />
+                  </div>
                 </div>
-              </div>
+              </PrivateRoute>
             }
           />
+
           <Route
             path="/listar-praticantes-arquivados"
             element={
-              <div className="app-content">
-                <Sidebar />
-                <div className="content">
-                  <ListarPraticantesArquivados />
+              <PrivateRoute>
+                <div className="app-content">
+                  <Sidebar />
+                  <div className="content">
+                    <ListarPraticantesArquivados />
+                  </div>
                 </div>
-              </div>
+              </PrivateRoute>
             }
           />
+
           <Route
             path="/administrador"
             element={
-              <div className="app-content">
-                <SidebarAdministrador />
-                <div className="content">
-                  <AgendaAdministrador />
+              <PrivateRoute>
+                <div className="app-content">
+                  <SidebarAdministrador />
+                  <div className="content">
+                    <AgendaAdministrador />
+                  </div>
                 </div>
-              </div>
+              </PrivateRoute>
             }
           />
+
           <Route
             path="/administrador/agenda"
             element={
-              <div className="app-content">
-                <SidebarAdministrador />
-                <div className="content">
-                  <AgendaAdministrador />
+              <PrivateRoute>
+                <div className="app-content">
+                  <SidebarAdministrador />
+                  <div className="content">
+                    <AgendaAdministrador />
+                  </div>
                 </div>
-              </div>
+              </PrivateRoute>
             }
           />
+
           <Route
             path="/agenda"
             element={
-              <div className="app-content">
-                <SidebarAdministrador />
-                <div className="content">
-                  <AgendaAdministrador />
+              <PrivateRoute>
+                <div className="app-content">
+                  <SidebarAdministrador />
+                  <div className="content">
+                    <AgendaAdministrador />
+                  </div>
                 </div>
-              </div>
+              </PrivateRoute>
             }
           />
+
           <Route
             path="/listar-funcionarios-ativos"
             element={
-              <div className="app-content">
-                <SidebarAdministrador />
-                <div className="content">
-                  <ListarFuncionariosAtivos />
+              <PrivateRoute>
+                <div className="app-content">
+                  <SidebarAdministrador />
+                  <div className="content">
+                    <ListarFuncionariosAtivos />
+                  </div>
                 </div>
-              </div>
+              </PrivateRoute>
             }
           />
+
           <Route
             path="/listar-funcionarios-arquivados"
             element={
-              <div className="app-content">
-                <SidebarAdministrador />
-                <div className="content">
-                  <ListarFuncionariosArquivados />
+              <PrivateRoute>
+                <div className="app-content">
+                  <SidebarAdministrador />
+                  <div className="content">
+                    <ListarFuncionariosArquivados />
+                  </div>
                 </div>
-              </div>
+              </PrivateRoute>
             }
           />
+
           <Route
             path="/cadastro-profissional"
             element={
-              <div className="app-content">
-                <SidebarAdministrador />
-                <div className="content">
-                  <CadastroProfissionalForm />
+              <PrivateRoute>
+                <div className="app-content">
+                  <SidebarAdministrador />
+                  <div className="content">
+                    <CadastroProfissionalForm />
+                  </div>
                 </div>
-              </div>
+              </PrivateRoute>
             }
           />
 
           <Route
             path="/dados-equitador-adm"
             element={
-              <div className="app-content">
-                <SidebarAdministrador />
-                <div className="content">
-                  <DadosEquitadorAdm />
-              </div>
-              </div>
+              <PrivateRoute>
+                <div className="app-content">
+                  <SidebarAdministrador />
+                  <div className="content">
+                    <DadosEquitadorAdm />
+                  </div>
+                </div>
+              </PrivateRoute>
             }
           />
 
           <Route
             path="/dados-equoterapeuta-adm"
             element={
-              <div className="app-content">
-                <SidebarAdministrador />
-                <div className="content">
-                  <DadosEquoterapeutaAdm />
-              </div>
-              </div>
+              <PrivateRoute>
+                <div className="app-content">
+                  <SidebarAdministrador />
+                  <div className="content">
+                    <DadosEquoterapeutaAdm />
+                  </div>
+                </div>
+              </PrivateRoute>
             }
           />
+
           <Route
             path="/FeedbackSessaoAnterior"
             element={
-              <div className="app-content">
-                <Sidebar />
-                <div className="content">
-                  <FeedbackSessaoAnterior />
+              <PrivateRoute>
+                <div className="app-content">
+                  <Sidebar />
+                  <div className="content">
+                    <FeedbackSessaoAnterior />
+                  </div>
                 </div>
-              </div>
+              </PrivateRoute>
             }
           />
 
           <Route
-              path="/DetalhesSessao"
-              element={
+            path="/DetalhesSessao"
+            element={
+              <PrivateRoute>
                 <div className="app-content">
                   <Sidebar />
-
                   <div className="content">
-                  <DetalhesSessao />
+                    <DetalhesSessao />
                   </div>
-                  
-                  
                 </div>
-
-              }
+              </PrivateRoute>
+            }
           />
 
           <Route
-              path="/FinalizarSessao"
-              element={
+            path="/FinalizarSessao"
+            element={
+              <PrivateRoute>
                 <div className="app-content">
                   <Sidebar />
-
                   <div className="content">
-                  <FinalizarSessao />
-
+                    <FinalizarSessao />
                   </div>
-                  
-                  
                 </div>
-
-              }
+              </PrivateRoute>
+            }
           />
 
-
-
           <Route
-              path="/InformacoesPraticante"
-              element={
+            path="/InformacoesPraticante"
+            element={
+              <PrivateRoute>
                 <div className="app-content">
                   <Sidebar />
                   <div className="content">
                     <InformacoesPraticante />
                   </div>
                 </div>
-              }
-            />
-
+              </PrivateRoute>
+            }
+          />
         </Routes>
       </div>
     </Router>

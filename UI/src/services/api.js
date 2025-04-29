@@ -14,25 +14,54 @@ const api = axios.create({
   }
 });
 
-// Interceptor para adicionar o token de autenticação e logging
+// Interceptor para adicionar o token de autenticação
 api.interceptors.request.use((config) => {
-  console.log('Enviando requisição:', config);
-  
-  // Verificar se a rota atual requer token de autenticação
+  const token = localStorage.getItem('token');
 
-  if (!ignoreTokenRoutes.includes(config.url)) {
-    const token = localStorage.getItem('token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
+  const isPublicRoute = ignoreTokenRoutes.some(route => config.url?.includes(route));
+  if (isPublicRoute) return config;
+
+  if (!token) {
+    // Token não encontrado -> redireciona para login
+    localStorage.setItem('authError', 'Acesso negado. Usuário não autenticado.');
+    window.location.href = '/login';
+    return Promise.reject(new Error("Usuário não autenticado."));
   }
-  return config;
+
+  try {
+    const [, payloadBase64] = token.split('.');
+    const payload = JSON.parse(atob(payloadBase64));
+    const now = Math.floor(Date.now() / 1000);
+
+    if (payload.exp && payload.exp < now) {
+      // Token expirado -> redireciona para login
+      localStorage.removeItem('token');
+      localStorage.removeItem('username');
+      localStorage.removeItem('name');
+      localStorage.setItem('authError', 'Sessão expirada. Faça login novamente.');
+      window.location.href = '/login';
+      return Promise.reject(new Error("Token expirado."));
+    }
+
+    // Token válido -> adiciona no cabeçalho
+    config.headers.Authorization = `Bearer ${token}`;
+    return config;
+
+  } catch (err) {
+    // Erro ao analisar o token -> redireciona para login
+    console.error("Erro ao analisar token:", err);
+    localStorage.removeItem('token');
+    localStorage.removeItem('username');
+    localStorage.removeItem('name');
+    localStorage.setItem('authError', 'Token inválido. Faça login novamente.');
+    window.location.href = '/login';
+    return Promise.reject(new Error("Token inválido."));
+  }
 }, (error) => {
   return Promise.reject(error);
 });
 
-
-// Interceptor para logging das respostas
+// Interceptor para lidar com respostas e erros
 api.interceptors.response.use(
   response => {
     console.log('Resposta recebida:', response);

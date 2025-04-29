@@ -2,16 +2,17 @@ import React, { useState, useEffect } from "react";
 import { RxExit } from "react-icons/rx";
 import { Link, useNavigate } from "react-router-dom";
 import { FaBars, FaTimes } from "react-icons/fa";
+import api from "../services/api";
 import "./Sidebar.css";
 
 const Sidebar = () => {
   const [activeButton, setActiveButton] = useState(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [username, setUsername] = useState("Nome do Usuário");
+  const [name, setUsername] = useState("Nome do Usuário");
   const navigate = useNavigate();
 
   useEffect(() => {
-    const storedUsername = localStorage.getItem("username");
+    const storedUsername = localStorage.getItem("name");
     if (storedUsername) {
       setUsername(storedUsername);
     }
@@ -90,7 +91,21 @@ const Sidebar = () => {
       )}
 
       <div className={`sidebar p-3 ${isSidebarOpen ? "show-mobile-sidebar" : ""}`}>
-        <Link to="/login" className="btn exit-button d-flex align-items-center">
+        {/*<Link to="/login" className="btn exit-button d-flex align-items-center">
+          <RxExit className="exit-icon me-1 icon-large" />
+          <span>Sair</span>
+        </Link>*/}
+        <Link
+          to="/login"
+          className="btn exit-button d-flex align-items-center"
+          onClick={() => {
+            localStorage.removeItem('token');
+            localStorage.removeItem('username');
+            localStorage.removeItem('name');
+            localStorage.removeItem('authError');
+            delete api.defaults.headers.common['Authorization'];
+          }}
+        >
           <RxExit className="exit-icon me-1 icon-large" />
           <span>Sair</span>
         </Link>
@@ -104,7 +119,7 @@ const Sidebar = () => {
         </div>
 
         <h5 className="text-center mb-2 fw-bold">Bem Vindo!</h5>
-        <h6 className="username mb-5 fw-bold">{username}</h6>
+        <h6 className="username mb-5 fw-bold">{name.length > 30 ? `${name.slice(0, 30)}...` : name}</h6>
 
         <button
           className={`btn sidebar-button mb-4 fw-bold ${
