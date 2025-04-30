@@ -12,10 +12,10 @@ function PraticantesAtivos() {
   useEffect(() => {
     async function fetchPraticantes() {
       try {
-        const response = await api.get("/praticantes-ativos"); 
+        const response = await api.get("/pacients");
         setPraticantes(response.data);
       } catch (error) {
-        console.error("Erro ao buscar praticantes ativos:", error);
+        console.error("Erro ao buscar praticantes:", error);
       }
     }
 
@@ -26,8 +26,11 @@ function PraticantesAtivos() {
     setSearchTerm(event.target.value);
   };
 
-  const filteredPraticantes = praticantes.filter(praticante =>
-    praticante.nome.toLowerCase().includes(searchTerm.toLowerCase())
+  const praticantesAtivos = praticantes;
+
+  // Filtra por nome
+  const filteredPraticantes = praticantesAtivos.filter(praticante =>
+    praticante.name?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -79,16 +82,16 @@ function PraticantesAtivos() {
             >
               <div className="d-flex align-items-center">
                 <img
-                  src={praticante.fotoUrl || "https://img.freepik.com/fotos-premium/icone-plano-isolado-no-fundo_1258715-220844.jpg?semt=ais_hybrid"}
+                  src={praticante.photo || "https://img.freepik.com/fotos-premium/icone-plano-isolado-no-fundo_1258715-220844.jpg?semt=ais_hybrid"}
                   alt="Praticante"
                   className="rounded-circle me-3 img-perfil"
                 />
                 <div className="me-5">
-                  <h5 className="mb-0">{praticante.nome}</h5>
+                  <h5 className="mb-0">{praticante.name}</h5>
                 </div>
 
                 <div className="me-5">
-                  <p className="mb-0">{praticante.idade ? `${praticante.idade} anos` : "Idade não informada"}</p>
+                  <p className="mb-0">{praticante.age ? `${praticante.age} anos` : "Idade não informada"}</p>
                 </div>
 
                 <div className="me-5">
