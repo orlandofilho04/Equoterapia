@@ -41,7 +41,7 @@ const Login = () => {
       localStorage.setItem("username", returnedUsername);
       localStorage.setItem("name", name);
 
-      navigate("/"); // troque para a rota desejada
+      navigate("/agenda-geral");
     } catch (error) {
       console.error("Erro ao fazer login:", error);
       alert("Usuário ou senha incorretos");

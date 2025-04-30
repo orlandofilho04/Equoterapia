@@ -55,7 +55,7 @@ const Sidebar = () => {
     
     switch (button) {
       case "agenda":
-        navigate("/");
+        navigate("/agenda-geral");
         break;
       case "sessoes":
         navigate("/proximas-sessoes");
