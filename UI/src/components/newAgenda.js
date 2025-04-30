@@ -319,7 +319,7 @@ function NewAgenda() {
 
                 <Row className='mt-3'>
                     <div className='d-flex justify-content-end flex-wrap'>
-                        <Link to="/" className='btnB btn mx-2' aria-pressed="true">
+                        <Link to="/agenda-geral" className='btnB btn mx-2' aria-pressed="true">
                             Cancelar
                         </Link>
 

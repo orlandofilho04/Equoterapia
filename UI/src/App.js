@@ -34,12 +34,16 @@ import DetalhesSessao from "./components/praticante/DetalhesSessao.js";
 import InformacoesPraticante from "./components/praticante/InformacoesPraticante.js";
 import FinalizarSessao from "./components/praticante/FinalizarSessao.js";
 import PrivateRoute from "./services/PrivateRoute.js";
+import { Navigate } from "react-router-dom";
 
 function App() {
   return (
     <Router>
       <div className="app-container">
         <Routes>
+          {/* Rota padrão */}
+          <Route path="/" element={<Navigate to="/login" replace />} />
+
           {/* Rotas sem Proteção */}
           <Route path="/login" element={<Login />} />
           <Route path="/esqueceu-senha" element={<EsqueceuSenha />} />
@@ -48,7 +52,7 @@ function App() {
 
           {/* Rotas com Proteção */}
           <Route
-            path="/"
+            path="/agenda-geral"
             element={
               <PrivateRoute>
                 <div className="app-content">
