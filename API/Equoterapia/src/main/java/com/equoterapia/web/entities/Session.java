@@ -22,8 +22,14 @@ public class Session {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column
     private LocalDateTime sessionHour;
+
+    @Column
     private LocalTime duration;
+
+    @Column
     private SessionStatus sessionStatus;
 
     @ManyToMany

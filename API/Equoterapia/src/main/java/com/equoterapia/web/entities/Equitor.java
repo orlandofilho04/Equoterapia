@@ -1,5 +1,6 @@
 package com.equoterapia.web.entities;
 
+import com.equoterapia.web.entities.enums.Genders;
 import jakarta.persistence.*;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -19,6 +20,7 @@ public class Equitor {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(nullable = false)
     private String name;
 
@@ -26,5 +28,5 @@ public class Equitor {
     private Integer age;
 
     @Column(nullable = false)
-    private String sex;
+    private Genders sex;
 }

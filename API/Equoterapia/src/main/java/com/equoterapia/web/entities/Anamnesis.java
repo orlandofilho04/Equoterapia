@@ -21,10 +21,19 @@ public class Anamnesis {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column
     private String reasonEvaluation;
+
+    @Column
     private String currentIllnessHistory;
+
+    @Column
     private String pastMedicalHistory;
+
+    @Column
     private String familiarHistory;
+
+    @Column
     private String observation;
 
     @OneToMany(mappedBy = "anamnesis")

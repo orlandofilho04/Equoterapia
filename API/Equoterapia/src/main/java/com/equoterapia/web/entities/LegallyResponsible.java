@@ -3,6 +3,7 @@ package com.equoterapia.web.entities;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.equoterapia.web.entities.enums.Genders;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
@@ -26,7 +27,7 @@ public class LegallyResponsible {
     @Column(unique = true)
     private String cpf;
 
-    private Character gender;
+    private Genders gender;
     @ManyToMany
     @JoinTable(
             name = "tb_LegallyResponsibles_has_pacients",

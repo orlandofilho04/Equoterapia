@@ -1,5 +1,6 @@
 package com.equoterapia.web.entities;
 
+import com.equoterapia.web.entities.enums.Genders;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -20,7 +21,7 @@ public class Mediator {
     @Column(nullable = false)
     private Integer age;
     @Column(nullable = false)
-    private String sex;
+    private Genders sex;
 
 }
 

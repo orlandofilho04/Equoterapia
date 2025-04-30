@@ -1,5 +1,6 @@
 package com.equoterapia.web.entities;
 
+import com.equoterapia.web.entities.enums.Genders;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -24,7 +25,7 @@ public class Pacient {
     private String name;
     private LocalDate birthDate;
     private String photo;
-    private Character gender;
+    private Genders gender;
 
     @ManyToMany(mappedBy = "pacients")
     private List<LegallyResponsible> LegallyResponsibles  = new ArrayList<>();
