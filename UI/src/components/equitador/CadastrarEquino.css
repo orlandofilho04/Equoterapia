@@ -63,3 +63,36 @@
     font-size: 14px;
     color: gray;
 }
+
+
+.btnA-equino {
+    border-radius: 5px;
+    border-width: 0px;
+    color: #FAFAFA !important;
+    margin-top: 10px;
+    min-width: 150px;
+}
+
+.btnA-equino {
+    background-color: #4E3B31 !important;
+}
+
+.btnC-equino {
+    background-color: #193238 !important;
+    color: white;
+    padding: 5px 15px;
+
+}
+
+.btnB-equino,
+.btnA-equino {
+    border-radius: 5px;
+    border-width: 0px;
+    color: #FAFAFA !important;
+    margin-top: 10px;
+    min-width: 120px;
+}
+
+.btnB-equino {
+    background-color: #032437 !important;
+}

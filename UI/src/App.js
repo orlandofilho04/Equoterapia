@@ -137,7 +137,7 @@ function App() {
           />
 
           <Route
-            path="/dados-equino"
+            path="/dados-equino/:id"
             element={
               <PrivateRoute>
                 <div className="app-content">

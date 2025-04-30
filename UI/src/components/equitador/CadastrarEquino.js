@@ -1,86 +1,115 @@
+// CadastrarEquino.jsx
+
 import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './CadastrarEquino.css';
-import { Form, Row, Col, Alert } from 'react-bootstrap';
+import { Form, Row, Col, Toast, ToastContainer, Spinner } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
-import { api } from '../../services/api';
+import api from "../../services/api";
 import PlusIcon from '../imgs/addEquino.svg';
+
 
 const CadastrarEquino = () => {
     const navigate = useNavigate();
-    const [formData, setFormData] = useState({
-        name: '',
-        registerNumber: '',
-        breed: '',
-        gender: '',
-        age: '',
-        weight: '',
-        height: '',
-        coatColor: '',
-        specialMarks: '',
-        photo: null
-    });
-    const [preview, setPreview] = useState(null);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
 
-    const handleChange = (e) => {
-        const { name, value, files } = e.target;
-        if (files) {
-            const file = files[0];
-            setFormData(prev => ({ ...prev, photo: file }));
-            const reader = new FileReader();
-            reader.onloadend = () => {
+    const [name, setName] = useState('');
+    const [registerNumber, setRegisterNumber] = useState('');
+    const [breed, setBreed] = useState('');
+    const [sex, setSex] = useState('');
+    const [age, setAge] = useState('');
+    const [weight, setWeight] = useState('');
+    const [height, setHeight] = useState('');
+    const [coatColor, setCoatColor] = useState('');
+    const [specialsTraits, setspecialsTraits] = useState('');
+    const [equipment, setEquipment] = useState('');
+    const [gait, setGait] = useState('');
+
+    const [showSuccess, setShowSuccess] = useState(false);
+    const [showError, setShowError] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [preview, setPreview] = useState(null);    
+
+    const token = localStorage.getItem('token');    
+
+
+    const handleCadastrarEquino = async (event) => {
+        event.preventDefault();
+        setIsSubmitting(true);
+
+        const horseData = {
+            name,
+            registerCode: registerNumber,
+            breed,
+            gait,
+            age,
+            weight,
+            height,
+            coatColor,
+            equipment,
+            specialsTraits,
+            sex,
+            createdAt: new Date().toISOString()
+        };
+
+        // eslint-disable-next-line no-unused-vars
+        const handleChange = (e) => {
+            const file = e.target.files[0];
+            if (file) {
+              const reader = new FileReader();
+              reader.onloadend = () => {
                 setPreview(reader.result);
-            };
-            reader.readAsDataURL(file);
-        } else {
-            setFormData(prev => ({ ...prev, [name]: value }));
-        }
-    };
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setLoading(true);
-        setError(null);
-
+              };
+              reader.readAsDataURL(file);
+            }
+          };
+        
+        
+        
         try {
-            const formDataToSend = new FormData();
-            Object.entries(formData).forEach(([key, value]) => {
-                if (value) formDataToSend.append(key, value);
-            });
-
-            await api.post('/horses', formDataToSend, {
+            await api.post('/horses', horseData, {
                 headers: {
-                    'Content-Type': 'multipart/form-data'
+                    Authorization: `Bearer ${token}`,
                 }
             });
 
-            navigate('/equitador/listar-equino');
-        } catch (err) {
-            setError('Erro ao cadastrar equino. Por favor, tente novamente.');
-            console.error('Erro ao cadastrar equino:', err);
+            setShowSuccess(true);
+            setTimeout(() => {
+                navigate('/equitador/listar-equino');
+            }, 2000);
+        } catch (error) {
+            console.error('Erro ao cadastrar equino:', error);
+            setShowError(true);
         } finally {
-            setLoading(false);
+            setIsSubmitting(false);
         }
     };
 
     return (
-        <div className='container my-5'>
-            {error && (
-                <Alert variant="danger" className="mb-4">
-                    {error}
-                </Alert>
-            )}
-            <Form className='mx-2 mx-md-0 form' onSubmit={handleSubmit}>
-                <div className='title mb-4'>Cadastrar Novo Equino</div>
+        <div className="container my-5">
+            <ToastContainer position="top-end" className="p-3" style={{ zIndex: 9999 }}>
+                <Toast bg="success" onClose={() => setShowSuccess(false)} show={showSuccess} delay={2000} autohide>
+                    <Toast.Body className="text-white text-center">
+                        Equino cadastrado com sucesso!
+                    </Toast.Body>
+                </Toast>
+                <Toast bg="danger" onClose={() => setShowError(false)} show={showError} delay={3000} autohide>
+                    <Toast.Body className="text-white text-center">
+                        Erro ao cadastrar o equino. Tente novamente.
+                    </Toast.Body>
+                </Toast>
+            </ToastContainer>
+
+            <Form className="mx-2 mx-md-0 form" onSubmit={handleCadastrarEquino}>
+                <div className="title mb-4">Cadastrar Novo Equino</div>
+
                 <Row className="mb-3 mx-md-2 ps-1">
-                    <Form.Group as={Col} xs={12} md={4} controlId="formGridEquinoNome" className='mb-3'>
+                    
+                    <Form.Group as={Col} xs={12} md={4} controlId="formGridEquinoNome" className="mb-3">
+                        
                         <Form.Label>Nome do Equino</Form.Label>
-                        <Form.Control 
-                            name="name"
-                            value={formData.name}
-                            onChange={handleChange}
+                        <Form.Control
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
                             placeholder="Digite o nome do Animal"
                             required
                         />
@@ -93,7 +122,6 @@ const CadastrarEquino = () => {
                                 id="imageUpload"
                                 name="photo"
                                 accept="image/*"
-                                onChange={handleChange}
                                 className="image-input"
                                 style={{ display: 'none' }}
                             />
@@ -111,56 +139,43 @@ const CadastrarEquino = () => {
                     </Form.Group>
                 </Row>
 
-                <div className='title mb-4'>Identificação do Equino</div>
+                <div className="title mb-4">Identificação do Equino</div>
+
                 <Row className="mb-3 mx-md-2 ps-1">
-                    <Form.Group as={Col} xs={12} md={4} controlId="formGridEquinoRegis" className='mb-3'>
+                    <Form.Group as={Col} xs={12} md={4} controlId="formGridEquinoRegis" className="mb-3">
                         <Form.Label>Número de registro</Form.Label>
-                        <Form.Control 
-                            type="text"
-                            name="registerNumber"
-                            value={formData.registerNumber}
-                            onChange={handleChange}
+                        <Form.Control
+                            type="number"
+                            value={registerNumber}
+                            onChange={(e) => setRegisterNumber(e.target.value)}
                             placeholder="Digite o número do animal"
-                            required
                         />
                     </Form.Group>
                 </Row>
 
                 <Row className="mb-3 mx-md-2 ps-1">
-                    <Form.Group as={Col} xs={12} md={4} controlId="formGridEquinoRaca" className='mb-3'>
+                    <Form.Group as={Col} xs={12} md={4} controlId="formGridEquinoRaca" className="mb-3">
                         <Form.Label>Raça</Form.Label>
-                        <Form.Control 
-                            name="breed"
-                            value={formData.breed}
-                            onChange={handleChange}
+                        <Form.Control
+                            value={breed}
+                            onChange={(e) => setBreed(e.target.value)}
                             placeholder="Digite a raça animal"
-                            required
                         />
                     </Form.Group>
 
-                    <Form.Group as={Col} xs={12} sm={6} md={3} controlId="formGridSexo" className='mb-3'>
+                    <Form.Group as={Col} xs={12} sm={6} md={3} controlId="formGridSexo" className="mb-3">
                         <Form.Label>Sexo</Form.Label>
-                        <Form.Select 
-                            name="gender"
-                            value={formData.gender}
-                            onChange={handleChange}
-                            required
-                        >
+                        <Form.Select value={sex} onChange={(e) => setSex(e.target.value)}>
                             <option value="">Selecione o sexo</option>
-                            <option value="M">Masculino</option>
-                            <option value="F">Feminino</option>
+                            <option value={0}>Masculino</option>
+                            <option value={1}>Feminino</option>
                         </Form.Select>
                     </Form.Group>
 
-                    <Form.Group as={Col} xs={12} sm={6} md={3} controlId="formGridIdade" className='mb-3'>
+                    <Form.Group as={Col} xs={12} sm={6} md={3} controlId="formGridIdade" className="mb-3">
                         <Form.Label>Idade</Form.Label>
-                        <Form.Select 
-                            name="age"
-                            value={formData.age}
-                            onChange={handleChange}
-                            required
-                        >
-                            <option value="">Selecione a Idade</option>
+                        <Form.Select value={age} onChange={(e) => setAge(e.target.value)}>
+                            <option value="">Selecione a idade</option>
                             {Array.from({ length: 30 }, (_, index) => (
                                 <option key={index + 1} value={index + 1}>
                                     {`${index + 1} ano${index + 1 > 1 ? 's' : ''}`}
@@ -170,75 +185,95 @@ const CadastrarEquino = () => {
                     </Form.Group>
                 </Row>
 
-                <div className='title mb-4'>Características Físicas</div>
+                <div className="title mb-4">Características Físicas</div>
+
                 <Row className="mb-3 mx-md-2 ps-1">
-                    <Form.Group as={Col} xs={12} md={3} controlId="formGridEquinoPeso" className='mb-3'>
+                    <Form.Group as={Col} xs={12} md={3} controlId="formGridEquinoPeso" className="mb-3">
                         <Form.Label>Peso do Equino</Form.Label>
-                        <Form.Control 
-                            type="number" 
+                        <Form.Control
+                            type="number"
                             step="0.1"
-                            name="weight"
-                            value={formData.weight}
-                            onChange={handleChange}
+                            value={weight}
+                            onChange={(e) => setWeight(e.target.value)}
                             placeholder="Digite o peso"
-                            required
                         />
                     </Form.Group>
 
-                    <Form.Group as={Col} xs={12} md={3} controlId="formGridEquinoAltura" className='mb-3'>
+                    <Form.Group as={Col} xs={12} md={3} controlId="formGridEquinoAltura" className="mb-3">
                         <Form.Label>Altura do Equino</Form.Label>
-                        <Form.Control 
-                            type="number" 
+                        <Form.Control
+                            type="number"
                             step="0.1"
-                            name="height"
-                            value={formData.height}
-                            onChange={handleChange}
+                            value={height}
+                            onChange={(e) => setHeight(e.target.value)}
                             placeholder="Digite a altura"
-                            required
                         />
                     </Form.Group>
 
-                    <Form.Group as={Col} xs={12} md={4} controlId="formGridEquinoPelagem" className='mb-3'>
+                    <Form.Group as={Col} xs={12} md={4} controlId="formGridEquinoPelagem" className="mb-3">
                         <Form.Label>Cor da Pelagem</Form.Label>
-                        <Form.Control 
-                            name="coatColor"
-                            value={formData.coatColor}
-                            onChange={handleChange}
+                        <Form.Control
+                            value={coatColor}
+                            onChange={(e) => setCoatColor(e.target.value)}
                             placeholder="Digite a cor da pelagem"
-                            required
                         />
                     </Form.Group>
                 </Row>
 
                 <Row className="mb-3 mx-md-2 ps-1">
-                    <Form.Group as={Col} xs={12} md={5} controlId="formGridEquinoObs" className='mb-3'>
+                    <Form.Group as={Col} xs={12} md={5} controlId="formGridEquinoObs" className="mb-3">
                         <Form.Label>Marcas ou características especiais</Form.Label>
-                        <Form.Control 
-                            name="specialMarks"
-                            value={formData.specialMarks}
-                            onChange={handleChange}
+                        <Form.Control
+                            value={specialsTraits}
+                            onChange={(e) => setspecialsTraits(e.target.value)}
                             placeholder="Adicione o seu texto aqui"
                         />
                     </Form.Group>
+
+                    <Form.Group as={Col} xs={12} md={5} controlId="formGridEquinoGait" className="mb-3">
+                        <Form.Label>Marcha (Galope, Trote, Passo...)</Form.Label>
+                        <Form.Control
+                            value={gait}
+                            onChange={(e) => setGait(e.target.value)}
+                            placeholder="Digite o tipo de andamento"
+                            required
+                        />
+                    </Form.Group>
                 </Row>
 
-                <Row className='mt-3'>
-                    <div className='d-flex justify-content-end flex-wrap'>
-                        <Link 
-                            to="/equitador/listar-equino" 
-                            className='btnC btn mx-2' 
-                            role="button" 
-                            aria-pressed="true"
-                            disabled={loading}
-                        >
+                <div className="title mb-4">Equipamentos</div>
+
+                <Row className="mb-3 mx-md-2 ps-1">
+                    <Form.Group as={Col} xs={12} md={5} controlId="formGridEquinoEquipamento" className="mb-3">
+                        <Form.Label>Equipamentos</Form.Label>
+                        <Form.Control
+                            value={equipment}
+                            onChange={(e) => setEquipment(e.target.value)}
+                            placeholder="Digite os equipamentos usados"
+                            required
+                        />
+                    </Form.Group>
+
+                    
+                </Row>
+
+                <Row className="mt-3">
+                    <div className="d-flex justify-content-end flex-wrap">
+                        <Link to="/equitador/listar-equino" className="btnB-equino btn mx-2" role="button" aria-pressed="true">
                             Cancelar
                         </Link>
-                        <button 
+                        <button
                             type="submit"
-                            className='btnA btn mx-2' 
-                            disabled={loading}
+                            className="btnA-equino btn mx-2"
                         >
-                            {loading ? 'Salvando...' : 'Salvar Equino'}
+                            {isSubmitting ? (
+                                <>
+                                    <Spinner animation="border" size="sm" className="me-2" />
+                                    Cadastrando...
+                                </>
+                            ) : (
+                                'Salvar Equino'
+                            )}
                         </button>
                     </div>
                 </Row>
