@@ -2,6 +2,7 @@ package com.equoterapia.web.services;
 
 import com.equoterapia.web.entities.*;
 import com.equoterapia.web.exceptions.NotFoundException;
+import com.equoterapia.web.exceptions.PacientMustBeActiveException;
 import com.equoterapia.web.exceptions.UnavailableDateException;
 import com.equoterapia.web.repositories.SessionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +50,7 @@ public class SessionService {
         if (sessionRepository.existsSessionBySessionHour(session.getSessionHour())) throw new UnavailableDateException("Data e Hora indisponíveis para agendamento!");
 
         Pacient pacient = pacientService.findById(pacient_id);
+        if (pacient.isActive()) throw new PacientMustBeActiveException("O paciente utilizado se encontra "+pacient.getStatus());
         Horse horse = horseService.findById(horse_id);
         Professional professional = professionalService.findById(professional_id);
         Equitor equitor = equitorService.findById(equitor_id);

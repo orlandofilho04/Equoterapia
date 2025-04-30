@@ -1,6 +1,7 @@
 package com.equoterapia.web.resources;
 
 import com.equoterapia.web.entities.Pacient;
+import com.equoterapia.web.entities.enums.PacientStatus;
 import com.equoterapia.web.services.PacientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +21,17 @@ public class PacientResource {
 
 
     @GetMapping
-    public ResponseEntity<List<Pacient>> findAll(){
+    public ResponseEntity<List<Pacient>> findAll(@RequestParam(required = false) String status){
+
+        if (status != null && status.equalsIgnoreCase("ATIVO")){
+            List<Pacient> pacients = pacientService.findAllPacientsByStatus(PacientStatus.ATIVO);
+            return ResponseEntity.ok().body(pacients);
+        } else if (status != null && status.equalsIgnoreCase("ARQUIVADO")) {
+            List<Pacient> pacients = pacientService.findAllPacientsByStatus(PacientStatus.ARQUIVADO);
+            return ResponseEntity.ok().body(pacients);
+        }
+
+
         List<Pacient> pacients = pacientService.findAll();
         return ResponseEntity.ok().body(pacients);
     }

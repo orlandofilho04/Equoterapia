@@ -75,4 +75,14 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         );
         return new ResponseEntity<>(exceptionPayload, statusCode);
     }
+    @ExceptionHandler(PacientMustBeActiveException.class)
+    public ResponseEntity<Object> PacientMustBeActiveHandler(PacientMustBeActiveException pacientMustBeActiveException){
+        HttpStatus statusCode =  HttpStatus.BAD_REQUEST;
+        ExceptionPayload exceptionPayload = new ExceptionPayload(
+                pacientMustBeActiveException.getMessage(),
+                statusCode,
+                ZonedDateTime.now(ZoneId.of("America/Sao_Paulo"))
+        );
+        return new ResponseEntity<>(exceptionPayload, statusCode);
+    }
 }
