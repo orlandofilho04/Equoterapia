@@ -19,7 +19,15 @@ public class SessionResource {
     private SessionService sessionService;
 
     @GetMapping
-    public ResponseEntity<List<Session>> findAll() {
+    public ResponseEntity<List<Session>> findAll(@RequestParam(required = false) String pacient_name, @RequestParam(required = false) Long pacient_id) {
+        if (pacient_name != null && !pacient_name.isEmpty()){
+            List<Session> sessions = sessionService.findAllByPacientName(pacient_name);
+            return ResponseEntity.ok().body(sessions);
+        }
+        if (pacient_id != null && pacient_id > 0){
+            List<Session> sessions = sessionService.findAllByPacientId(pacient_id);
+            return ResponseEntity.ok().body(sessions);
+        }
         List<Session> sessions = sessionService.findAll();
         return ResponseEntity.ok().body(sessions);
     }
