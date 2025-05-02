@@ -50,7 +50,7 @@ public class SessionService {
     @Transactional(rollbackFor = {NotFoundException.class, UnavailableDateException.class, PacientMustBeActiveException.class})
     public Session registerSession(Session session, Long pacient_id, Long horse_id, Long professional_id, Long equitor_id, Long mediator_id) {
         if (sessionRepository.existsSessionBySessionHour(session.getSessionHour())) throw new UnavailableDateException("Data e Hora indisponíveis para agendamento!");
-        if (session.getSessionHour().isBefore(LocalDateTime.now(ZoneId.of("America/Sao Paulo")))){
+        if (session.getSessionHour().isBefore(LocalDateTime.now(ZoneId.of("America/Sao_Paulo")))){
             throw new UnavailableDateException("Impossivel agendar uma sessão no passado");
         }
 
