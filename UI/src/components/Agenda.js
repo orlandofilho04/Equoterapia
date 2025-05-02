@@ -5,11 +5,18 @@ import SearchBar from "./SearchBar.js";
 import DateNavigator from './DateNavigator.js';
 import api from "../services/api";
 import { Link } from 'react-router-dom';
+import FloatCard from './FloatCard.js';
+import Toast from 'react-bootstrap/Toast';
+import ToastContainer from 'react-bootstrap/ToastContainer';
 
 function Agenda() {
     const [agendaMap, setAgendaMap] = useState({});
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [weekDates, setWeekDates] = useState([]);
+    const [sessions, setSessions] = useState([]);
+    const [showCard, setShowCard] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [sessionError, setSessionError] = useState(false);
 
     // Função para calcular as datas da semana a partir de uma data específica
     const calculateWeekDates = (date) => {
@@ -74,14 +81,53 @@ function Agenda() {
         return `${hour}:00`;
     });
 
+    // Função para lidar com a seleção de um paciente na barra de pesquisa
+    const handlePacientSelect = async (id) => {
+        setLoading(true);
+        try {
+            const response = await api.get(`/sessions?pacient_id=` + id);
+
+            const orderedSessions = response.data.sort((a, b) => {
+                return new Date(a.sessionHour) - new Date(b.sessionHour);
+            });
+
+            if (orderedSessions == null || orderedSessions.length === 0) {
+                setSessionError(true);
+                return;
+            }
+            setSessions(orderedSessions);
+            setShowCard(true);
+        } catch (err) {
+            console.error("Erro ao buscar sessões:", err);
+            setSessions([]);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
         <div className="container my-5">
+            <ToastContainer position="top-end" className="p-3" style={{ zIndex: 9999 }}>
+                <Toast
+                    bg="danger"
+                    onClose={() => setSessionError(false)}
+                    show={sessionError}
+                    delay={3000}
+                    autohide
+                >
+                <Toast.Body className="text-white texte-center">Nenhuma sessão foi encontrada para o paciente buscado.</Toast.Body>
+                </Toast>
+            </ToastContainer>
             <div className='agenda mb-2'>
                 Agenda
             </div>
             <div className='mb-4 d-flex flex-column flex-md-row justify-content-between align-items-center'>
                 <div className='mb-3 mb-md-0'>
-                    <SearchBar />  
+                    <SearchBar onPacientSelect={handlePacientSelect}/>
+                    {loading && <p>Carregando sessões...</p>}
+                    {showCard && (
+                        <FloatCard sessions={sessions} onClose={() => setShowCard(false)} />
+                    )}
                 </div>
                 <div className='mb-3 mb-md-0'>
                     <DateNavigator onDateChange={handleDateChange} />

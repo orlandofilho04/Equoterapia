@@ -19,17 +19,19 @@ function NewAgenda() {
     const [selectedEquitorId, setSelectedEquitorId] = useState(null);
     const [mediators, setMediators] = useState([]);
     const [selectedMediatorId, setSelectedMediatorId] = useState(null);
-    const [weekdays, setWeekdays] = useState([]);
     const [selectedDate, setSelectedDate] = useState('');
     const [selectedTime, setSelectedTime] = useState('');
     const [sessions, setSessions] = useState([]);
     const [showSuccess, setShowSuccess] = useState(false);
     const [showError, setShowError] = useState(false);
+    const [dateError, setDateError] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const username = localStorage.getItem('username');
     const token = localStorage.getItem('token');
+    const today = new Date();
+   const localDate = new Date(today.getTime() - today.getTimezoneOffset() * 60000).toISOString().split("T")[0];
     
-    // BUSCAR SESSÕES DO DIA
+    // BUSCAR SESSÕES AGENDADAS
     useEffect(() => {
         const fetchSessions = async () => {
             try {
@@ -39,26 +41,7 @@ function NewAgenda() {
             console.error('Erro ao buscar sessões:', error);
             }
         };
-
-        // Função para obter os dias da semana
-        // (de segunda a sexta-feira) a partir de hoje
-        const getWeekdays = () => {
-            const today = new Date();
-            const week = [];
-            const start = new Date(today);
-            start.setDate(today.getDate() - today.getDay() + 1);
-
-            for (let i = 0; i < 5; i++) {
-            const date = new Date(start);
-            date.setDate(start.getDate() + i);
-            week.push(date.toISOString().split('T')[0]);
-            }
-
-            return week;
-        };
-
         fetchSessions();
-        setWeekdays(getWeekdays());
     }, []);
 
     // BUSCAR PROFISSIONAL LOGADO
@@ -128,7 +111,7 @@ function NewAgenda() {
 
             setShowSuccess(true);
             setTimeout(() => {
-                navigate('/');
+                navigate('/agenda-geral');
             }, 2000); // espera 2 segundos antes de navegar
         } catch (error) {
             console.error("Erro ao criar agendamento:", error);
@@ -227,10 +210,36 @@ function NewAgenda() {
                         <Form.Control
                             type="date"
                             value={selectedDate}
-                            onChange={(e) => setSelectedDate(e.target.value)}
-                            min={weekdays[0]}
-                            max={weekdays[weekdays.length - 1]}
+                            min={localDate}
+                            onChange={(e) => {
+                                const inputDate = e.target.value;
+                                const selected = new Date(inputDate + 'T00:00:00');
+                                const day = selected.getDay();
+
+                                const now = new Date();
+                                const selectedIsToday = inputDate === localDate;
+
+                                if (day === 0 || day === 6) {
+                                    setDateError('Erro ao selecionar data. Fins de semana não são permitidos.');
+                                    setSelectedDate('');
+                                    return;
+                                }
+
+                                if (selectedIsToday && now.getHours() >= 17) {
+                                    setDateError('Erro: Não é possível agendar após as 17h.');
+                                    setSelectedDate('');
+                                    return;
+                                }
+
+                                setDateError('');
+                                setSelectedDate(inputDate);
+                            }}
                         />
+                            {dateError && (
+                            <Form.Text className="text-danger">
+                                {dateError}
+                            </Form.Text>
+                            )}
                     </Form.Group>
 
                     <Form.Group as={Col} xs={12} md={4} controlId="formGridHorarios" className='mb-3'>
