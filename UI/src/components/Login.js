@@ -42,7 +42,11 @@ const Login = () => {
       localStorage.setItem("name", name);
       localStorage.setItem("isAdmin", isAdmin)
 
-      navigate("/agenda-geral");
+      if (localStorage.getItem("isAdmin") === true) {
+        navigate("/agenda");
+      } else {
+        navigate("/agenda-geral");
+      }
     } catch (error) {
       console.error("Erro ao fazer login:", error);
       alert("Usuário ou senha incorretos");
