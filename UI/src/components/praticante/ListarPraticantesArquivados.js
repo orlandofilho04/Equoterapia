@@ -26,7 +26,7 @@ function PraticantesArquivados() {
     setSearchTerm(event.target.value);
   };
 
-  const praticantesArquivados = praticantes;
+  const praticantesArquivados = praticantes.filter(p => p.status == "ARQUIVADO");
 
   const filteredPraticantes = praticantesArquivados.filter(praticante =>
     praticante.name?.toLowerCase().includes(searchTerm.toLowerCase())

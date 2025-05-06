@@ -26,7 +26,7 @@ function PraticantesAtivos() {
     setSearchTerm(event.target.value);
   };
 
-  const praticantesAtivos = praticantes;
+  const praticantesAtivos = praticantes.filter(p => p.status == "ATIVO");
 
   // Filtra por nome
   const filteredPraticantes = praticantesAtivos.filter(praticante =>
