@@ -5,24 +5,24 @@ import "./Login.css";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../services/api";
 import { useEffect } from "react";
-import { Toast, ToastContainer } from 'react-bootstrap';
+import { Toast, ToastContainer } from "react-bootstrap";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
-  const [authError, setAuthError] = useState('');
+  const [authError, setAuthError] = useState("");
 
   const togglePasswordVisibility = () => {
     setShowPassword((prevState) => !prevState);
   };
 
   useEffect(() => {
-    const errorMsg = localStorage.getItem('authError');
+    const errorMsg = localStorage.getItem("authError");
     if (errorMsg) {
       setAuthError(errorMsg);
-      localStorage.removeItem('authError');
+      localStorage.removeItem("authError");
     }
   }, []);
 
@@ -35,14 +35,21 @@ const Login = () => {
         password,
       });
 
-      const { token, username: returnedUsername, name, isAdmin } = response.data;
+      const {
+        token,
+        username: returnedUsername,
+        name,
+        isAdmin,
+      } = response.data;
 
       localStorage.setItem("token", token);
       localStorage.setItem("username", returnedUsername);
       localStorage.setItem("name", name);
-      localStorage.setItem("isAdmin", isAdmin)
+      localStorage.setItem("isAdmin", isAdmin);
 
-      if (localStorage.getItem("isAdmin") === true) {
+      console.log(localStorage.getItem("isAdmin"));
+
+      if (localStorage.getItem("isAdmin") === "true") {
         navigate("/agenda");
       } else {
         navigate("/agenda-geral");
@@ -56,19 +63,23 @@ const Login = () => {
   return (
     <div className="login-container d-flex">
       <div className="login-form col-5 d-flex flex-column align-items-center justify-content-center">
-        <ToastContainer position="top-center" className="p-3" style={{ zIndex: 9999 }}>
-          <Toast 
-            bg="danger" 
-            onClose={() => setAuthError('')} 
-            show={!!authError} 
-            delay={3000} 
+        <ToastContainer
+          position="top-center"
+          className="p-3"
+          style={{ zIndex: 9999 }}
+        >
+          <Toast
+            bg="danger"
+            onClose={() => setAuthError("")}
+            show={!!authError}
+            delay={3000}
             autohide
           >
             <Toast.Body className="text-white text-center">
               <strong>{authError}</strong>
             </Toast.Body>
           </Toast>
-      </ToastContainer>
+        </ToastContainer>
         <img src={logo} alt="Logo" className="logo mb-4" />
         <h2 className="font-weight-bold">Acesse sua Conta</h2>
         <form onSubmit={handleLogin} className="w-75 mt-3">
