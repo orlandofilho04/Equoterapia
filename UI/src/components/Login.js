@@ -35,11 +35,12 @@ const Login = () => {
         password,
       });
 
-      const { token, username: returnedUsername, name } = response.data;
+      const { token, username: returnedUsername, name, isAdmin } = response.data;
 
       localStorage.setItem("token", token);
       localStorage.setItem("username", returnedUsername);
       localStorage.setItem("name", name);
+      localStorage.setItem("isAdmin", isAdmin)
 
       navigate("/agenda-geral");
     } catch (error) {
