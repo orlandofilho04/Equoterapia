@@ -1,5 +1,6 @@
 package com.equoterapia.web.entities;
 
+import com.equoterapia.web.entities.enums.Genders;
 import com.equoterapia.web.entities.enums.Roles;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -12,6 +13,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -24,12 +27,18 @@ import java.util.List;
 @Table(name = "tb_professionals")
 public class Professional implements UserDetails {
 
-    public Professional(String name, String username, LocalDate birthDate, String encryptedPassword, Roles role) {
+    public Professional(String name, String username, LocalDate birthDate, String encryptedPassword, String cpf, String email, String phone, String address, Genders gender,  Roles role, String regNumber) {
         this.name = name;
         this.username = username;
         this.birthDate = birthDate;
         this.password = encryptedPassword;
+        this.cpf = cpf;
+        this.email = email;
+        this.phone = phone;
+        this.address = address;
         this.role = role;
+        this.gender = gender;
+        this.regNumber = regNumber;
     }
 
     @Id
@@ -48,11 +57,33 @@ public class Professional implements UserDetails {
     @Column
     private String password;
 
+    @Column(unique = true, length = 12)
+    private String cpf;
+
+    @Column
+    private String email;
+
+    @Column
+    private String phone;
+
+    @Column
+    private String address;
+
     @Column
     private Roles role;
 
     @Column
+    private Genders gender;
+
+    @Column(unique = true)
+    private String regNumber;
+
+
+    @Column
     private Boolean isAdmin = false;
+
+    @Column
+    private LocalDateTime createdAt = LocalDateTime.now(ZoneId.of("America/Sao_Paulo"));
 
     @ManyToMany
     @JsonIgnore
@@ -104,4 +135,5 @@ public class Professional implements UserDetails {
     public boolean isEnabled() {
         return UserDetails.super.isEnabled();
     }
+
 }

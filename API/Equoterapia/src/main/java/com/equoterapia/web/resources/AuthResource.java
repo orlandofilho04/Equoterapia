@@ -47,7 +47,7 @@ public class AuthResource {
         }
 
         String encryptedPassword = new BCryptPasswordEncoder().encode(user.password());
-        Professional newProfessional = new Professional(user.name(), user.username(),user.birthDate(), encryptedPassword, user.role());
+        Professional newProfessional = new Professional(user.name(), user.username(),user.birthDate(), encryptedPassword, user.cpf(), user.email(), user.phone(), user.address(), user.gender(), user.role(), user.regNumber());
 
         if (adminPass == null){
             professionalService.insert(newProfessional);

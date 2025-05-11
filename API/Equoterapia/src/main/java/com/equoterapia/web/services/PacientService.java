@@ -54,6 +54,23 @@ public class PacientService {
         pacientRepository.save(pacient);
     }
 
+    public String changeStatus(Long pacient_id){
+        Pacient pacient = pacientRepository.findById(pacient_id).orElseThrow(NotFoundException::new);
+        StringBuilder message = new StringBuilder().append("O paciente ")
+                .append(pacient.getName())
+                .append("agora possui o status: ")
+                .append(pacient.getStatus());
+
+        if (!pacient.isActive()){
+            pacient.setStatus(PacientStatus.ATIVO);
+            pacientRepository.save(pacient);
+            return message.toString();
+        }
+        pacient.setStatus(PacientStatus.ARQUIVADO);
+        pacientRepository.save(pacient);
+        return message.toString();
+    }
+
     public Pacient insert(Pacient pacient){
         return pacientRepository.save(pacient);
     }

@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 @Getter
 @Setter
@@ -58,5 +59,5 @@ public class Horse {
     private String coatColor;
 
     @Column
-    private LocalDateTime createdAt;
+    private LocalDateTime createdAt = LocalDateTime.now(ZoneId.of("America/Sao_Paulo"));
 }
