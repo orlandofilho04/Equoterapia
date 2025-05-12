@@ -100,3 +100,82 @@
         margin-bottom: 10px;
     }
 }
+
+.form-section {
+  margin-bottom: 2rem;
+}
+
+.form-control-lg, .form-select-lg {
+  font-size: 1rem;
+  height: calc(2.5rem + 2px);
+  padding: 0.5rem 1rem;
+}
+
+.form-control:focus, .form-select:focus, .form-control-lg:focus, .form-select-lg:focus {
+  border-color: rgba(155, 45, 32, 0.4);
+  box-shadow: 0 0 0 0.2rem rgba(155, 45, 32, 0.25);
+}
+
+.form-check-input:checked {
+  background-color: #9B2D20;
+  border-color: #9B2D20;
+}
+
+.form-check-input:focus {
+  border-color: #9B2D20;
+  box-shadow: 0 0 0 0.2rem rgba(155, 45, 32, 0.25);
+}
+
+.card {
+  transition: all 0.3s ease;
+}
+
+.form-label {
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  color: #495057;
+}
+
+/* Estilo para o botão de upload de foto */
+.photo-upload-container {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  margin: 0 auto;
+  border-radius: 50%;
+  overflow: hidden;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  border: 2px solid #e9ecef;
+  background-color: #f8f9fa;
+}
+
+.photo-upload-container:hover {
+  box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+}
+
+/* Animação de hover nos botões */
+.btn:hover {
+  transform: translateY(-2px);
+  transition: all 0.2s ease;
+}
+
+/* Cores personalizadas */
+.bg-primary-light {
+  background-color: rgba(155, 45, 32, 0.05);
+}
+
+.text-primary-dark {
+  color: #9B2D20;
+}
+
+/* Responsividade para telas menores */
+@media (max-width: 767.98px) {
+  .card-body {
+    padding: 1.25rem;
+  }
+  
+  .bg-light {
+    padding: 1.25rem !important;
+  }
+}

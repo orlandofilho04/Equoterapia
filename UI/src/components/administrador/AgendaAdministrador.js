@@ -1,37 +1,51 @@
 import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './AgendaAdministrador.css';
-import { Table, Alert, Form, Button } from 'react-bootstrap';
+import { Alert, Spinner } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
+import { FaSearch, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { api } from '../../services/api';
 
+// Cores para diferentes equoterapeutas/sessões
+const sessionColors = [
+  '#30D0CA',  // Azul turquesa
+  '#4CAF50',  // Verde
+  '#E7A740',  // Laranja
+  '#E74C3C',  // Vermelho
+  '#9B2D20',  // Marrom
+  '#8E44AD',  // Roxo
+  '#2980B9',  // Azul
+  '#F39C12',  // Amarelo
+  '#16A085'   // Verde escuro
+];
+
+// Função para obter uma cor com base no nome do equoterapeuta
+const getEquoterapeutaColor = (name) => {
+  if (!name) return sessionColors[0];
+  let hash = 0;
+  for (let i = 0; i < name.length; i++) {
+    hash = name.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  return sessionColors[Math.abs(hash) % sessionColors.length];
+};
+
 const AgendaAdministrador = () => {
+  const navigate = useNavigate();
+  const [searchTerm, setSearchTerm] = useState('');
   const [sessions, setSessions] = useState([]);
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [currentDay, setCurrentDay] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [selectedDate, setSelectedDate] = useState(new Date());
   const [weekDates, setWeekDates] = useState([]);
-  const [filterType, setFilterType] = useState('all');
-  const [filterId, setFilterId] = useState('');
-  const [professionals, setProfessionals] = useState([]);
 
-  useEffect(() => {
-    fetchProfessionals();
-  }, []);
-
-  const fetchProfessionals = async () => {
-    try {
-      const response = await api.get('/professionals/active');
-      setProfessionals(response.data);
-    } catch (err) {
-      console.error('Erro ao buscar profissionais:', err);
-    }
-  };
-
+  // Função para calcular as datas da semana
   const calculateWeekDates = (date) => {
     const startOfWeek = new Date(date);
-    startOfWeek.setDate(date.getDate() - date.getDay());
+    startOfWeek.setDate(date.getDate() - date.getDay() + 1); // Segunda-feira
+    
     const dates = [];
-    for (let i = 0; i < 7; i++) {
+    for (let i = 0; i < 5; i++) { // 5 dias úteis
       const currentDate = new Date(startOfWeek);
       currentDate.setDate(startOfWeek.getDate() + i);
       dates.push(currentDate);
@@ -39,232 +53,282 @@ const AgendaAdministrador = () => {
     return dates;
   };
 
+  // Atualizar datas da semana quando a data selecionada mudar
   useEffect(() => {
-    setWeekDates(calculateWeekDates(selectedDate));
+    const dates = calculateWeekDates(selectedDate);
+    setWeekDates(dates);
+    
+    // Formatar a data atual para exibição (DD/MM/AA)
+    const day = selectedDate.getDate().toString().padStart(2, '0');
+    const month = (selectedDate.getMonth() + 1).toString().padStart(2, '0');
+    const year = selectedDate.getFullYear().toString().slice(-2);
+    setCurrentDay(`${day}/${month}/${year}`);
   }, [selectedDate]);
 
+  // Buscar sessões da API
   useEffect(() => {
     const fetchSessions = async () => {
+      if (weekDates.length === 0) return;
+      
       try {
         setLoading(true);
-        let response;
         
-        if (filterType === 'equitor' && filterId) {
-          response = await api.get(`/sessions/equitor/${filterId}`);
-        } else if (filterType === 'mediator' && filterId) {
-          response = await api.get(`/sessions/mediator/${filterId}`);
-        } else {
-          response = await api.get('/sessions');
-        }
+        // Obter a primeira e a última data da semana
+        const startDate = weekDates[0];
+        const endDate = weekDates[weekDates.length - 1];
         
-        setSessions(response.data);
+        // Formatar datas para a API
+        const startDateStr = startDate.toISOString().split('T')[0];
+        const endDateStr = endDate.toISOString().split('T')[0];
+        
+        // Buscar sessões na API
+        const response = await api.get('/sessions', {
+          params: {
+            pacient_name: searchTerm || undefined
+          }
+        });
+        
+        // Filtrar sessões para a semana atual
+        const filteredSessions = response.data.filter(session => {
+          const sessionDate = new Date(session.sessionHour);
+          const sessionDay = sessionDate.toISOString().split('T')[0];
+          return sessionDay >= startDateStr && sessionDay <= endDateStr;
+        });
+        
+        setSessions(filteredSessions);
         setError(null);
       } catch (err) {
-        setError('Erro ao carregar sessões. Por favor, tente novamente.');
         console.error('Erro ao buscar sessões:', err);
+        setError('Erro ao carregar agenda. Por favor, tente novamente.');
       } finally {
         setLoading(false);
       }
     };
-
+    
     fetchSessions();
-  }, [filterType, filterId]);
+  }, [weekDates, searchTerm]);
 
-  const handleDateChange = (date) => {
-    setSelectedDate(date);
+  // Função para navegar entre semanas
+  const navigateWeek = (direction) => {
+    const newDate = new Date(selectedDate);
+    const days = direction === 'prev' ? -7 : 7;
+    newDate.setDate(newDate.getDate() + days);
+    setSelectedDate(newDate);
   };
 
-  const handleFilterChange = (e) => {
-    setFilterType(e.target.value);
-    setFilterId(''); // Reset filter ID when changing type
+  // Preparar dados da semana para exibição
+  const weekViewData = weekDates.map(date => {
+    const day = date.getDate();
+    const month = date.toLocaleString('pt-BR', { month: 'long' }).charAt(0).toUpperCase() + 
+                 date.toLocaleString('pt-BR', { month: 'long' }).slice(1);
+    
+    const dayName = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'][date.getDay()];
+    
+    return {
+      date,
+      dayStr: date.toISOString().split('T')[0],
+      display: `${day}/${month}`,
+      dayName
+    };
+  });
+
+  // Definir horários para exibição na agenda
+  const timeSlots = [
+    '08:00 - 09:00',
+    '09:00 - 10:00',
+    '10:00 - 11:00',
+    '11:00 - 12:00'
+  ];
+
+  // Encontrar uma sessão para um dia e horário específicos
+  const findSessionsForTimeSlot = (dateStr, timeSlotStr) => {
+    const [startHour] = timeSlotStr.split(' - ')[0].split(':');
+    
+    return sessions.filter(session => {
+      const sessionDate = new Date(session.sessionHour);
+      const sessionDateStr = sessionDate.toISOString().split('T')[0];
+      const sessionHour = sessionDate.getHours();
+      
+      return sessionDateStr === dateStr && sessionHour === parseInt(startHour);
+    });
   };
 
-  const handleFilterIdChange = (e) => {
-    setFilterId(e.target.value);
-  };
-
-  const handleStatusChange = async (sessionId, newStatus) => {
-    try {
-      await api.put(`/sessions/${sessionId}`, { sessionStatus: newStatus });
-      setSessions(sessions.map(session => 
-        session.id === sessionId 
-          ? { ...session, sessionStatus: newStatus }
-          : session
-      ));
-    } catch (err) {
-      setError('Erro ao atualizar status da sessão. Por favor, tente novamente.');
-      console.error('Erro ao atualizar status:', err);
-    }
-  };
-
-  const formatTime = (dateTime) => {
-    return new Date(dateTime).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-  };
-
-  const formatDate = (date) => {
-    return new Date(date).toLocaleDateString('pt-BR', { weekday: 'short', day: '2-digit', month: '2-digit' });
-  };
-
+  // Renderizar a tabela da agenda
+  const renderAgendaTable = () => {
   if (loading) {
     return (
-      <div className="text-center">
-        <div className="spinner-border text-primary" role="status">
+        <div className="text-center p-5">
+          <Spinner animation="border" role="status" variant="primary">
           <span className="visually-hidden">Carregando...</span>
-        </div>
+          </Spinner>
       </div>
     );
   }
 
   if (error) {
     return (
-      <Alert variant="danger">
+        <Alert variant="danger" className="my-3">
         {error}
       </Alert>
     );
   }
 
-  const sessionsByDayAndTime = {};
-  weekDates.forEach(date => {
-    const dateStr = date.toISOString().split('T')[0];
-    sessionsByDayAndTime[dateStr] = {};
-  });
-
-  sessions.forEach(session => {
-    const dateStr = new Date(session.sessionHour).toISOString().split('T')[0];
-    const timeStr = formatTime(session.sessionHour);
-    if (!sessionsByDayAndTime[dateStr][timeStr]) {
-      sessionsByDayAndTime[dateStr][timeStr] = [];
-    }
-    sessionsByDayAndTime[dateStr][timeStr].push(session);
-  });
-
-  const allTimes = new Set();
-  sessions.forEach(session => {
-    allTimes.add(formatTime(session.sessionHour));
-  });
-  const sortedTimes = Array.from(allTimes).sort();
-
-  return (
-    <div className="container my-5">
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <h2 className="title-adm">Agenda</h2>
-        <div className="d-flex gap-2">
-          <Form.Select 
-            value={filterType} 
-            onChange={handleFilterChange}
-            style={{ width: '200px' }}
-          >
-            <option value="all">Todas as Sessões</option>
-            <option value="equitor">Por Equitador</option>
-            <option value="mediator">Por Mediador</option>
-          </Form.Select>
-          
-          {(filterType === 'equitor' || filterType === 'mediator') && (
-            <Form.Select
-              value={filterId}
-              onChange={handleFilterIdChange}
-              style={{ width: '200px' }}
-            >
-              <option value="">Selecione um {filterType === 'equitor' ? 'Equitador' : 'Mediador'}</option>
-              {professionals
-                .filter(prof => prof.role.toLowerCase() === filterType)
-                .map(prof => (
-                  <option key={prof.id} value={prof.id}>
-                    {prof.name}
-                  </option>
-                ))}
-            </Form.Select>
-          )}
-          
-          <button
-            className="btn btn-outline-primary"
-            onClick={() => handleDateChange(new Date(selectedDate.setDate(selectedDate.getDate() - 7)))}
-          >
-            Semana Anterior
-          </button>
-          <button
-            className="btn btn-outline-primary"
-            onClick={() => handleDateChange(new Date())}
-          >
-            Hoje
-          </button>
-          <button
-            className="btn btn-outline-primary"
-            onClick={() => handleDateChange(new Date(selectedDate.setDate(selectedDate.getDate() + 7)))}
-          >
-            Próxima Semana
-          </button>
-        </div>
-      </div>
-
-      <div className="table-responsive">
-        <Table bordered className="agenda-table">
+    return (
+      <div 
+        className="agenda-table"
+        style={{ 
+          border: '1px solid #e8e8e8',
+          borderRadius: '10px',
+          overflow: 'hidden',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.05)'
+        }}
+      >
+        <table className="table mb-0" style={{ tableLayout: 'fixed' }}>
           <thead>
             <tr>
-              <th className="time-column">Horário</th>
-              {weekDates.map((date, index) => (
-                <th key={index} className="day-column">
-                  {formatDate(date)}
+              {weekViewData.map((dayData, index) => (
+                <th 
+                  key={dayData.dayStr} 
+                  className="text-center py-3"
+                  style={{ 
+                    borderBottom: '1px solid #e8e8e8',
+                    borderRight: index < weekViewData.length - 1 ? '1px solid #e8e8e8' : 'none',
+                    background: '#ffffff' 
+                  }}
+                >
+                  <div style={{ fontWeight: 'bold' }}>{dayData.dayName}</div>
+                  <div style={{ fontSize: '14px', color: '#666' }}>{dayData.display}</div>
                 </th>
               ))}
             </tr>
           </thead>
           <tbody>
-            {sortedTimes.map((time, timeIndex) => (
-              <tr key={timeIndex}>
-                <td className="time-cell">{time}</td>
-                {weekDates.map((date, dateIndex) => {
-                  const dateStr = date.toISOString().split('T')[0];
-                  const sessionsAtTime = sessionsByDayAndTime[dateStr][time] || [];
+            {timeSlots.map((timeSlot, rowIndex) => (
+              <tr key={timeSlot}>
+                {weekViewData.map((dayData, colIndex) => {
+                  const sessionsForSlot = findSessionsForTimeSlot(dayData.dayStr, timeSlot);
+                  const hasSession = sessionsForSlot.length > 0;
+                  const session = hasSession ? sessionsForSlot[0] : null;
+                  
                   return (
-                    <td key={dateIndex} className="session-cell">
-                      {sessionsAtTime.map((session, sessionIndex) => (
-                        <div key={sessionIndex} className="session-item">
-                          <div className="session-header">
-                            <span className="session-time">{time}</span>
-                            <div className="d-flex justify-content-between align-items-center">
-                              <span className={`session-status ${session.sessionStatus.toLowerCase()}`}>
-                                {session.sessionStatus}
-                              </span>
-                              <div className="status-actions">
-                                <Button
-                                  variant="outline-primary"
-                                  size="sm"
-                                  className="me-1"
-                                  onClick={() => handleStatusChange(session.id, 'CONFIRMED')}
-                                  disabled={session.sessionStatus === 'CONFIRMED'}
-                                >
-                                  Confirmar
-                                </Button>
-                                <Button
-                                  variant="outline-danger"
-                                  size="sm"
-                                  onClick={() => handleStatusChange(session.id, 'CANCELLED')}
-                                  disabled={session.sessionStatus === 'CANCELLED'}
-                                >
-                                  Cancelar
-                                </Button>
-                              </div>
-                            </div>
+                    <td 
+                      key={`${dayData.dayStr}-${timeSlot}`}
+                      className="p-0"
+                      style={{ 
+                        height: '80px',
+                        borderBottom: rowIndex < timeSlots.length - 1 ? '1px solid #e8e8e8' : 'none',
+                        borderRight: colIndex < weekViewData.length - 1 ? '1px solid #e8e8e8' : 'none',
+                        position: 'relative',
+                        verticalAlign: 'top'
+                      }}
+                    >
+                      {session ? (
+                        <div 
+                          style={{
+                            backgroundColor: getEquoterapeutaColor(session.professionals?.[0]?.name),
+                            color: 'white',
+                            height: '100%',
+                            padding: '8px',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            fontSize: '14px'
+                          }}
+                        >
+                          <div className="mb-1">{timeSlot}</div>
+                          <div className="mb-1" style={{ fontWeight: 'bold' }}>
+                            {session.pacient?.name || 'Paciente'}
                           </div>
-                          <div className="session-details">
-                            <p className="mb-1"><strong>Praticante:</strong> {session.pacient.name}</p>
-                            <p className="mb-1"><strong>Equoterapeuta:</strong> {session.professionals[0]?.name}</p>
-                            <p className="mb-1"><strong>Equitador:</strong> {session.equitor.name}</p>
-                            <p className="mb-1"><strong>Mediador:</strong> {session.mediator.name}</p>
-                            <p className="mb-1"><strong>Cavalo:</strong> {session.equine.name}</p>
-                            <p className="mb-1"><strong>Duração:</strong> {session.duration}</p>
+                          <div>
+                            Equoterapeuta: {session.professionals?.[0]?.name || 'Não definido'}
                           </div>
                         </div>
-                      ))}
+                      ) : null}
                     </td>
                   );
                 })}
               </tr>
             ))}
           </tbody>
-        </Table>
+        </table>
       </div>
+    );
+  };
+
+  return (
+    <div className="container-fluid p-4">
+      <h2 className="mb-4" style={{ color: '#9B2D20', fontWeight: 'bold' }}>Agenda</h2>
+      
+      {/* Barra de pesquisa e navegação de data */}
+      <div className="d-flex justify-content-between align-items-center mb-4">
+        <div className="position-relative" style={{ width: '400px' }}>
+          <input
+            type="text"
+            className="form-control"
+            placeholder="Procurar um Praticante"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            style={{
+              borderRadius: '8px',
+              paddingLeft: '15px',
+              paddingRight: '40px',
+              height: '40px',
+              border: '1px solid #ddd',
+              boxShadow: '0 2px 5px rgba(0,0,0,0.05)'
+            }}
+          />
+          <FaSearch 
+            className="position-absolute"
+            style={{
+              right: '15px',
+              top: '12px',
+              color: '#999',
+              fontSize: '16px'
+            }}
+          />
+        </div>
+        
+        <div className="d-flex align-items-center">
+          <button
+            className="btn"
+            onClick={() => navigateWeek('prev')}
+            style={{
+              border: 'none', 
+              background: 'transparent',
+              color: '#666'
+            }}
+          >
+            <FaChevronLeft />
+          </button>
+          
+          <div 
+            className="date-display mx-2"
+            style={{
+              border: '1px solid #ddd',
+              borderRadius: '8px',
+              padding: '6px 12px',
+              fontWeight: '500',
+              boxShadow: '0 1px 3px rgba(0,0,0,0.05)'
+            }}
+          >
+            {currentDay}
+          </div>
+          
+          <button
+            className="btn"
+            onClick={() => navigateWeek('next')}
+            style={{
+              border: 'none', 
+              background: 'transparent',
+              color: '#666'
+            }}
+          >
+            <FaChevronRight />
+          </button>
+        </div>
+      </div>
+      
+      {/* Tabela da agenda */}
+      {renderAgendaTable()}
     </div>
   );
 };

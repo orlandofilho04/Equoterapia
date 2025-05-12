@@ -10,77 +10,159 @@
 }
 
 .search-input {
-    border: 1px solid #B3B5B6 !important;
+    border-radius: 8px;
+    border: 1px solid #ddd;
     height: 40px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    padding-left: 15px;
+    padding-right: 40px;
 }
 
 .search-icon {
-    background-color: #9B2D20 !important;
-    border: none !important;
-    height: 40px;
-    width: 40px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #999;
+    font-size: 16px;
 }
 
 /* Navegador de data */
 .date-navigator {
-    background-color: white;
-    padding: 5px 15px;
-    border-radius: 5px;
-    font-size: 14px;
+    display: flex;
+    align-items: center;
 }
 
-.btn-nav {
-    color: #9B2D20 !important;
-    background: none !important;
-    border: none !important;
-    padding: 5px 10px !important;
+.date-display {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 6px 12px;
+    font-weight: 500;
+    margin: 0 10px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.nav-arrow {
+    border: none;
+    background: transparent;
+    color: #666;
+    cursor: pointer;
 }
 
 /* Tabela da agenda */
 .agenda-table {
     background-color: white;
-    border-radius: 8px;
+    border-radius: 10px;
     overflow: hidden;
-}
-
-.agenda-table table {
-    margin-bottom: 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e0e0e0;
 }
 
 .agenda-table th {
-    background-color: #f8f9fa;
+    font-weight: bold;
     text-align: center;
-    font-weight: 600;
-    padding: 15px;
-    font-size: 14px;
+    padding: 15px 10px;
+    border-bottom: 1px solid #e8e8e8;
+    background-color: #ffffff;
 }
 
-.session-cell {
-    padding: 10px !important;
-    color: white !important;
-    min-height: 80px;
+.agenda-table td {
+    border: none;
+    height: 80px;
+    padding: 0;
+    vertical-align: top;
 }
 
-.empty-cell {
-    background-color: white;
-    min-height: 80px;
+.agenda-header {
+    color: #9B2D20;
+    font-weight: bold;
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.session-block {
+    color: white;
+    height: 100%;
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
 }
 
 .session-time {
-    font-size: 12px;
-    margin-bottom: 5px;
+    margin-bottom: 4px;
 }
 
-.session-praticante {
+.session-name {
+    font-weight: bold;
+    margin-bottom: 4px;
+}
+
+.session-equo {
+    font-size: 14px;
+}
+
+/* Cores específicas para cada tipo de profissional */
+.session-color-1 {
+    background-color: #30D0CA;
+}
+
+.session-color-2 {
+    background-color: #4CAF50;
+}
+
+.session-color-3 {
+    background-color: #E7A740;
+}
+
+.session-color-4 {
+    background-color: #E74C3C;
+}
+
+.session-status {
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 12px;
     font-weight: 500;
-    margin-bottom: 3px;
 }
 
-.session-equoterapeuta {
+.session-status.confirmed {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.session-status.cancelled {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.session-status.pending {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.session-details {
     font-size: 12px;
+}
+
+.session-details p {
+    margin-bottom: 4px;
+    color: #495057;
+}
+
+.status-actions {
+    display: flex;
+    gap: 4px;
+}
+
+.status-actions button {
+    font-size: 12px;
+    padding: 2px 8px;
+}
+
+.title-adm {
+    color: #9B2D20;
+    font-weight: bold;
+    font-size: 24px;
 }
 
 /* Responsividade */
@@ -97,9 +179,21 @@
         overflow-x: auto;
     }
 
-    .session-time,
-    .session-praticante,
-    .session-equoterapeuta {
+    .agenda-table th,
+    .agenda-table td {
+        padding: 8px 5px;
+    }
+
+    .session-block {
+        padding: 5px;
+    }
+
+    .session-details {
         font-size: 11px;
+    }
+
+    .status-actions button {
+        font-size: 11px;
+        padding: 1px 6px;
     }
 }

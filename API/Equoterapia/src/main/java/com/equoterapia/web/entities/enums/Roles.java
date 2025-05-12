@@ -13,4 +13,5 @@ public enum Roles {
     ASSISTENTE_SOCIAL_CFESS,
     PEDAGOGO,
     PSICOLOGO,
+    EQUITADOR,
 }

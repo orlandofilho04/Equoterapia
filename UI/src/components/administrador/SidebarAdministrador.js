@@ -1,23 +1,41 @@
 import React, { useState, useEffect } from "react";
 import { RxExit } from "react-icons/rx";
 import { FaBars, FaTimes } from "react-icons/fa";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import "../Sidebar.css";
 import "./SidebarAdministrador.css";
 
 const SidebarAdministrador = () => {
   const [activeButton, setActiveButton] = useState(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [userName, setUserName] = useState('');
   const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
+    // Obter o nome do usuário do localStorage
+    const storedName = localStorage.getItem('name');
+    if (storedName) {
+      setUserName(storedName);
+    }
+
     // Atualiza o botão ativo baseado na rota atual
     const path = location.pathname;
     if (path.includes('/administrador/agenda')) {
       setActiveButton('agenda');
-    } else if (path.includes('/listar-funcionarios')) {
+    } else if (
+      path.includes('/listar-funcionarios') || 
+      path.includes('/cadastro-equoterapeuta') || 
+      path.includes('/cadastro-equitador') ||
+      path.includes('/cadastro-profissional') ||
+      path.includes('/dados-profissional-adm') ||
+      path.includes('/dados-equoterapeuta-adm') ||
+      path.includes('/dados-equitador-adm')
+    ) {
       setActiveButton('profissionais');
+    } else {
+      // Se nenhuma rota específica, agenda é o padrão (tela inicial)
+      setActiveButton('agenda');
     }
     
     // Detecta tamanho da tela para mostrar/esconder sidebar em dispositivos móveis
@@ -57,7 +75,11 @@ const SidebarAdministrador = () => {
   };
 
   const handleLogout = () => {
-    // Aqui você pode adicionar lógica de logout se necessário
+    // Limpar dados do usuário no localStorage
+    localStorage.removeItem('token');
+    localStorage.removeItem('username');
+    localStorage.removeItem('name');
+    localStorage.removeItem('isAdmin');
     navigate("/login");
   };
 
@@ -101,13 +123,14 @@ const SidebarAdministrador = () => {
         </div>
 
         <h5 className="text-center mb-2 fw-bold">Bem-vindo!</h5>
-        <h6 className="username-administrador mb-5 fw-bold">ADMINISTRADOR</h6>
+        <h6 className="username-administrador mb-5 fw-bold">{userName || 'ADMINISTRADOR'}</h6>
 
         <button
           className={`btn sidebar-button mb-4 fw-bold ${
             activeButton === "agenda" ? "active-button-administrador" : ""
           }`}
           onClick={() => handleButtonClick("agenda")}
+          style={activeButton === "agenda" ? { backgroundColor: '#9B2D20', color: '#fff' } : {}}
         >
           Acessar agenda <span className="arrow">&gt;</span>
         </button>
@@ -117,6 +140,7 @@ const SidebarAdministrador = () => {
             activeButton === "profissionais" ? "active-button-administrador" : ""
           }`}
           onClick={() => handleButtonClick("profissionais")}
+          style={activeButton === "profissionais" ? { backgroundColor: '#9B2D20', color: '#fff' } : {}}
         >
           Listar Profissionais <span className="arrow">&gt;</span>
         </button>

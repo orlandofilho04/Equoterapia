@@ -6,7 +6,6 @@ const ignoreTokenRoutes = ['/auth/login', '/auth/register'];
 
 // Configuração base da API
 const api = axios.create({
-  baseURL: 'http://localhost:8080',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
@@ -76,8 +75,7 @@ api.interceptors.response.use(
       } : 'Sem resposta do servidor',
       config: {
         url: error.config.url,
-        method: error.config.method,
-        baseURL: error.config.baseURL
+        method: error.config.method
       }
     });
     
@@ -85,14 +83,34 @@ api.interceptors.response.use(
     if (error.response) {
       // O servidor respondeu com um código de status diferente de 2xx
       console.error(`Erro ${error.response.status}:`, error.response.data);
-      
-      // Verificar problemas de CORS
-      if (error.response.status === 0) {
-        console.error('Possível erro de CORS. Verifique se o servidor permite requisições de origem cruzada.');
-      }
     } else if (error.request) {
       // A requisição foi feita mas não houve resposta
       console.error('Sem resposta do servidor. Verifique se o backend está rodando.');
+      
+      // Verificar se o erro parece ser um problema de CORS
+      if (error.message && (error.message.includes('Network Error') || error.message.includes('CORS'))) {
+        console.error(`
+        =================================
+        ERRO DE CORS DETECTADO
+        =================================
+        Este é provavelmente um erro de Cross-Origin Resource Sharing (CORS).
+        O frontend está tentando acessar o backend, mas o navegador está bloqueando
+        a requisição por motivos de segurança.
+        
+        POSSÍVEIS SOLUÇÕES:
+        1. Verifique se o backend está em execução
+        2. O backend deve incluir os cabeçalhos CORS apropriados:
+           - Access-Control-Allow-Origin: http://localhost:3000
+           - Access-Control-Allow-Methods: GET, POST, PUT, DELETE
+           - Access-Control-Allow-Headers: Content-Type, Authorization
+        3. A aplicação está usando um proxy configurado no package.json para
+           redirecionar as requisições - pode ser necessário reiniciar o servidor
+        
+        Se o problema persistir, verifique a configuração CORS no servidor ou 
+        consulte o administrador do sistema.
+        =================================
+        `);
+      }
     }
     
     return Promise.reject(error);

@@ -28,7 +28,7 @@ import ListarFuncionariosAtivos from "./components/administrador/ListarFuncionar
 import ListarFuncionariosArquivados from "./components/administrador/ListarFuncionariosArquivados";
 import CadastroProfissionalForm from "./components/administrador/CadastroProfissionalForm";
 import DadosEquitadorAdm from "./components/administrador/DadosEquitadorAdm.js";
-import DadosEquoterapeutaAdm from "./components/administrador/DadosEquoterapeutaAdm.js";
+import DadosProfissionalAdm from "./components/administrador/DadosProfissionalAdm.js";
 import FeedbackSessaoAnterior from "./components/praticante/FeedbackSessaoAnterior.js";
 import DetalhesSessao from "./components/praticante/DetalhesSessao.js";
 import InformacoesPraticante from "./components/praticante/InformacoesPraticante.js";
@@ -333,7 +333,7 @@ function App() {
           />
 
           <Route
-            path="/dados-equitador-adm"
+            path="/dados-equitador-adm/:id"
             element={
               <PrivateRoute>
                 <div className="app-content">
@@ -347,13 +347,13 @@ function App() {
           />
 
           <Route
-            path="/dados-equoterapeuta-adm"
+            path="/dados-profissional-adm/:id"
             element={
               <PrivateRoute>
                 <div className="app-content">
                   <SidebarAdministrador />
                   <div className="content">
-                    <DadosEquoterapeutaAdm />
+                    <DadosProfissionalAdm />
                   </div>
                 </div>
               </PrivateRoute>

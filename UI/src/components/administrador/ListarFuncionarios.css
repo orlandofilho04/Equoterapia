@@ -1,112 +1,223 @@
 .listar-funcionarios-container {
-    margin-left: 30px;
-    transform: scale(0.9);
-    transform-origin: top left;
-  }
+  margin-left: 0;
+  padding: 20px;
+}
 
-  .img-perfil{
-      width: 50px;
-      height: 50px;
-      object-fit: cover;
-      border-radius: 50%;
-  }
-  
-  .conteudo-lista{
-    margin-top: 30px;
-  }
-  
-  .cor-padrao-funcionario{
-      color: #9B2D20;
-    }
-    .cor-padrao-btn-funcionario{
-      background-color: #9B2D20;
-      color: #fff;
-      border: none;
-    }
-  .cor-padrao-btn-funcionario:hover{
-    background-color: #9B2D20;
-    color: #fff;
-  }
-  .status-ativo{
-    background-color: #07C158;
-  }
-  .status-arquivado{
-    background-color: #9B2D20;
-  }
-    .menu button {
-      text-align: left;
-    }
-    
-    .content {
-      background-color: #fff;
-      padding: 20px;
-      border-radius: 8px;
-    }
-    .bg-praticante{
-      background-color: #f8f9fa;
-    }
-    .list-group-item {
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      margin-bottom: 10px;
-      padding: 15px;
-    }
+.img-perfil {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 50%;
+}
 
-/* Estilos responsivos para dispositivos móveis */
-@media (max-width: 768px) {
-  .listar-funcionarios-container {
-    margin-left: 0;
-    transform: scale(1);
-    padding: 10px;
-  }
-  
-  .cor-padrao-funcionario.header {
-    justify-content: center !important;
-    text-align: center;
-  }
-  
-  .cor-padrao-funcionario h2 {
-    width: 100%;
-    text-align: center;
-  }
-  
-  .tabs {
+.titulo-funcionarios {
+  color: #9B2D20;
+  font-weight: bold;
+  font-size: 24px;
+  margin-bottom: 24px;
+}
+
+/* Campo de busca */
+.campo-busca {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.campo-busca input {
+  border-radius: 8px;
+  padding-left: 15px;
+  padding-right: 40px;
+  height: 40px;
+  border: 1px solid #ddd;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  width: 100%;
+}
+
+.icone-busca {
+  position: absolute;
+  right: 15px;
+  top: 12px;
+  color: #999;
+  font-size: 16px;
+}
+
+/* Botões de navegação */
+.btn-navegacao-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.btn-grupo-tabs {
+  display: flex;
+}
+
+.btn-tab-ativo {
+  background-color: #9B2D20;
+  color: white;
+  border-radius: 4px 0 0 4px;
+  padding: 8px 16px;
+  border: none;
+}
+
+.btn-tab-inativo {
+  background-color: #f8f9fa;
+  color: #666;
+  border-radius: 0 4px 4px 0;
+  border: 1px solid #ddd;
+  padding: 8px 16px;
+}
+
+.btn-novo-funcionario {
+  background-color: #9B2D20;
+  color: white;
+  border-radius: 4px;
+  padding: 8px 16px;
+  border: none;
+}
+
+/* Status */
+.status-ativo {
+  background-color: #4CAF50;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.status-inativo {
+  background-color: #9B2D20;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+/* Item de funcionário */
+.item-funcionario {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  padding: 15px;
+  background-color: #f8f9fa;
+  margin-bottom: 10px;
+}
+
+.info-funcionario {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+.avatar-funcionario {
+  margin-right: 15px;
+}
+
+.nome-funcionario {
+  min-width: 150px;
+}
+
+.nome-funcionario a {
+  text-decoration: none;
+  color: #212529;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.cargo-funcionario {
+  min-width: 120px;
+  margin-left: 20px;
+}
+
+.data-cadastro {
+  flex: 1;
+  margin-left: 20px;
+}
+
+.acoes-funcionario {
+  display: flex;
+  align-items: center;
+}
+
+.menu-acoes button {
+  border: none;
+  background: none;
+  padding: 4px;
+}
+
+/* Menu de três pontos */
+.dropdown-menu {
+  min-width: 180px;
+  border-radius: 4px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.dropdown-item {
+  padding: 8px 16px;
+  font-size: 14px;
+}
+
+/* Responsividade */
+@media (max-width: 992px) {
+  .btn-navegacao-container {
     flex-direction: column;
-    align-items: center;
+    align-items: stretch;
   }
   
-  .tabs button {
-    margin: 5px 0;
+  .btn-grupo-tabs {
+    margin-bottom: 10px;
     width: 100%;
   }
   
-  .tabs .ms-auto {
-    margin-left: 0 !important;
-    margin-top: 10px;
+  .btn-tab-ativo, .btn-tab-inativo {
+    flex: 1;
   }
   
-  .list-group-item {
+  .btn-novo-funcionario {
+    width: 100%;
+  }
+  
+  .item-funcionario {
     flex-direction: column;
+    align-items: flex-start;
   }
   
-  .list-group-item > div {
+  .info-funcionario {
+    flex-direction: column;
+    align-items: flex-start;
     width: 100%;
-    justify-content: center;
+    margin-bottom: 15px;
+  }
+  
+  .avatar-funcionario {
     margin-bottom: 10px;
   }
   
-  .list-group-item .d-flex.align-items-center {
-    flex-direction: column;
-    text-align: center;
-  }
-  
-  .list-group-item .me-5 {
-    margin-right: 0 !important;
+  .nome-funcionario, .cargo-funcionario, .data-cadastro {
+    margin-left: 0;
     margin-bottom: 5px;
-    text-align: center;
+    width: 100%;
   }
   
-  .status-ativo {
-    margin: 10px 0;
+  .acoes-funcionario {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+@media (max-width: 576px) {
+  .btn-grupo-tabs {
+    flex-direction: column;
+  }
+  
+  .btn-tab-ativo {
+    border-radius: 4px 4px 0 0;
+  }
+  
+  .btn-tab-inativo {
+    border-radius: 0 0 4px 4px;
   }
 }
