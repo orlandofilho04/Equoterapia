@@ -1,11 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from 'react';
 import './ListarEquino.css'; 
 import SearchBar from "../SearchBar.js";
 import { Link } from 'react-router-dom';
+import api from "../../services/api";
 
 
 const ListarEquino = () => {
-  const [equinosAtivos, setEquinosAtivos] = useState([
+ /* const [equinosAtivos, setEquinosAtivos] = useState([
     { id: 1, nome: "Alfa", idade: "6 Anos", dataCadastro: "5 Dez 2024 15:59 PM" },
     { id: 2, nome: "Primavera", idade: "7 Anos", dataCadastro: "17 Nov 2024 7:30 AM" },
     { id: 3, nome: "Canela", idade: "10 Anos", dataCadastro: "17 Jan 2024 9:00 AM" },
@@ -15,8 +16,50 @@ const ListarEquino = () => {
   const [equinosArquivados, setEquinosArquivados] = useState([
     { id: 5, nome: "Thor", idade: "8 Anos", dataCadastro: "20 Mar 2023 10:00 AM" },
     { id: 6, nome: "Relâmpago", idade: "9 Anos", dataCadastro: "22 Ago 2023 12:00 PM" },
-  ]);
+  ]);*/
+  const [equinosAtivos, setEquinosAtivos] = useState([]);
+  const [equinosArquivados, setEquinosArquivados] = useState([]);
+    useEffect(() => {
+      const loadHorse = async () => {
+        const response = await api.get(`/horses`);
+       // setEquinosAtivos(response.data[0].STATUS=);
+       console.log(response.data[0].status)
+       const ativos = [];
+      const arquivados = [];
+        for(let i = 0; i < response.data.length; i++ ){
+          if(response.data[i].status === "ARQUIVADO"){
+            arquivados.push(response.data[i]);
+            console.log(response.data[i].name)
+            console.log("DENTRO DO FOR(IF): ",response.data[i].name)
 
+          }else{
+            ativos.push(response.data[i]);
+            console.log("DENTRO DO FOR(ELSE): ",response.data[i].name)
+
+          }
+            
+          }
+          setEquinosAtivos(ativos);
+          setEquinosArquivados(arquivados);
+        }
+       
+        loadHorse();
+    }, [])
+  
+
+
+    useEffect(() => {
+      const loadHorse = async () => {
+      const response = await api.get(`/horses`);
+    
+        //console.log("seu nome aqui:",response.data[0].name)
+
+      }
+      loadHorse();
+    }, [])
+  
+
+ 
   const [exibirAtivos, setExibirAtivos] = useState(true);
 
   return (
@@ -48,7 +91,8 @@ const ListarEquino = () => {
       <hr className="divider" />
 
       <div className="listar-equinos">
-        {(exibirAtivos ? equinosAtivos : equinosArquivados).map((equino) => (
+      {(exibirAtivos ? equinosAtivos : equinosArquivados).map((equino)  => ( 
+         
           <div key={equino.id} className="item-container d-flex align-items-center">
             <Link to="/dados-equino">
             <img
@@ -58,13 +102,13 @@ const ListarEquino = () => {
             />
             </Link>
             <div className="info">
-              <p className="text mb-0"><b>{equino.nome}</b></p>
-              <p className="text mb-0">Idade: {equino.idade}</p>
-              <p className="text mb-0">Data de cadastro: {equino.dataCadastro}</p>
+              <p className="text mb-0"><b>{equino.name}</b></p>
+              <p className="text mb-0">Idade: {equino.age}</p>
+              <p className="text mb-0">Data de cadastro: {equino.createdAt}</p>
             </div>
             <div className="status text-end me-3">
-              <span className={`status-text ${exibirAtivos ? "text-success" : "text-danger"}`}>
-                {exibirAtivos ? "Status: Ativo" : "Status: Arquivado"}
+            <span className={`status-text ${exibirAtivos ? "text-success" : "text-danger"}`}>
+            {exibirAtivos ? "Status: Ativo" : "Status: Arquivado"}
               </span>
             </div>
             <button className="action-button">

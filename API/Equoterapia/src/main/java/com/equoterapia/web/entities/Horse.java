@@ -1,6 +1,9 @@
 package com.equoterapia.web.entities;
 
 import com.equoterapia.web.entities.enums.Genders;
+import com.equoterapia.web.entities.enums.PacientStatus;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,6 +12,8 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+
+import com.equoterapia.web.entities.enums.HorsesStatus;
 
 @Getter
 @Setter
@@ -60,4 +65,11 @@ public class Horse {
 
     @Column
     private LocalDateTime createdAt = LocalDateTime.now(ZoneId.of("America/Sao_Paulo"));
+ @Column
+    private HorsesStatus status;
+
+   @JsonIgnore
+    public boolean isActive(){
+        return this.status.toString().equalsIgnoreCase("ativo");
+    }
 }
