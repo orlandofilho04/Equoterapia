@@ -23,19 +23,16 @@ const ListarEquino = () => {
       const loadHorse = async () => {
         const response = await api.get(`/horses`);
        // setEquinosAtivos(response.data[0].STATUS=);
-       console.log(response.data[0].status)
+   
        const ativos = [];
       const arquivados = [];
         for(let i = 0; i < response.data.length; i++ ){
           if(response.data[i].status === "ARQUIVADO"){
             arquivados.push(response.data[i]);
-            console.log(response.data[i].name)
-            console.log("DENTRO DO FOR(IF): ",response.data[i].name)
-
+            
           }else{
             ativos.push(response.data[i]);
-            console.log("DENTRO DO FOR(ELSE): ",response.data[i].name)
-
+           
           }
             
           }
@@ -48,15 +45,6 @@ const ListarEquino = () => {
   
 
 
-    useEffect(() => {
-      const loadHorse = async () => {
-      const response = await api.get(`/horses`);
-    
-        //console.log("seu nome aqui:",response.data[0].name)
-
-      }
-      loadHorse();
-    }, [])
   
 
  
@@ -96,7 +84,7 @@ const ListarEquino = () => {
           <div key={equino.id} className="item-container d-flex align-items-center">
             <Link to="/dados-equino">
             <img
-              src="https://img.freepik.com/fotos-gratis/bela-vista-de-um-magnifico-cavalo-branco-com-o-campo-verde_181624-14424.jpg?t=st=1732245856~exp=1732249456~hmac=04d8eb3ea75eb418bdfca534b6ad1dcdf726f0a8155d9011bac86f34e12f7aaa&w=740"
+              src= {equino.photo ? equino.photo : "https://img.freepik.com/fotos-gratis/bela-vista-de-um-magnifico-cavalo-branco-com-o-campo-verde_181624-14424.jpg?t=st=1732245856~exp=1732249456~hmac=04d8eb3ea75eb418bdfca534b6ad1dcdf726f0a8155d9011bac86f34e12f7aaa&w=740"}
               alt="Equino"
               className="avatar me-3"
             />
