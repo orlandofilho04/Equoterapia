@@ -40,17 +40,22 @@ const Login = () => {
         username: returnedUsername,
         name,
         isAdmin,
+        role,
       } = response.data;
 
       localStorage.setItem("token", token);
       localStorage.setItem("username", returnedUsername);
       localStorage.setItem("name", name);
       localStorage.setItem("isAdmin", isAdmin);
+      localStorage.setItem("role", role);
 
       console.log(localStorage.getItem("isAdmin"));
+      console.log(localStorage.getItem("role"));
 
       if (localStorage.getItem("isAdmin") === "true") {
         navigate("/agenda");
+      } else if (localStorage.getItem("role") === "EQUITADOR") {
+        navigate("/equitador");
       } else {
         navigate("/agenda-geral");
       }

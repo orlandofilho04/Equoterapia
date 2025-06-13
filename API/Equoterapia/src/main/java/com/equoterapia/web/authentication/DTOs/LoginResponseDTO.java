@@ -1,4 +1,6 @@
 package com.equoterapia.web.authentication.DTOs;
 
-public record LoginResponseDTO(String token, String username, String name, Boolean isAdmin) {
+import com.equoterapia.web.entities.enums.Roles;
+
+public record LoginResponseDTO(String token, String username, String name, Boolean isAdmin, Roles role) {
 }

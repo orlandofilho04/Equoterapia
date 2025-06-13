@@ -1,6 +1,9 @@
 package com.equoterapia.web.resources;
 
 import com.equoterapia.web.entities.Horse;
+import com.equoterapia.web.entities.Pacient;
+import com.equoterapia.web.entities.enums.HorsesStatus;
+import com.equoterapia.web.entities.enums.PacientStatus;
 import com.equoterapia.web.services.HorseService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -26,7 +29,17 @@ public class HorseResource {
             @ApiResponse(responseCode = "200", description = "Cavalos encontrados com sucesso")
     })
     @GetMapping
-    public ResponseEntity<List<Horse>> findAll() {
+    public ResponseEntity<List<Horse>> findAll(@RequestParam(required = false) String status) {
+
+        //TODO Implementar Design Pattern Strategy
+        if (status != null && status.equalsIgnoreCase("ATIVO")){
+            List<Horse> horses = horseService.findAllHorsesByStatus(HorsesStatus.ATIVO);
+            return ResponseEntity.ok().body(horses);
+        } else if (status != null && status.equalsIgnoreCase("ARQUIVADO")) {
+            List<Horse> horses = horseService.findAllHorsesByStatus(HorsesStatus.ARQUIVADO);
+            return ResponseEntity.ok().body(horses);
+        }
+
         List<Horse> horses = horseService.findAll();
         return ResponseEntity.ok().body(horses);
     }

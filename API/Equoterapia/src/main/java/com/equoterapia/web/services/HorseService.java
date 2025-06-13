@@ -1,6 +1,7 @@
 package com.equoterapia.web.services;
 
 import com.equoterapia.web.entities.Horse;
+import com.equoterapia.web.entities.enums.HorsesStatus;
 import com.equoterapia.web.exceptions.NotFoundException;
 import com.equoterapia.web.repositories.HorseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,10 @@ public class HorseService {
         }
 
         return horseRepository.findById(id).orElseThrow();
+    }
+
+    public List<Horse> findAllHorsesByStatus(HorsesStatus horseStatus) {
+        return horseRepository.findAllByStatus(horseStatus);
     }
 
     public void delete(Long id) {

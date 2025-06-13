@@ -65,10 +65,11 @@ public class Horse {
 
     @Column
     private LocalDateTime createdAt = LocalDateTime.now(ZoneId.of("America/Sao_Paulo"));
- @Column
+
+    @Column
     private HorsesStatus status;
 
-   @JsonIgnore
+    @JsonIgnore
     public boolean isActive(){
         return this.status.toString().equalsIgnoreCase("ativo");
     }

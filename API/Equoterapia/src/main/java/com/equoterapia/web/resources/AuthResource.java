@@ -38,7 +38,7 @@ public class AuthResource {
 
         var token = tokenService.generateToken((Professional)auth.getPrincipal());
 
-        return ResponseEntity.ok(new LoginResponseDTO(token, ((Professional) auth.getPrincipal()).getUsername(), professional.getName(), professional.getIsAdmin()));
+        return ResponseEntity.ok(new LoginResponseDTO(token, ((Professional) auth.getPrincipal()).getUsername(), professional.getName(), professional.getIsAdmin(), professional.getRole()));
     }
     @PostMapping(value = "/register")
     public ResponseEntity<Professional> register(@RequestBody @Valid RegisterDTO user, @RequestParam(required = false) String adminPass){
@@ -49,12 +49,12 @@ public class AuthResource {
         String encryptedPassword = new BCryptPasswordEncoder().encode(user.password());
         Professional newProfessional = new Professional(user.name(), user.username(),user.birthDate(), encryptedPassword, user.cpf(), user.email(), user.phone(), user.address(), user.gender(), user.role(), user.regNumber());
 
+        //TODO Implementar Design Pattern Strategy
         if (adminPass == null){
             professionalService.insert(newProfessional);
         }else {
             professionalService.insert(newProfessional, adminPass);
         }
-
 
 
         return ResponseEntity.ok().build();

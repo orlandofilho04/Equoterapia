@@ -78,7 +78,6 @@ public class Professional implements UserDetails {
     @Column(unique = true)
     private String regNumber;
 
-
     @Column
     private Boolean isAdmin = false;
 

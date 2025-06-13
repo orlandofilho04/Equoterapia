@@ -21,8 +21,9 @@ public class PacientResource {
 
 
     @GetMapping
-    public ResponseEntity<List<Pacient>> findAll(@RequestParam(required = false) String status){
+    public ResponseEntity<List<Pacient>> findAll(@RequestParam(required = false, defaultValue = "*") String status){
 
+        //TODO Implementar Design Pattern Strategy
         if (status != null && status.equalsIgnoreCase("ATIVO")){
             List<Pacient> pacients = pacientService.findAllPacientsByStatus(PacientStatus.ATIVO);
             return ResponseEntity.ok().body(pacients);
