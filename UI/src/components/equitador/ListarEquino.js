@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import './ListarEquino.css'; 
 import SearchBar from "../SearchBar.js";
 import { Link } from 'react-router-dom';
+import { format, subHours } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 import api from "../../services/api";
 
 
@@ -92,7 +94,11 @@ const ListarEquino = () => {
             <div className="info">
               <p className="text mb-0"><b>{equino.name}</b></p>
               <p className="text mb-0">Idade: {equino.age}</p>
-              <p className="text mb-0">Data de cadastro: {equino.createdAt}</p>
+              <p className="text mb-0">
+                Data de cadastro: {
+                  format(subHours(new Date(equino.createdAt), 3), "dd MMM yyyy, hh:mm a", { locale: ptBR })
+                }
+              </p>
             </div>
             <div className="status text-end me-3">
             <span className={`status-text ${exibirAtivos ? "text-success" : "text-danger"}`}>
