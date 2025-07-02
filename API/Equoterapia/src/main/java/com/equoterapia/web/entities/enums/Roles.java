@@ -14,4 +14,5 @@ public enum Roles {
     PEDAGOGO,
     PSICOLOGO,
     EQUITADOR,
+    MEDIADOR
 }

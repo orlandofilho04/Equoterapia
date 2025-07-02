@@ -3,6 +3,7 @@ package com.equoterapia.web.services;
 import com.equoterapia.web.entities.Pacient;
 import com.equoterapia.web.entities.Professional;
 import com.equoterapia.web.entities.Appointment;
+import com.equoterapia.web.entities.enums.Roles;
 import com.equoterapia.web.exceptions.AdminAccessDeniedException;
 import com.equoterapia.web.exceptions.NotFoundException;
 import com.equoterapia.web.repositories.ProfessionalRepository;
@@ -44,6 +45,10 @@ public class ProfessionalService {
             throw new NotFoundException("Profissional não encontrado");
         }
         return professionalRepository.findProfessionalByUsername(username);
+    }
+
+    public List<Professional> findProfessionalByRole(Roles role) {
+        return professionalRepository.findProfessionalByRole(role);
     }
 
     public Professional insert(Professional professional) {
@@ -89,6 +94,9 @@ public class ProfessionalService {
     public Appointment marcarConsulta(Long professional_id, Long pacient_id, Appointment appointment) {
         try {
             Professional professional = findById(professional_id);
+            if (professional.getRole().equals(Roles.EQUITADOR) || professional.getRole().equals(Roles.MEDIADOR)){
+                throw new IllegalArgumentException("Este profissional não pode marcar uma consulta!");
+            }
             Pacient pacient = pacientService.findById(pacient_id);
 
             appointment.setProfessional(professional);
@@ -109,7 +117,6 @@ public class ProfessionalService {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-
     }
 
     public void desmarcarConsulta(Long professionalId, Long appointmentId) {

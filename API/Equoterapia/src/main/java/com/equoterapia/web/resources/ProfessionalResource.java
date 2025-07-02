@@ -2,7 +2,9 @@ package com.equoterapia.web.resources;
 
 import com.equoterapia.web.entities.Appointment;
 import com.equoterapia.web.entities.Professional;
+import com.equoterapia.web.entities.enums.Roles;
 import com.equoterapia.web.services.ProfessionalService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,6 +13,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 import java.util.List;
 
+@Slf4j
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping(value = "/professional")
@@ -33,8 +36,15 @@ public class ProfessionalResource {
 
     @GetMapping(value = "/")
     public ResponseEntity<Professional> findProfessionalByUsername(@RequestParam String username) {
+        log.info("Buscando professionals por username {}", username);
         Professional professional = professionalService.findProfessionalByUsername(username);
         return ResponseEntity.ok().body(professional);
+    }
+    @GetMapping(value = "/role")
+    public ResponseEntity<List<Professional>> findByRoles(@RequestParam String role) {
+        log.info("Buscando professionals por role {}", role);
+        List<Professional> professionals = professionalService.findProfessionalByRole(Roles.valueOf(role.toUpperCase()));
+        return ResponseEntity.ok().body(professionals);
     }
 
     @PostMapping

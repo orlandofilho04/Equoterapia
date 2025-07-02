@@ -1,6 +1,8 @@
 package com.equoterapia.web.services;
 
 import com.equoterapia.web.entities.*;
+import com.equoterapia.web.entities.enums.Roles;
+import com.equoterapia.web.exceptions.InvalidRoleException;
 import com.equoterapia.web.exceptions.NotFoundException;
 import com.equoterapia.web.exceptions.PacientMustBeActiveException;
 import com.equoterapia.web.exceptions.UnavailableDateException;
@@ -25,11 +27,6 @@ public class SessionService {
     private HorseService horseService;
     @Autowired
     private ProfessionalService professionalService;
-    @Autowired
-    private EquitorService equitorService;
-    @Autowired
-    private MediatorService mediatorService;
-
 
     public List<Session> findAll() {
         return sessionRepository.findAll();
@@ -49,7 +46,9 @@ public class SessionService {
 
     @Transactional(rollbackFor = {NotFoundException.class, UnavailableDateException.class, PacientMustBeActiveException.class})
     public Session registerSession(Session session, Long pacient_id, Long horse_id, Long professional_id, Long equitor_id, Long mediator_id) {
-        if (sessionRepository.existsSessionBySessionHour(session.getSessionHour())) throw new UnavailableDateException("Data e Hora indisponíveis para agendamento!");
+        if (sessionRepository.existsSessionBySessionHour(session.getSessionHour())) {
+            throw new UnavailableDateException("Data e Hora indisponíveis para agendamento!");
+        }
         if (session.getSessionHour().isBefore(LocalDateTime.now(ZoneId.of("America/Sao_Paulo")))){
             throw new UnavailableDateException("Impossivel agendar uma sessão no passado");
         }
@@ -57,12 +56,24 @@ public class SessionService {
         Pacient pacient = pacientService.findById(pacient_id);
         if (!pacient.isActive()) throw new PacientMustBeActiveException("O paciente utilizado se encontra " + pacient.getStatus());
         Horse horse = horseService.findById(horse_id);
+
         Professional professional = professionalService.findById(professional_id);
-        Equitor equitor = equitorService.findById(equitor_id);
-        Mediator mediator = mediatorService.findById(mediator_id);
+        if (professional.getRole() == Roles.EQUITADOR || professional.getRole() == Roles.MEDIADOR){
+            throw new InvalidRoleException("Este profissional não pode marcar uma consulta: "+professional.getName());
+        }
+        Professional equitor = professionalService.findById(equitor_id);
+        if (equitor.getRole() != Roles.EQUITADOR){
+            throw new InvalidRoleException("Profissão invalida, confira as informações. " +
+                    "Esperado -> " + Roles.EQUITADOR + " | Obteve -> " + equitor.getRole());
+        }
+        Professional mediator = professionalService.findById(mediator_id);
+        if (mediator.getRole() != Roles.MEDIADOR){
+            throw new InvalidRoleException("Profissão invalida, confira as informações. " +
+                    "Esperado -> " + Roles.MEDIADOR + " | Obteve -> " + mediator.getRole());
+        }
 
         session.getProfessionals().add(professional);
-        session.setEquine(horse);
+        session.setHorse(horse);
         session.setPacient(pacient);
         session.setEquitor(equitor);
         session.setMediator(mediator);
@@ -95,11 +106,11 @@ public class SessionService {
     }
 
     public List<Session> findAllByEquitorId(Long equitor_id) {
-        equitorService.findById(equitor_id);
+        professionalService.findById(equitor_id);
         return sessionRepository.findAllByEquitorId(equitor_id);
     }
     public List<Session> findAllByMediatorId(Long mediator_id) {
-        mediatorService.findById(mediator_id);
+        professionalService.findById(mediator_id);
         return sessionRepository.findAllByMediatorId(mediator_id);
     }
 }
