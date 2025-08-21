@@ -41,7 +41,7 @@ public class Pacient {
     private PacientStatus status;
 
     @ManyToMany(mappedBy = "pacients")
-    private List<LegallyResponsible> LegallyResponsibles  = new ArrayList<>();
+    private List<LegallyResponsible> legallyResponsibles  = new ArrayList<>();
 
     @OneToMany(mappedBy = "pacient", cascade = CascadeType.ALL)
     @JsonIgnore
