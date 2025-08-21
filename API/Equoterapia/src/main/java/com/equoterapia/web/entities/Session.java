@@ -40,16 +40,16 @@ public class Session {
 
     @ManyToOne
     @JoinColumn(name = "pacient_id")
-    private Pacient pacient = new Pacient();
+    private Pacient pacient;
 
     @ManyToOne
     @JoinColumn(name = "horse_id")
-    private Horse equine = new Horse();
+    private Horse horse;
 
     @ManyToOne
     @JoinColumn(name = "equitor_id")
-    private Equitor equitor = new Equitor();
+    private Professional equitor;
     @ManyToOne
     @JoinColumn(name = "mediator_id")
-    private Mediator mediator = new Mediator();
+    private Professional mediator;
 }

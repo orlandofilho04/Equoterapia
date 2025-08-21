@@ -85,4 +85,14 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         );
         return new ResponseEntity<>(exceptionPayload, statusCode);
     }
+    @ExceptionHandler(InvalidRoleException.class)
+    public ResponseEntity<Object> InvalidRoleExceptionHandler(InvalidRoleException invalidRoleException){
+        HttpStatus statusCode =  HttpStatus.BAD_REQUEST;
+        ExceptionPayload exceptionPayload = new ExceptionPayload(
+                invalidRoleException.getMessage(),
+                statusCode,
+                ZonedDateTime.now(ZoneId.of("America/Sao_Paulo"))
+        );
+        return new ResponseEntity<>(exceptionPayload, statusCode);
+    }
 }

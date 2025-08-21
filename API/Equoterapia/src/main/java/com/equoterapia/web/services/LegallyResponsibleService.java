@@ -26,6 +26,10 @@ public class LegallyResponsibleService {
         return legallyResponsibleRepository.findById(id).orElseThrow();
     }
 
+    public LegallyResponsible findByCpf(String cpf){
+        return legallyResponsibleRepository.findLegallyResponsibleByCpf(cpf).orElseThrow(NotFoundException::new);
+    }
+
     public void delete(Long id){
         if (!legallyResponsibleRepository.existsById(id)){
             throw new NotFoundException("Responsável legal não encontrado");

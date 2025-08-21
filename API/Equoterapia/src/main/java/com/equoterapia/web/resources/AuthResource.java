@@ -8,6 +8,7 @@ import com.equoterapia.web.entities.Professional;
 import com.equoterapia.web.repositories.ProfessionalRepository;
 import com.equoterapia.web.services.ProfessionalService;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -15,6 +16,7 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("auth")
@@ -43,6 +45,7 @@ public class AuthResource {
     @PostMapping(value = "/register")
     public ResponseEntity<Professional> register(@RequestBody @Valid RegisterDTO user, @RequestParam(required = false) String adminPass){
         if (this.professionalRepository.findByUsername(user.username()) != null){
+            log.info("Professional already exists");
             return ResponseEntity.badRequest().build();
         }
 

@@ -84,17 +84,6 @@ public class Professional implements UserDetails {
     @Column
     private LocalDateTime createdAt = LocalDateTime.now(ZoneId.of("America/Sao_Paulo"));
 
-    @ManyToMany
-    @JsonIgnore
-    @JoinTable(name = "tb_professionals_has_pacients",
-            joinColumns = @JoinColumn(name = "professional_id"),
-            inverseJoinColumns = @JoinColumn(name = "pacient_id"))
-    private List<Pacient> pacients = new ArrayList<>();
-
-    @OneToMany(mappedBy = "professional")
-    @JsonIgnore
-    private List<Appointment> appointments = new ArrayList<>();
-
     @JsonIgnore
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -135,4 +124,14 @@ public class Professional implements UserDetails {
         return UserDetails.super.isEnabled();
     }
 
+    @ManyToMany
+    @JsonIgnore
+    @JoinTable(name = "tb_professionals_has_pacients",
+            joinColumns = @JoinColumn(name = "professional_id"),
+            inverseJoinColumns = @JoinColumn(name = "pacient_id"))
+    private List<Pacient> pacients = new ArrayList<>();
+
+    @OneToMany(mappedBy = "professional")
+    @JsonIgnore
+    private List<Appointment> appointments = new ArrayList<>();
 }
