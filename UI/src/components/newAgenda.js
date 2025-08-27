@@ -60,9 +60,9 @@ function NewAgenda() {
             try {
                 const [pRes, eRes, hRes, mRes] = await Promise.all([
                     api.get('/pacients'),
-                    api.get('/equitors'),
+                    api.get('/professional/role?role=EQUITADOR'),
                     api.get('/horses'),
-                    api.get('/mediators')
+                    api.get('/professional/role?role=MEDIADOR')
                 ]);
 
                 setPacients(pRes.data);
@@ -190,10 +190,10 @@ function NewAgenda() {
                     <Form.Group as={Col} xs={12} sm={6} md={4} controlId="formGridPraticante" className='mb-3'>
                         <Form.Label>Praticante</Form.Label>
                         <Form.Select onChange={handleSelectPacient}>
-                            <option value="">Selecione um Praticante</option>
-                            {pacients.map((pacient) => (
-                                <option key={pacient.id} value={pacient.id}>
-                                    {pacient.name}
+                            <option value="" disabled selected>Selecione um Praticante</option>
+                            {pacients.filter(p => p.status === "ATIVO").map(p => (
+                                <option key={p.id} value={p.id}>
+                                    {p.name}
                                 </option>
                             ))}
                         </Form.Select>
@@ -245,7 +245,7 @@ function NewAgenda() {
                     <Form.Group as={Col} xs={12} md={4} controlId="formGridHorarios" className='mb-3'>
                         <Form.Label>Horários Disponíveis</Form.Label>
                         <Form.Select value={selectedTime} onChange={(e) => setSelectedTime(e.target.value)} disabled={!selectedDate}>
-                            <option value="">Selecione um Horário</option>
+                            <option value="" disabled selected>Selecione um Horário</option>
                             {getAvailableHours().map((hour) => (
                             <option key={hour} value={hour}>{hour}</option>
                             ))}
@@ -262,7 +262,7 @@ function NewAgenda() {
                     <Form.Group as={Col} xs={12} md={4} className="mb-3" controlId="formGridEquitor">
                         <Form.Label>Equitador</Form.Label>
                         <Form.Select onChange={handleSelectEquitor}>
-                            <option value="">Selecione um Equitador</option>
+                            <option value="" disabled selected>Selecione um Equitador</option>
                             {equitors.map((equitor) => (
                                 <option key={equitor.id} value={equitor.id}>
                                     {equitor.name}
@@ -274,8 +274,8 @@ function NewAgenda() {
                     <Form.Group as={Col} xs={12} md={4} controlId="formGridCavalo" className='mb-3'>
                         <Form.Label>Cavalo</Form.Label>
                         <Form.Select onChange={handleSelectHorse}>
-                            <option value="">Selecione um Animal</option>
-                            {horsers.map((horse) => (
+                            <option value="" disabled selected>Selecione um Animal</option>
+                            {horsers.filter(horse => horse.status === "ATIVO").map((horse) => (
                                 <option key={horse.id} value={horse.id}>
                                     {horse.name}
                                 </option>

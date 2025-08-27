@@ -8,7 +8,7 @@ const CadastroPraticante1 = () => {
 
   return (
     <div className="container my-5">
-      <div className="cadastro-title mb-4">
+      <div className="cadastroPraticante-title mb-4">
         Cadastre um novo praticante
       </div>
 
@@ -20,7 +20,7 @@ const CadastroPraticante1 = () => {
               <Form.Label>Nome do Praticante</Form.Label>
               <Form.Control 
                 type="text"
-                placeholder="Selecione o Praticante"
+                placeholder="Digite o nome completo do praticante"
                 className="input-field"
               />
             </Form.Group>
@@ -33,14 +33,14 @@ const CadastroPraticante1 = () => {
         </Row>
 
         {/* Escolaridade */}
-        <div className="section-title">Escolaridade</div>
+        <div className="sectionPraticante-title">Escolaridade</div>
         <Row className="mb-4">
           <Col xs={12} md={4}>
             <Form.Group>
               <Form.Label>Turma</Form.Label>
               <Form.Control 
                 type="text" 
-                placeholder="00/00/00"
+                placeholder="Em qual turma está matriculado(a)"
                 className="input-field"
               />
             </Form.Group>
@@ -50,7 +50,7 @@ const CadastroPraticante1 = () => {
               <Form.Label>Ano/Série</Form.Label>
               <Form.Control 
                 type="text" 
-                placeholder="00:00"
+                placeholder="Em que ano/série escolar está matriculado(a)"
                 className="input-field"
               />
             </Form.Group>
@@ -60,7 +60,7 @@ const CadastroPraticante1 = () => {
               <Form.Label>Modalidade Escolar</Form.Label>
               <Form.Control 
                 type="text" 
-                placeholder="Nome do Condutor"
+                placeholder="Em qual a modalidade escolar está matriculado(a)"
                 className="input-field"
               />
             </Form.Group>
@@ -73,7 +73,7 @@ const CadastroPraticante1 = () => {
               <Form.Label>Instituição de Ensino</Form.Label>
               <Form.Control 
                 type="text" 
-                placeholder="Digite o nome do Mediador"
+                placeholder="Em qual instituição de ensino está matriculado(a)"
                 className="input-field"
               />
             </Form.Group>
@@ -81,15 +81,17 @@ const CadastroPraticante1 = () => {
           <Col xs={12} md={6}>
             <Form.Group>
               <Form.Label>Turno de Estudo</Form.Label>
-              <Form.Select className="input-field">
-                <option>Selecione o Encilhamento utilizado</option>
-              </Form.Select>
+              <Form.Control 
+                type="text" 
+                placeholder="Em qual período do dia está matriculado(a)"
+                className="input-field"
+              />
             </Form.Group>
           </Col>
         </Row>
 
         {/* Dados de Identificação */}
-        <div className="section-title">Dados de Identificação</div>
+        <div className="sectionPraticante-title">Dados de Identificação</div>
         <Row className="mb-3">
           <Col xs={12} md={4}>
             <Form.Group>
@@ -116,6 +118,8 @@ const CadastroPraticante1 = () => {
               <Form.Label>Sexo</Form.Label>
               <Form.Select className="input-field">
                 <option>Selecione o sexo</option>
+                <option>Masculino</option>
+                <option>Feminino</option>
               </Form.Select>
             </Form.Group>
           </Col>
@@ -137,7 +141,7 @@ const CadastroPraticante1 = () => {
               <Form.Label>Idade Atual</Form.Label>
               <Form.Control 
                 type="text" 
-                placeholder="00/00/00"
+                placeholder="Considerando a data atual"
                 className="input-field"
               />
             </Form.Group>
@@ -201,15 +205,17 @@ const CadastroPraticante1 = () => {
           <Col xs={12} md={3}>
             <Form.Group>
               <Form.Label>Cuidador</Form.Label>
-              <Form.Select className="input-field">
-                <option>Selecione o cuidador</option>
-              </Form.Select>
+              <Form.Control 
+                type="text" 
+                placeholder="Informe o nome do cuidador"
+                className="input-field"
+              />
             </Form.Group>
           </Col>
         </Row>
 
         {/* Diagnostico Clínico */}
-        <div className="section-title">Diagnóstico Clínico</div>
+        <div className="sectionPraticante-title">Diagnóstico Clínico</div>
         <Row className="mb-4">
           <Col xs={12}>
             <Form.Group>
@@ -225,7 +231,7 @@ const CadastroPraticante1 = () => {
         </Row>
 
         {/* Responsáveis pelo Praticante */}
-        <div className="section-title">Responsáveis pelo Praticante</div>
+        <div className="sectionPraticante-title">Responsáveis pelo Praticante</div>
         
         {/* Responsável 1 */}
         <div className="responsavel-wrapper mb-4">
@@ -236,25 +242,28 @@ const CadastroPraticante1 = () => {
                 <Form.Label>Grau de parentesco</Form.Label>
                 <Form.Select className="input-field">
                   <option>Selecione o grau de parentesco</option>
+                  <option>Pai</option>
+                  <option>Mãe</option>
+                  <option>Outro</option>
                 </Form.Select>
               </Form.Group>
             </Col>
             <Col xs={12} md={4}>
               <Form.Group>
-                <Form.Label>Profissão</Form.Label>
+                <Form.Label>Nome</Form.Label>
                 <Form.Control 
                   type="text" 
-                  placeholder="Digite a profissão"
+                  placeholder="Digite o nome completo"
                   className="input-field"
                 />
               </Form.Group>
             </Col>
             <Col xs={12} md={4}>
               <Form.Group>
-                <Form.Label>Telefone 1</Form.Label>
+                <Form.Label>CPF</Form.Label>
                 <Form.Control 
                   type="text" 
-                  placeholder="(00) 0 0000-0000"
+                  placeholder="000.000.000-00"
                   className="input-field"
                 />
               </Form.Group>
@@ -274,17 +283,17 @@ const CadastroPraticante1 = () => {
             </Col>
             <Col xs={12} md={4}>
               <Form.Group>
-                <Form.Label>E-mail</Form.Label>
-                <Form.Control 
-                  type="email" 
-                  placeholder="Digite o e-mail"
-                  className="input-field"
-                />
+                <Form.Label>Sexo</Form.Label>
+                <Form.Select className="input-field">
+                <option>Selecione o sexo</option>
+                <option>Masculino</option>
+                <option>Feminino</option>
+              </Form.Select>
               </Form.Group>
             </Col>
             <Col xs={12} md={4}>
               <Form.Group>
-                <Form.Label>Telefone do trabalho</Form.Label>
+                <Form.Label>Telefone</Form.Label>
                 <Form.Control 
                   type="text" 
                   placeholder="(00) 0 0000-0000"
@@ -304,25 +313,28 @@ const CadastroPraticante1 = () => {
                 <Form.Label>Grau de parentesco</Form.Label>
                 <Form.Select className="input-field">
                   <option>Selecione o grau de parentesco</option>
+                  <option>Pai</option>
+                  <option>Mãe</option>
+                  <option>Outro</option>
                 </Form.Select>
               </Form.Group>
             </Col>
             <Col xs={12} md={4}>
               <Form.Group>
-                <Form.Label>Profissão</Form.Label>
+                <Form.Label>Nome</Form.Label>
                 <Form.Control 
                   type="text" 
-                  placeholder="Digite a profissão"
+                  placeholder="Digite o nome completo"
                   className="input-field"
                 />
               </Form.Group>
             </Col>
             <Col xs={12} md={4}>
               <Form.Group>
-                <Form.Label>Telefone 1</Form.Label>
+                <Form.Label>CPF</Form.Label>
                 <Form.Control 
                   type="text" 
-                  placeholder="(00) 0 0000-0000"
+                  placeholder="000.000.000-00"
                   className="input-field"
                 />
               </Form.Group>
@@ -342,17 +354,17 @@ const CadastroPraticante1 = () => {
             </Col>
             <Col xs={12} md={4}>
               <Form.Group>
-                <Form.Label>E-mail</Form.Label>
-                <Form.Control 
-                  type="email" 
-                  placeholder="Digite o e-mail"
-                  className="input-field"
-                />
+                <Form.Label>Sexo</Form.Label>
+                <Form.Select className="input-field">
+                <option>Selecione o sexo</option>
+                <option>Masculino</option>
+                <option>Feminino</option>
+              </Form.Select>
               </Form.Group>
             </Col>
             <Col xs={12} md={4}>
               <Form.Group>
-                <Form.Label>Telefone do trabalho</Form.Label>
+                <Form.Label>Telefone</Form.Label>
                 <Form.Control 
                   type="text" 
                   placeholder="(00) 0 0000-0000"

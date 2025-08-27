@@ -55,7 +55,7 @@ const Login = () => {
       if (localStorage.getItem("isAdmin") === "true") {
         navigate("/agenda");
       } else if (localStorage.getItem("role") === "EQUITADOR") {
-        navigate("/equitador");
+        navigate("/equitador/agenda");
       } else {
         navigate("/agenda-geral");
       }

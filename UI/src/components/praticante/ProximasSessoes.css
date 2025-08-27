@@ -70,6 +70,21 @@
     color: #07C158 !important;
 }
 
+.btn-outline-primary {
+    font-size: 1rem;
+    font-weight: bold;
+    color: black;
+    border-radius: 25px;
+    outline: none;
+    border-color: #07C158;
+}
+
+.btn-outline-primary:hover {
+    background-color: #05a140;
+    border-color: #05a140;
+    color: white;
+}
+
 /* Responsividade */
 @media (max-width: 768px) {
     .titulo {

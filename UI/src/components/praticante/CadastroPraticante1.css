@@ -105,11 +105,11 @@ textarea.input-field {
 
 /* Responsividade */
 @media (max-width: 768px) {
-    .cadastro-title {
+    .cadastroPraticante-title {
         font-size: 20px;
     }
 
-    .section-title {
+    .sectionPraticante-title {
         font-size: 14px;
     }
 

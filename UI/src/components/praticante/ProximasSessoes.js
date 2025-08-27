@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Button } from "react-bootstrap";
-import "./ProximasSessoes.css"; 
+import "./ProximasSessoes.css";
+import { format, subHours } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
+import { Link } from "react-router-dom";
+import { FaEye } from "react-icons/fa"; 
 import api from "../../services/api";
 
 const ProximasSessoes = () => {
@@ -69,11 +73,19 @@ const ProximasSessoes = () => {
         })()
       : 'Desconhecida'
   } Anos</p>
-        <p className="mb-0">Data da sessão: {sessao.sessionHour}</p>
+        <p className="mb-0">Data da sessão: {
+          format(subHours(new Date(sessao.sessionHour), 0), "dd MMM yyyy, hh:mm a", { locale: ptBR })
+        }</p>
       </div>
       <p className={`status ${sessao.sessionStatus === "AGENDADA" ? "text-success" : "text-danger"} mb-0`}>
         Status: {sessao.sessionStatus}
       </p>
+
+      {/* Botão para detalhes */}
+      <Link to={`/DetalhesSessao/${sessao.id}`} className="btn btn-outline-primary">
+        <FaEye />
+      </Link>
+
     </div>
   ));
 

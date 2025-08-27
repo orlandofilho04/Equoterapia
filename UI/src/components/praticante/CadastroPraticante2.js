@@ -8,13 +8,13 @@ const CadastroPraticante2 = () => {
 
   return (
     <div className="container my-5">
-      <div className="cadastro-title mb-4">
+      <div className="cadastroPraticante-title mb-4">
         Cadastre um novo praticante 2/2
       </div>
 
       <Form className="cadastro-form">
         {/* Cronograma de atividade */}
-        <div className="section-title mb-4">
+        <div className="sectionPraticante-title mb-4">
           Cronograma de atividade do Praticante em outras instituições
         </div>
 
@@ -34,19 +34,19 @@ const CadastroPraticante2 = () => {
               <tbody>
                 <tr>
                   <td className="bg-light">Matutino</td>
-                  <td><Form.Check className="d-flex justify-content-center" /></td>
-                  <td><Form.Check className="d-flex justify-content-center" /></td>
-                  <td><Form.Check className="d-flex justify-content-center" /></td>
-                  <td><Form.Check className="d-flex justify-content-center" /></td>
-                  <td><Form.Check className="d-flex justify-content-center" /></td>
+                  <td><Form.Check className="d-flex justify-content-center check-Praticante" /></td>
+                  <td><Form.Check className="d-flex justify-content-center check-Praticante" /></td>
+                  <td><Form.Check className="d-flex justify-content-center check-Praticante" /></td>
+                  <td><Form.Check className="d-flex justify-content-center check-Praticante" /></td>
+                  <td><Form.Check className="d-flex justify-content-center check-Praticante" /></td>
                 </tr>
                 <tr>
                   <td className="bg-light">Vespertino</td>
-                  <td><Form.Check className="d-flex justify-content-center" /></td>
-                  <td><Form.Check className="d-flex justify-content-center" /></td>
-                  <td><Form.Check className="d-flex justify-content-center" /></td>
-                  <td><Form.Check className="d-flex justify-content-center" /></td>
-                  <td><Form.Check className="d-flex justify-content-center" /></td>
+                  <td><Form.Check className="d-flex justify-content-center check-Praticante" /></td>
+                  <td><Form.Check className="d-flex justify-content-center check-Praticante" /></td>
+                  <td><Form.Check className="d-flex justify-content-center check-Praticante" /></td>
+                  <td><Form.Check className="d-flex justify-content-center check-Praticante" /></td>
+                  <td><Form.Check className="d-flex justify-content-center check-Praticante" /></td>
                 </tr>
               </tbody>
             </table>
@@ -68,7 +68,7 @@ const CadastroPraticante2 = () => {
         </Row>
 
         {/* Em caso de emergência */}
-        <div className="section-title mb-4">Em caso de emergência</div>
+        <div className="sectionPraticante-title mb-4">Em caso de emergência</div>
         
         <Row className="mb-4">
           <Col xs={12} md={8}>
@@ -107,7 +107,7 @@ const CadastroPraticante2 = () => {
         </Row>
 
         {/* Informações complementares */}
-        <div className="section-title mb-4">Informações complementares</div>
+        <div className="sectionPraticante-title mb-4">Informações complementares</div>
 
         <Row className="mb-4">
           <Col xs={12} md={6}>
@@ -160,14 +160,14 @@ const CadastroPraticante2 = () => {
           <Col className="d-flex justify-content-end gap-3">
             <Button 
               variant="secondary" 
-              className="btn-voltar"
+              className="btnP-voltar"
               onClick={() => navigate('/cadastro-praticante')}
             >
               Voltar
             </Button>
             <Button 
               variant="primary" 
-              className="btn-concluir"
+              className="btnP-concluir"
               onClick={() => navigate('/')}
             >
               Concluir novo cadastro

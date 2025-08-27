@@ -1,10 +1,10 @@
-.cadastro-title {
+.cadastroPraticante-title {
     color: #00A335 !important;
     font-weight: bold;
     font-size: 24px;
 }
 
-.section-title {
+.sectionPraticante-title {
     color: #00A335 !important;
     font-weight: bold;
     font-size: 16px;
@@ -59,7 +59,7 @@
 }
 
 /* Checkboxes customizados */
-.form-check-input {
+.check-Praticante .form-check-input {
     width: 20px;
     height: 20px;
     margin: 0;
@@ -67,13 +67,13 @@
     border: 2px solid #00A335 !important;
 }
 
-.form-check-input:checked {
+.check-Praticante .form-check-input:checked {
     background-color: #00A335 !important;
     border-color: #00A335 !important;
 }
 
 /* Botões */
-.btn-voltar {
+.btnP-voltar {
     background-color: #032437;
     border: none;
     color: #FAFAFA;
@@ -84,7 +84,7 @@
     min-width: 120px;
 }
 
-.btn-concluir {
+.btnP-concluir {
     background-color: #00A335 !important;
     border: none;
     color: #FAFAFA;

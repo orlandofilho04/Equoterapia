@@ -375,7 +375,7 @@ function App() {
           />
 
           <Route
-            path="/DetalhesSessao"
+            path="/DetalhesSessao/:id"
             element={
               <PrivateRoute>
                 <div className="app-content">

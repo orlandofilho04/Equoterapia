@@ -10,6 +10,7 @@ const SidebarEquitador = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const name = localStorage.getItem('name');
 
   useEffect(() => {
     // Atualiza o botão ativo baseado na rota atual
@@ -93,7 +94,7 @@ const SidebarEquitador = () => {
         </div>
 
         <h5 className="text-center mb-2 fw-bold">Bem Vindo!</h5>
-        <h6 className="username-equitador mb-5 fw-bold">Nome do Usuário</h6>
+        <h6 className="username-equitador mb-5 fw-bold">{name.length > 30 ? `${name.slice(0, 30)}...` : name}</h6>
 
         <button
           className={`btn sidebar-button mb-4 fw-bold ${
