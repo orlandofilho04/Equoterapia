@@ -74,11 +74,16 @@ function AgendaEquitador() {
 
     // Organiza as sessões por dia e horário
     const organizedSessions = weekDates.reduce((acc, date) => {
-        const dayKey = date.toISOString().split('T')[0];
-        acc[dayKey] = sessions.filter(session => 
-            new Date(session.date).toISOString().split('T')[0] === dayKey
+    const dayKey = date.toISOString().split("T")[0];
+    acc[dayKey] = sessions.filter((session) => {
+        if (!session.sessionHour) return false;
+        const sessionDate = new Date(session.sessionHour);
+        return (
+        !isNaN(sessionDate) &&
+        sessionDate.toISOString().split("T")[0] === dayKey
         );
-        return acc;
+    });
+    return acc;
     }, {});
 
     return (
@@ -134,12 +139,31 @@ function AgendaEquitador() {
                                             className={session ? "session-cell" : "empty-cell"}
                                         >
                                             {session ? (
-                                                <>
-                                                    <small>{`${session.startTime} - ${session.endTime}`}</small>
-                                                    <div>{session.patientName}</div>
-                                                </>
+                                            <>
+                                                {(() => {
+                                                const inicio = new Date(session.sessionHour);
+                                                const fim = new Date(inicio);
+                                                fim.setHours(fim.getHours() + 1);
+
+                                                const horaInicio = inicio.toLocaleTimeString("pt-BR", {
+                                                    hour: "2-digit",
+                                                    minute: "2-digit",
+                                                });
+                                                const horaFim = fim.toLocaleTimeString("pt-BR", {
+                                                    hour: "2-digit",
+                                                    minute: "2-digit",
+                                                });
+
+                                                return (
+                                                    <>
+                                                    <small>{`${horaInicio} - ${horaFim}`}</small>
+                                                    <div>{session.pacient?.name || "Sem praticante"}</div>
+                                                    </>
+                                                );
+                                                })()}
+                                            </>
                                             ) : (
-                                                <div>-</div>
+                                            <div>-</div>
                                             )}
                                         </td>
                                     );

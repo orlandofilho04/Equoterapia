@@ -16,7 +16,8 @@
     padding: 20px;
     max-width: 500px;
     width: 90%;
-    height: inherit;
+    max-height: 80vh;
+    overflow-y: auto;
     border-radius: 10px;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
     position: relative;
