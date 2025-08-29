@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 import api from "../../services/api";
 import "./ListarPraticantes.css";
 
@@ -26,7 +28,17 @@ function PraticantesAtivos() {
     setSearchTerm(event.target.value);
   };
 
-  const praticantesAtivos = praticantes.filter(p => p.status == "ATIVO");
+  const calcularIdade = (dataNascimento) => {
+    const hoje = new Date();
+    let idade = hoje.getFullYear() - dataNascimento.getFullYear();
+    const m = hoje.getMonth() - dataNascimento.getMonth();
+    if (m < 0 || (m === 0 && hoje.getDate() < dataNascimento.getDate())) {
+      idade--;
+    }
+    return idade;
+  };
+
+  const praticantesAtivos = praticantes.filter(p => p.status === "ATIVO");
 
   // Filtra por nome
   const filteredPraticantes = praticantesAtivos.filter(praticante =>
@@ -75,35 +87,54 @@ function PraticantesAtivos() {
 
         {/* Lista de praticantes */}
         <div className="conteudo-lista list-group">
-          {filteredPraticantes.map((praticante, index) => (
-            <div
-              key={index}
-              className="bg-praticante list-group-item d-flex justify-content-between align-items-center"
-            >
-              <div className="d-flex align-items-center">
-                <img
-                  src={praticante.photo || "https://img.freepik.com/fotos-premium/icone-plano-isolado-no-fundo_1258715-220844.jpg?semt=ais_hybrid"}
-                  alt="Praticante"
-                  className="rounded-circle me-3 img-perfil"
-                />
-                <div className="me-5">
-                  <h5 className="mb-0">{praticante.name}</h5>
-                </div>
+          {filteredPraticantes.map((praticante, index) => {
+            const dataNascimento = praticante.birthDate ? new Date(praticante.birthDate) : null;
+            const idade = dataNascimento ? calcularIdade(dataNascimento) : null;
 
-                <div className="me-5">
-                  <p className="mb-0">{praticante.age ? `${praticante.age} anos` : "Idade não informada"}</p>
-                </div>
+            return (
+              <div
+                key={index}
+                className="bg-praticante list-group-item d-flex justify-content-between align-items-center"
+              >
+                <div className="d-flex align-items-center gap-5">
+                  <img
+                    src={praticante.photo || "https://img.freepik.com/fotos-premium/icone-plano-isolado-no-fundo_1258715-220844.jpg"}
+                    alt="Praticante"
+                    className="rounded-circle me-3 img-perfil"
+                  />
+                  <div className="me-5">
+                    <h5 className="mb-0">{praticante.name}</h5>
+                  </div>
 
-                <div className="me-5">
-                  <p className="mb-0">{praticante.dataCadastro || "Data não informada"}</p>
+                  <div className="me-5">
+                    <p className="mb-0">
+                      {idade ? `Idade: ${idade} anos` : "Idade não informada"}
+                    </p>
+                  </div>
+
+                  <div className="me-5">
+                    <p className="mb-0">
+                      Data de Nascimento:{" "}
+                      {dataNascimento
+                        ? format(dataNascimento, "dd/MM/yyyy", { locale: ptBR })
+                        : "Data não informada"}
+                    </p>
+                  </div>
+                </div>
+                <div className="d-flex align-items-center">
+                  <span className="cor-padrao-btn-praticante badge me-3">
+                    Status: Ativo
+                  </span>
+                  <button
+                    className="btn btn-light btn-sm"
+                    onClick={() => console.log("Arquivar praticante", praticante.id)}
+                  >
+                    Arquivar praticante
+                  </button>
                 </div>
               </div>
-              <div className="d-flex align-items-center">
-                <span className="cor-padrao-btn-praticante badge me-3">Status: Ativo</span>
-                <button className="btn btn-light btn-sm">Arquivar praticante</button>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </div>

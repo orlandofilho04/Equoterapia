@@ -15,7 +15,7 @@ function FloatCard({ sessions, onClose }) {
                         <Card.Body>
                             <Card.Title>{new Date(session.sessionHour).toLocaleString()}</Card.Title>
                             <Card.Text>Status: {session.sessionStatus}</Card.Text>
-                            <Card.Text>Profissional: {session.professionals?.[0]?.name}</Card.Text>
+                            <Card.Text>Cavalo: {session.horse.name}</Card.Text>
                         </Card.Body>
                     </Card>
                 ))}

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Button } from "react-bootstrap";
 import "./ProximasSessoes.css";
-import { format, subHours } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+//import { format, subHours } from 'date-fns';
+//import { ptBR } from 'date-fns/locale';
 import { Link } from "react-router-dom";
 import { FaEye } from "react-icons/fa"; 
 import api from "../../services/api";
@@ -30,7 +30,7 @@ const ProximasSessoes = () => {
      
        const aberta = [];
       const concluidas = [];
-    
+
         for(let i = 0; i < sessionGet.data.length; i++ ){
           console.log(sessionGet.data[i]);
           if(sessionGet.data[i].sessionStatus === "AGENDADA"){
@@ -74,7 +74,8 @@ const ProximasSessoes = () => {
       : 'Desconhecida'
   } Anos</p>
         <p className="mb-0">Data da sessão: {
-          format(subHours(new Date(sessao.sessionHour), 0), "dd MMM yyyy, hh:mm a", { locale: ptBR })
+          //format(subHours(new Date(sessao.sessionHour), 0), "dd MMM yyyy, hh:mm a", { locale: ptBR })
+          <span>{new Date(sessao.sessionHour).toLocaleString()}</span>
         }</p>
       </div>
       <p className={`status ${sessao.sessionStatus === "AGENDADA" ? "text-success" : "text-danger"} mb-0`}>

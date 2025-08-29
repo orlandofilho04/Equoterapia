@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import './FotoEstilo.css';
 import fotoDefault from "../imgs/foto.jpg";
-import BotaoEfeito from './BotaoEfeito';
-import BotaoVerde from './BotaoArredondado';
 import gear from '../imgs/gear.png';
-import { Link, useParams, useNavigate } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
+import { Toast, ToastContainer } from 'react-bootstrap';
 import api from '../../services/api';
 
 const CabecalhoSessao = (props) => {
   const { id } = useParams();
-  const navigate = useNavigate();
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [showError, setShowError] = useState(false);
+  const [reload, setReload] = useState(false);
   const [sessionData, setSessionData] = useState({
     numeroSessao: "",
     status: "Carregando...",
@@ -22,8 +23,18 @@ const CabecalhoSessao = (props) => {
     horario: "",
     data: ""
   });
+  const [sessionEnd, setSessionEnd] = useState({
+    duration:"",
+    sessionHour:"",
+    sessionStatus: "CONCLUIDA",
+    pacient_id: "",
+    horse_id: "",
+    equitor_id: "",
+    mediator_id: "",
+  });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const token = localStorage.getItem('token');
 
   useEffect(() => {
     const fetchSessionData = async () => {
@@ -54,48 +65,49 @@ const CabecalhoSessao = (props) => {
         }
         
         console.log(`Buscando dados da sessão com ID: ${sessionId}`);
-        const sessionResponse = await api.get(`/api/sessions/${sessionId}`);
+        const response = await api.get(`/sessions/${sessionId}`);
+        const sessao = response.data;
         
-        if (!sessionResponse.data) {
+        if (!sessao) {
           throw new Error('Dados da sessão não encontrados');
         }
         
-        // Buscar dados do praticante da API
-        const praticantId = sessionResponse.data.praticantId;
-        const praticantResponse = await api.get(`/api/praticantes/${praticantId}`);
-        
-        if (!praticantResponse.data) {
-          throw new Error('Dados do praticante não encontrados');
-        }
-        
-        // Formatar data e hora no formato desejado
-        const dataHora = new Date(sessionResponse.data.dataHora);
+        const dataHora = new Date(sessao.sessionHour);
         const horaInicio = formatarHora(dataHora);
-        
-        // Adicionar 1 hora para o horário final
+
         const horaFim = new Date(dataHora);
         horaFim.setHours(horaFim.getHours() + 1);
         const horarioFim = formatarHora(horaFim);
-        
+
         const horarioCompleto = `${horaInicio} – ${horarioFim}`;
         const dataFormatada = formatarData(dataHora);
-        
+
         // Calcular idade
-        const dataNascimento = new Date(praticantResponse.data.dataNascimento);
+        const dataNascimento = new Date(sessao.pacient.birthDate);
         const idade = calcularIdade(dataNascimento);
-        
+
         // Verificar se há uma URL de foto, senão usar a padrão
-        const fotoUrl = praticantResponse.data.fotoUrl || fotoDefault;
-        
+        const fotoUrl = sessao.pacient.photo || fotoDefault;
+
         // Atualizar o estado com os dados da API
+        setSessionEnd({
+          id: sessao.id,
+          duration: sessao.duration,
+          sessionHour: sessao.sessionHour,
+          sessionStatus: "CONCLUIDA",
+          equitor: { id: sessao.equitor?.id },
+          mediator: { id: sessao.mediator?.id },
+          pacient: { id: sessao.pacient?.id },
+          horse: { id: sessao.horse?.id },
+        });
         setSessionData({
-          numeroSessao: sessionResponse.data.numeroSessao || sessionId,
-          status: sessionResponse.data.finalizada ? "Finalizada" : "Aberta",
+          numeroSessao: sessao.id || sessionId,
+          status: sessao.sessionStatus === "CONCLUIDA" ? "Finalizada" : "Aberta",
           praticante: {
-            nome: praticantResponse.data.nomeCompleto,
+            nome: sessao.pacient.name,
             idade: `${idade} anos`,
             foto: fotoUrl,
-            id: praticantId
+            id: sessao.pacient.id
           },
           horario: horarioCompleto,
           data: dataFormatada
@@ -124,7 +136,7 @@ const CabecalhoSessao = (props) => {
     };
     
     fetchSessionData();
-  }, [id, props.sessionId]);
+  }, [id, props.sessionId, reload]);
   
   // Função para formatar a hora no padrão HH:MM
   const formatarHora = (data) => {
@@ -151,18 +163,62 @@ const CabecalhoSessao = (props) => {
   };
   
   // Redirecionamento para a tela FinalizarSessao
-  const irParaFinalizarSessao = () => {
-    const sessionId = id || props.sessionId || 'demo';
-    navigate(`/finalizar-sessao/${sessionId}`);
+  const finalizarSessao = async () => {
+    try {
+
+      const response = await api.put(
+        `/sessions/${props.sessionId}`,
+        sessionEnd,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        setShowSuccess(true);
+        setSessionData(prev => ({ ...prev, sessionStatus: "CONCLUIDA" }));
+        setTimeout(() => {
+          setReload(prev => !prev);
+        }, 2000);
+      } else {
+        setShowError(true);
+      }
+    } catch (err) {
+      console.error("Erro ao finalizar sessão:", err);
+      setShowError(true);
+    }
   };
 
   return (
     <>
+      <ToastContainer position="top-end" className="p-3" style={{ zIndex: 9999 }}>
+                <Toast
+                    bg="success"
+                    onClose={() => setShowSuccess(false)}
+                    show={showSuccess}
+                    delay={2000}
+                    autohide
+                >
+                    <Toast.Body className="text-white text-center">Sessão finalizada com sucesso!</Toast.Body>
+                </Toast>
+
+                <Toast
+                    bg="danger"
+                    onClose={() => setShowError(false)}
+                    show={showError}
+                    delay={3000}
+                    autohide
+                >
+                    <Toast.Body className="text-white text-center">Erro ao finalizar sessão. Verifique com o suporte.</Toast.Body>
+                </Toast>
+            </ToastContainer>
       <div style={estilos.header}>
-        <h2>Sessão {sessionData.numeroSessao} - <span style={{...estilos.status, color: sessionData.status === "Aberta" ? "red" : "#07C158"}}>{sessionData.status}</span></h2>
+        <h2>Sessão {id} - <span style={{...estilos.status, color: sessionData.status === "Finalizada" ? "red" : "#07C158"}}>{sessionData.status}</span></h2>
       </div>
       <div>
-        <div style={{ display: 'flex', gap: '10px' }}>
+        <div style={{ display: 'flex', gap: '20px', paddingBottom: '20px' }}>
           <img src={sessionData.praticante.foto} alt="foto" title="foto" className="rounded-photo" />
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             <div style={{ display: 'flex', gap: '50px', alignItems: 'flex-start' }}>
@@ -170,7 +226,7 @@ const CabecalhoSessao = (props) => {
                 <h3 style={estilos.nomeEstilo}>{sessionData.praticante.nome}</h3>
                 <p style={{ margin: '5px 0' }}>{sessionData.praticante.idade}</p>
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '5px', paddingBottom: '15px' }}>
                 <div>
                   <strong>Horário da sessão: </strong>{sessionData.horario}
                 </div>
@@ -179,10 +235,10 @@ const CabecalhoSessao = (props) => {
                 </div>
               </div>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
               {sessionData.status !== "Finalizada" && (
-                <Link 
-                  to={`/finalizar-sessao/${id || props.sessionId || 'demo'}`}
+                <button
+                  onClick={finalizarSessao}
                   style={{ 
                     padding: '10px 15px',
                     backgroundColor: '#07C158',
@@ -196,7 +252,7 @@ const CabecalhoSessao = (props) => {
                   }}
                 >
                   Finalizar Sessão
-                </Link>
+                </button>
               )}
               <Link 
                 to="/configuracoes-sessao" 
@@ -221,11 +277,6 @@ const CabecalhoSessao = (props) => {
               </Link>
             </div>
           </div>
-        </div>
-        <div>
-          <BotaoEfeito texto="Detalhes da Sessão" to={props.detalhesPath || `/sessao/${id || 'demo'}/detalhes`} />
-          <BotaoEfeito texto="Informações do Praticante" to={props.informacoesPath || `/praticantes/${sessionData.praticante.id}`} />
-          <BotaoEfeito texto="Feedback da Sessão Anterior" to={props.feedbackPath || `/sessao/${id || 'demo'}/feedback`} />
         </div>
       </div>
       {error && (

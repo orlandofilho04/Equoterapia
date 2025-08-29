@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../../services/api';
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 import CabecalhoSessao from './CabecalhoSessao';
+import BotaoEfeito from "./BotaoEfeito";
 
 const DetalhesSessao = () => {
   const { id } = useParams();
@@ -10,6 +13,8 @@ const DetalhesSessao = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [errorDetail, setErrorDetail] = useState(null);
+  const [activeTab, setActiveTab] = useState("detalhes");
+  //const token = localStorage.getItem('token');
 
   const tamanhoTituloVerde = '25px';
   const tamanhoTextoPreto = '18px';
@@ -25,7 +30,7 @@ const DetalhesSessao = () => {
         console.log(`Buscando sessão com ID: ${id}`);
 
         // Tentativa com endpoint específico
-        const response = await api.get(`/api/sessions/${id}`);
+        const response = await api.get(`/sessions/${id}`);
 
         if (response.data) {
           console.log('Sessão carregada com sucesso:', response.data);
@@ -69,21 +74,6 @@ const DetalhesSessao = () => {
       setLoading(false);
     }
   }, [id]);
-
-  const finalizarSessao = async () => {
-    try {
-      const response = await api.post(`/api/sessions/${id}/finalizar`);
-      if (response.status === 200) {
-        alert('Sessão finalizada com sucesso!');
-        setSessao({ ...sessao, finalizada: true });
-      } else {
-        throw new Error('Erro ao finalizar a sessão');
-      }
-    } catch (err) {
-      console.error('Erro ao finalizar sessão:', err);
-      alert('Não foi possível finalizar a sessão. Tente novamente.');
-    }
-  };
 
   if (loading) {
     return (
@@ -137,47 +127,88 @@ const DetalhesSessao = () => {
 
   return (
     <div style={estilos.container}>
-      <CabecalhoSessao />
+      <CabecalhoSessao sessionId={id} />
+
       <div style={estilos.contentContainer}>
-        <div style={estilos.section}>
-          <div style={estilos.infoGrid}>
-            <p style={{ ...estilos.textoPreto, fontSize: tamanhoTextoPreto }}>
-              <strong>Condutor:</strong> {sessao?.condutor || 'Não informado'}
-            </p>
-            <p style={{ ...estilos.textoPreto, fontSize: tamanhoTextoPreto }}>
-              <strong>Mediador(es):</strong> {sessao?.mediadores?.join(", ") || 'Não informado'}
-            </p>
-            <p style={{ ...estilos.textoPreto, fontSize: tamanhoTextoPreto }}>
-              <strong>Encilhamento:</strong> {sessao?.encilhamento || 'Não informado'}
-            </p>
-            <p style={{ ...estilos.textoPreto, fontSize: tamanhoTextoPreto }}>
-              <strong>Cavalo:</strong> {sessao?.cavalo || 'Não informado'}
-            </p>
-          </div>
+        <div style={{ display: "flex", gap: "20px", margin: "20px 0", width: "max-content" }}>
+          <BotaoEfeito
+            texto="Detalhes da Sessão"
+            onClick={() => setActiveTab("detalhes")}
+            ativo={activeTab === "detalhes"}
+          />
+          <BotaoEfeito
+            texto="Informações do Praticante"
+            onClick={() => setActiveTab("praticante")}
+            ativo={activeTab === "praticante"}
+          />
+          <BotaoEfeito
+            texto="Feedback da Sessão Anterior"
+            onClick={() => setActiveTab("feedback")}
+            ativo={activeTab === "feedback"}
+          />
         </div>
 
-        <div style={estilos.section}>
-          <h4 style={{ ...estilos.tituloVerde, fontSize: tamanhoTituloVerde }}>
-            Observações
-          </h4>
-          <p style={{ ...estilos.textoPreto, fontSize: tamanhoTextoPreto }}>
-            {sessao?.observacoes || 'Sem observações registradas'}
-          </p>
-        </div>
+        {/* Conteúdo renderizado */}
+        <div>
+          {activeTab === "detalhes" && (
+            <>
+              <p style={{ ...estilos.textoPreto, fontSize: tamanhoTextoPreto }}><strong>Condutor:</strong> {sessao?.equitor?.name}</p>
+              <p style={{ ...estilos.textoPreto, fontSize: tamanhoTextoPreto }}><strong>Mediador:</strong> {sessao?.mediator?.name}</p>
+              <p style={{ ...estilos.textoPreto, fontSize: tamanhoTextoPreto }}><strong>Cavalo:</strong> {sessao?.horse?.name}</p>
+            </>
+          )}
 
-        <div style={estilos.buttonContainer}>
-          <button onClick={() => navigate(-1)} style={estilos.button}>
-            Voltar
-          </button>
-          {!sessao.finalizada && (
-            <button
-              onClick={finalizarSessao}
-              style={{ ...estilos.button, backgroundColor: '#07C158', color: '#fff' }}
-            >
-              Finalizar Sessão
-            </button>
+          {activeTab === "praticante" && (
+            <>
+              <div style={estilos.section}>
+                <h4 style={{ ...estilos.tituloVerde, fontSize: tamanhoTituloVerde, fontWeight: 'bold' }}>Dados de Identificação</h4>
+                <p style={{ ...estilos.textoPreto, fontSize: tamanhoTextoPreto }}><strong>Nome Completo:</strong> {sessao?.pacient?.name}</p>
+                <p style={{ ...estilos.textoPreto, fontSize: tamanhoTextoPreto }}><strong>Sexo:</strong> {sessao?.pacient?.gender === "M" ? "Masculino" : "Feminino"}</p>
+                <p style={{ ...estilos.textoPreto, fontSize: tamanhoTextoPreto }}><strong>Nº Cartão SUS:</strong> {sessao?.pacient?.susCardNumber}</p>
+                <p style={{ ...estilos.textoPreto, fontSize: tamanhoTextoPreto }}><strong>Data de Nascimento:</strong> {format(new Date(sessao?.pacient?.birthDate), "dd/MM/yyyy", { locale: ptBR })}</p>
+                <p style={{ ...estilos.textoPreto, fontSize: tamanhoTextoPreto }}><strong>Telefone:</strong> {sessao?.pacient?.phone}</p>
+                <p style={{ ...estilos.textoPreto, fontSize: tamanhoTextoPreto }}><strong>E-mail:</strong> {sessao?.pacient?.email}</p>
+                <p style={{ ...estilos.textoPreto, fontSize: tamanhoTextoPreto }}><strong>Endereço:</strong> {sessao?.pacient?.address}</p>
+                <p style={{ ...estilos.textoPreto, fontSize: tamanhoTextoPreto }}><strong>Cuidador:</strong> {sessao?.pacient?.caregiver}</p>
+                <p style={{ ...estilos.textoPreto, fontSize: tamanhoTextoPreto }}><strong>Nome do Pai:</strong> {sessao?.pacient?.fatherName}</p>
+                <p style={{ ...estilos.textoPreto, fontSize: tamanhoTextoPreto }}><strong>Nome da Mãe:</strong> {sessao?.pacient?.motherName}</p>
+              </div>
+
+              <div style={estilos.section}>
+                <h4 style={{ ...estilos.tituloVerde, fontSize: tamanhoTituloVerde, fontWeight: 'bold' }}>Escolaridade do Praticante</h4>
+                <p style={{ ...estilos.textoPreto, fontSize: tamanhoTextoPreto }}><strong>Escolaridade do Praticante:</strong> {sessao?.pacient?.education?.school}</p>
+                <p style={{ ...estilos.textoPreto, fontSize: tamanhoTextoPreto }}><strong>Ano/Série:</strong> {sessao?.pacient?.education?.anoSerie}</p>
+                <p style={{ ...estilos.textoPreto, fontSize: tamanhoTextoPreto }}><strong>Turma:</strong> {sessao?.pacient?.education?.turma}</p>
+                <p style={{ ...estilos.textoPreto, fontSize: tamanhoTextoPreto }}><strong>Período:</strong> {sessao?.pacient?.education?.periodo}</p>
+              </div>
+
+              <div style={estilos.section}>
+                <h4 style={{ ...estilos.tituloVerde, fontSize: tamanhoTituloVerde, fontWeight: 'bold' }}>Diagnóstico Clínico</h4>
+                <p style={{ ...estilos.textoPreto, fontSize: tamanhoTextoPreto, whiteSpace: 'pre-wrap' }}>{sessao?.pacient?.diagnosticoClinico}</p>
+              </div>
+            </>
+          )}
+
+          {activeTab === "feedback" && (
+            <>
+              <p>Aqui vão ser mostrados os dados do feedback.</p>
+            </>
           )}
         </div>
+
+        <button
+          onClick={() => navigate(-1)}
+          style={{
+            marginTop: "20px",
+            padding: "10px 15px",
+            background: "#0275d8",
+            color: "white",
+            border: "none",
+            borderRadius: "5px",
+          }}
+        >
+          Voltar
+        </button>
       </div>
     </div>
   );
