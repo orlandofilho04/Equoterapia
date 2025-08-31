@@ -46,11 +46,20 @@ public class SessionService {
 
     @Transactional(rollbackFor = {NotFoundException.class, UnavailableDateException.class, PacientMustBeActiveException.class})
     public Session registerSession(Session session, Long pacient_id, Long horse_id, Long professional_id, Long equitor_id, Long mediator_id) {
-        if (sessionRepository.existsSessionBySessionHour(session.getSessionHour())) {
+        LocalDateTime sessionHour = session.getSessionHour();
+
+        if (sessionRepository.existsSessionBySessionHour(sessionHour)) {
             throw new UnavailableDateException("Data e Hora indisponíveis para agendamento!");
         }
-        if (session.getSessionHour().isBefore(LocalDateTime.now(ZoneId.of("America/Sao_Paulo")))){
+
+        if (sessionHour.isBefore(LocalDateTime.now(ZoneId.of("America/Sao_Paulo")))){
             throw new UnavailableDateException("Impossivel agendar uma sessão no passado");
+        }
+
+        String dayOfWeek = sessionHour.getDayOfWeek().toString();
+
+        if ("SATURDAY".equalsIgnoreCase(dayOfWeek) || "SUNDAY".equalsIgnoreCase(dayOfWeek)) {
+            throw new UnavailableDateException("Não é possivel agendar sessões nos fins de semana !");
         }
 
         Pacient pacient = pacientService.findById(pacient_id);
