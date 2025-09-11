@@ -1,0 +1,236 @@
+# Documentação da Pasta .idea
+
+## Índice de Navegação Rápida
+- [Resumo Executivo](#-resumo-executivo)
+- [Arquivos Essenciais](#-arquivos-essenciais)
+- [Configurações de Desenvolvimento](#️-configurações-de-desenvolvimento)
+- [Configurações de Banco de Dados](#️-configurações-de-banco-de-dados)
+- [Arquivos de Controle](#-arquivos-de-controle)
+- [Recomendações Práticas](#-recomendações-práticas)
+- [Informações Técnicas Detalhadas](#-informações-técnicas-detalhadas)
+
+---
+
+##  Resumo Executivo
+
+### O que é a pasta .idea?
+A pasta `.idea` contém **todas as configurações do IntelliJ IDEA** para o projeto Equoterapia. É o "centro de controle" que define como a IDE vai interpretar, compilar e executar seu projeto.
+
+### Arquivos Mais Importantes (Prioridade Alta):
+1. **`misc.xml`** - Configurações básicas (JDK, Maven)
+2. **`modules.xml`** + **`Equoterapia.iml`** - Estrutura do projeto
+3. **`compiler.xml`** - Como compilar o código Java
+4. **`dataSources.xml`** - Conexões com banco de dados
+
+### Status da Documentação:
+- **13/13 arquivos** documentados 
+- **Configuração completa** do ambiente Java 23 + Spring Boot
+- **2 bancos configurados**: MySQL (produção) + H2 (testes)
+
+---
+
+## Arquivos Essenciais
+
+> ** Estes são os arquivos fundamentais que definem o comportamento básico do projeto**
+
+###  **misc.xml** ( CRÍTICO)
+- **Função**: Configurações centrais do projeto
+- **JDK**: Java 23 configurado como padrão
+- **Maven**: Reconhece `API/Equoterapia/pom.xml`
+- **Saída**: Diretório `$PROJECT_DIR$/out`
+- **Impacto**: Define a base de todo o ambiente de desenvolvimento
+
+### **modules.xml** + **Equoterapia.iml** ( CRÍTICO)
+- **Função**: Define a estrutura de módulos do projeto
+- **Configuração**: Módulo único apontando para a raiz
+- **Impacto**: Determina como a IDE organiza o código
+
+### **vcs.xml** ( IMPORTANTE)
+- **Função**: Configurações do Git
+- **Configuração**: Git na raiz do projeto
+- **Impacto**: Integração com controle de versão
+
+---
+
+## Configurações de Desenvolvimento
+
+> ** Arquivos que controlam como o código é compilado e analisado**
+
+### **compiler.xml** ( CRÍTICO)
+- **Processamento de anotações**: Habilitado para Lombok
+- **Lombok**: `lombok-1.18.36.jar` configurado
+- **JavaC**: Opção `-parameters` (preserva nomes para reflection)
+- **Saídas**: 
+  - Fontes: `target/generated-sources/annotations`
+  - Testes: `target/generated-test-sources/test-annotations`
+
+### **encodings.xml** ( IMPORTANTE)
+- **Encoding**: UTF-8 para `API/Equoterapia/src/main/java`
+- **Impacto**: Evita problemas de caracteres especiais
+
+### **jarRepositories.xml** ( IMPORTANTE)
+- **Repositórios Maven configurados**:
+  - Central Repository: `repo.maven.apache.org/maven2`
+  - Maven Central: `repo1.maven.org/maven2`
+  - JBoss Community: `repository.jboss.org/nexus/content/repositories/public/`
+
+### **inspectionProfiles/** ( MODERADO)
+- **ESLint**: Habilitado para código JavaScript/TypeScript
+- **Nível**: WARNING
+- **Uso**: Análise de qualidade do frontend React
+
+---
+
+### Configurações de Banco de Dados
+
+> ** Configurações das conexões com bancos de dados**
+
+### **dataSources.xml** ( CRÍTICO)
+
+#### **Banco de Testes (H2)**
+- **Driver**: `org.h2.Driver`
+- **URL**: `jdbc:h2:mem:Equoterapia`
+- **Uso**: Testes automatizados em memória
+- **UUID**: `49e0fdaf-e550-4fb6-9c43-379f212fccc0`
+
+####  **Banco Principal (MySQL)**
+- **Driver**: `com.mysql.cj.jdbc.Driver`
+- **URL**: `jdbc:mysql://localhost:3306/Equoterapia`
+- **Uso**: Banco de produção/desenvolvimento
+- **UUID**: `f967a635-56cc-4ba8-a629-070fc767e6fe`
+
+###  **dataSources.local.xml** ( SEGURANÇA)
+- **Conteúdo**: Credenciais e configurações locais
+- **Status**:  **NUNCA** versionar (contém senhas)
+
+---
+
+##  Arquivos de Controle
+
+> * Arquivos que controlam o que é ignorado e configurações pessoais**
+
+###  **.gitignore** ( IMPORTANTE)
+- **Função**: Define o que o Git deve ignorar na pasta .idea
+- **Ignora**: `workspace.xml`, `dataSources.local.xml`, `/shelf/`, etc.
+
+###  **workspace.xml** ( PESSOAL)
+- **Conteúdo**: Layout de janelas, abas abertas, preferências pessoais
+- **Status**:  **SEMPRE** ignorado pelo Git
+
+###  **documentação_idea** ( OPCIONAL)
+- **Função**: Documentação interna da pasta .idea
+- **Status**: Arquivo local, pode ser ignorado
+
+---
+
+##  Arquitetura do Projeto
+
+### Tecnologias Identificadas:
+- **Backend**: Java 23 + Spring Boot + Maven
+- **Frontend**: React.js (baseado na estrutura UI/)
+- **Banco de Dados**: 
+  - MySQL (produção)
+  - H2 (testes)
+- **Ferramentas**:
+  - Lombok (geração de código)
+  - ESLint (análise de código frontend)
+
+### Estrutura Maven:
+- **Projeto principal**: `API/Equoterapia/`
+- **Arquivo POM**: `API/Equoterapia/pom.xml`
+- **Saída de compilação**: `target/`
+
+---
+
+## Recomendações Práticas
+
+### Para Novos Desenvolvedores:
+1. **Comece por**: `misc.xml` → `modules.xml` → `compiler.xml`
+2. **Configure primeiro**: JDK 23 e Maven
+3. **Teste conexões**: Verificar `dataSources.xml`
+
+###  Arquivos que DEVEM ser versionados (Git):
+```
+ misc.xml              - Configurações do projeto
+ modules.xml            - Estrutura de módulos  
+ Equoterapia.iml        - Definição do módulo
+ compiler.xml           - Configurações de compilação
+ encodings.xml          - Configurações de encoding
+ jarRepositories.xml    - Repositórios Maven
+ vcs.xml               - Configurações Git
+ inspectionProfiles/    - Perfis de análise de código
+ .gitignore            - Exclusões da pasta .idea
+ dataSources.xml       - Configurações de banco (SEM credenciais)
+```
+
+###  Arquivos que NÃO devem ser versionados:
+```
+ workspace.xml         - Configurações pessoais da IDE
+ dataSources.local.xml - Credenciais e configurações locais
+ documentação_idea     - Documentação local (opcional)
+ /shelf/              - Arquivos temporários
+ /dataSources/        - Dados sensíveis de conexão
+```
+
+### Manutenção Regular:
+- [ ] Verificar atualizações do JDK em `misc.xml`
+- [ ] Revisar repositórios Maven em `jarRepositories.xml`  
+- [ ] Validar configurações de banco em `dataSources.xml`
+- [ ] Manter perfis de inspeção atualizados
+
+###  Troubleshooting Comum:
+| Problema | Arquivo | Solução |
+|----------|---------|---------|
+| Projeto não compila | `compiler.xml` | Verificar Lombok e `-parameters` |
+| JDK não encontrado | `misc.xml` | Configurar Java 23 |
+| Maven não funciona | `misc.xml` | Verificar path do `pom.xml` |
+| Banco não conecta | `dataSources.xml` | Verificar URLs e drivers |
+
+---
+
+##  Verificação de Completude da Documentação
+
+###  Status dos Arquivos Documentados:
+**Total de arquivos na pasta .idea**: 13
+**Arquivos documentados**: 12 + 1 pasta
+
+####  Arquivos Completamente Documentados:
+1. `.gitignore` 
+2. `compiler.xml`  (atualizado com configurações JavaC)
+3. `dataSources.local.xml` 
+4. `dataSources.xml`  (atualizado com detalhes completos)
+5. `documentação_idea`  (adicionado à documentação)
+6. `encodings.xml` 
+7. `Equoterapia.iml` 
+8. `inspectionProfiles/`  (pasta com Project_Default.xml)
+9. `jarRepositories.xml` 
+10. `misc.xml` 
+11. `modules.xml` 
+12. `vcs.xml` 
+13. `workspace.xml` 
+
+### Atualizações Realizadas:
+- **Adicionados detalhes do JavaC** em `compiler.xml` (opção `-parameters`)
+- **Detalhamento completo** das conexões de banco em `dataSources.xml`
+- **Documentação do arquivo** `documentação_idea`
+- **URLs completas** dos bancos de dados
+- **Drivers específicos** para MySQL e H2
+- **Configurações de sincronização** dos data sources
+
+---
+
+## Glossário de Termos
+
+- **IML**: IntelliJ Module File - Define estrutura de módulos
+- **POM**: Project Object Model - Arquivo de configuração Maven
+- **VCS**: Version Control System - Sistema de controle de versão
+- **UUID**: Universally Unique Identifier - Identificador único universal
+- **ESLint**: Ferramenta de análise estática para JavaScript/TypeScript
+- **Lombok**: Biblioteca Java para redução de código boilerplate
+
+---
+
+**Data da documentação**: 11 de setembro de 2025  
+**Versão do projeto**: Equoterapia-0.0.1-SNAPSHOT  
+**IDE**: IntelliJ IDEA  
+**JDK configurado**: Java 23

@@ -1,0 +1,348 @@
+# Documentação da Pasta UI
+
+## Índice de Navegação Rápida
+- [Resumo Executivo](#resumo-executivo)
+- [Arquivos Essenciais](#arquivos-essenciais)
+- [Configurações e Dependências](#configurações-e-dependências)
+- [Estrutura de Componentes](#estrutura-de-componentes)
+- [Recursos Estáticos](#recursos-estáticos)
+- [Recomendações Práticas](#recomendações-práticas)
+- [Informações Técnicas Detalhadas](#informações-técnicas-detalhadas)
+
+---
+
+## Resumo Executivo
+
+### O que é a pasta UI?
+A pasta `UI` contém **todo o frontend React.js** do projeto Equoterapia. É uma aplicação Single Page Application (SPA) que fornece interfaces para três tipos de usuários: Administradores, Equoterapeutas e Equitadores.
+
+### Arquivos Mais Importantes (Prioridade Alta):
+1. **`package.json`** - Configurações do projeto e dependências
+2. **`src/App.js`** - Componente principal e roteamento
+3. **`src/index.js`** - Ponto de entrada da aplicação
+4. **`src/services/api.js`** - Configuração de comunicação com backend
+
+### Status do Projeto:
+- **Framework**: React 18.3.1
+- **Arquitetura**: SPA com React Router 6.28.0
+- **UI Framework**: Bootstrap 5.3.3 + React Bootstrap 2.10.5
+- **API**: Axios 1.8.4 com proxy para localhost:8080
+- **Total de Componentes**: 45+ componentes organizados por perfil
+
+---
+
+## Arquivos Essenciais
+
+> **Estes são os arquivos fundamentais que definem o comportamento da aplicação**
+
+### **package.json** (CRÍTICO)
+- **Nome do projeto**: equoterapia-site v0.1.0
+- **Proxy API**: Configurado para `http://localhost:8080` (backend)
+- **Scripts principais**:
+  - `npm start` - Servidor de desenvolvimento (localhost:3000)
+  - `npm run build` - Build para produção
+  - `npm test` - Execução de testes
+- **Dependências principais**: React 18, Bootstrap 5, Axios, React Router
+
+### **src/App.js** (CRÍTICO)
+- **Função**: Componente raiz com todas as rotas da aplicação
+- **Roteamento**: React Router DOM com 25+ rotas definidas
+- **Perfis suportados**:
+  - Administrador (gestão completa)
+  - Equoterapeuta (sessões e praticantes)
+  - Equitador (cavalos e agendas)
+- **Imports**: 30+ componentes organizados por funcionalidade
+
+### **src/index.js** (CRÍTICO)
+- **Função**: Ponto de entrada da aplicação React
+- **Configuração**: React 18 com Strict Mode
+- **Bootstrap**: Importação global do CSS
+- **Renderização**: Elemento root no DOM
+
+### **src/services/api.js** (CRÍTICO)
+- **Função**: Configuração central do Axios para comunicação com API
+- **Timeout**: 10 segundos
+- **Headers**: JSON por padrão
+- **Autenticação**: Sistema de tokens com rotas protegidas
+- **Interceptors**: Configurados para requisições e respostas
+
+---
+
+## Configurações e Dependências
+
+> **Arquivos que controlam o ambiente e dependências do projeto**
+
+### **package-lock.json** (IMPORTANTE)
+- **Função**: Lock de versões exatas das dependências
+- **Status**: Gerado automaticamente pelo npm
+- **Importância**: Garante builds reproduzíveis
+
+### **.gitignore** (IMPORTANTE)
+- **Função**: Define arquivos ignorados pelo Git
+- **Principais exclusões**:
+  - `/node_modules` - Dependências npm
+  - `/build` - Arquivos de produção
+  - `/coverage` - Relatórios de teste
+  - Arquivos de ambiente (.env.*)
+
+### **.gitattributes** (MODERADO)
+- **Função**: Normalização automática de quebras de linha
+- **Configuração**: `* text=auto`
+
+### **README.md** (MODERADO)
+- **Conteúdo**: Documentação padrão do Create React App
+- **Scripts disponíveis**: start, build, test, eject
+- **Status**: Documentação genérica (pode ser personalizada)
+
+---
+
+## Estrutura de Componentes
+
+> **Organização hierárquica dos componentes React por funcionalidade**
+
+### **src/components/** (CRÍTICO)
+
+#### **Autenticação e Navegação**
+```
+Login.js + Login.css           - Tela de login principal
+EsqueceuSenha.js              - Recuperação de senha
+Codigo.js                     - Verificação de código
+NovaSenha.js                  - Redefinição de senha
+Sidebar.js + Sidebar.css      - Menu lateral principal
+PrivateRoute.js (services/)   - Proteção de rotas
+```
+
+#### **Sistema de Agendamento**
+```
+Agenda.js + Agenda.css           - Agenda principal
+newAgenda.js + newAgenda.css     - Nova consulta/sessão
+DateNavigator.js + DateNavigator.css - Navegação de datas
+SearchBar.js + SearchBar.css     - Busca em agendas
+FloatCard.js + FloatCard.css     - Cards flutuantes
+```
+
+#### **Módulo Administrador** (15 arquivos)
+```
+administrador/
+   SidebarAdministrador.js + .css    - Menu lateral admin
+   AgendaAdministrador.js + .css     - Agenda administrativa
+   CadastroEquoterapeuta.js          - Cadastro de equoterapeutas
+   CadastroEquitador.js              - Cadastro de equitadores
+   CadastroProfissionalForm.js + .css - Formulário profissionais
+   ListarFuncionariosAtivos.js       - Lista funcionários ativos
+   ListarFuncionariosArquivados.js   - Lista funcionários arquivados
+   ListarFuncionarios.css            - Estilos das listas
+   DadosEquitadorAdm.js + .css       - Detalhes equitador
+   DadosEquoterapeutaAdm.css         - Estilos equoterapeuta
+   DadosProfissionalAdm.js           - Dados gerais profissionais
+```
+
+#### **Módulo Equitador** (10 arquivos)
+```
+equitador/
+   SidebarEquitador.js + .css     - Menu lateral equitador
+   AgendaEquitador.js + .css      - Agenda do equitador
+   CadastrarEquino.js + .css      - Cadastro de cavalos
+   ListarEquino.js + .css         - Lista de cavalos
+   DadosEquino.js + .css          - Detalhes do cavalo
+```
+
+#### **Módulo Praticante** (19 arquivos)
+```
+praticante/
+   CadastroPraticante1.js + .css     - Cadastro parte 1
+   CadastroPraticante2.js + .css     - Cadastro parte 2
+   ListarPraticantesAtivos.js        - Lista ativos
+   ListarPraticantesArquivados.js    - Lista arquivados
+   ListarPraticantes.css             - Estilos das listas
+   ProximasSessoes.js + .css         - Próximas sessões
+   InformacoesPraticante.js          - Dados do praticante
+   DetalhesSessao.js + .test.js      - Detalhes da sessão
+   FeedbackSessaoAnterior.js         - Feedback das sessões
+   FinalizarSessao.js                - Finalização de sessão
+   CabecalhoSemBotao.js              - Cabeçalho sem ações
+   CabecalhoSessao.js                - Cabeçalho de sessão
+   BotaoArredondado.js               - Componente botão
+   BotaoEfeito.js                    - Botão com efeitos
+   FotoEstilo.css                    - Estilos para fotos
+```
+
+#### **Recursos Visuais**
+```
+imgs/
+   addEquino.svg    - Ícone adicionar cavalo
+   equo.png         - Logo/imagem equoterapia
+   foto.jpg         - Foto placeholder
+   gear.png         - Ícone configurações
+   icone.png        - Ícone principal
+```
+
+---
+
+## Recursos Estáticos
+
+> **Arquivos públicos servidos diretamente pelo servidor**
+
+### **public/** (IMPORTANTE)
+
+#### **index.html** (CRÍTICO)
+- **Função**: Template HTML principal
+- **Configurações**:
+  - Charset UTF-8
+  - Viewport responsivo
+  - Fonte Google: Poppins
+  - Favicon personalizado (icone.png)
+  - Meta description padrão
+
+#### **manifest.json** (IMPORTANTE)
+- **Função**: Configuração PWA (Progressive Web App)
+- **Ícones**: favicon.ico, logo192.png, logo512.png
+- **Nome**: "Create React App Sample" (pode ser personalizado)
+
+#### **Arquivos de Imagem**
+```
+favicon.ico      - Ícone do navegador
+icone.png        - Ícone principal personalizado
+logo192.png      - Logo 192x192 para PWA
+logo512.png      - Logo 512x512 para PWA
+```
+
+#### **robots.txt** (MODERADO)
+- **Função**: Instruções para crawlers de busca
+- **Status**: Arquivo padrão do Create React App
+
+---
+
+## Recomendações Práticas
+
+### Para Novos Desenvolvedores:
+1. **Comece por**: `package.json` → `src/App.js` → `src/index.js`
+2. **Instale dependências**: `npm install`
+3. **Execute localmente**: `npm start` (localhost:3000)
+4. **Verifique API**: Certifique-se que backend está em localhost:8080
+
+### Arquivos que DEVEM ser versionados (Git):
+```
+src/                    - Todo código fonte
+public/                 - Recursos estáticos
+package.json            - Configuração do projeto
+package-lock.json       - Lock de dependências
+README.md               - Documentação
+.gitignore             - Exclusões Git
+.gitattributes         - Configurações Git
+```
+
+### Arquivos que NÃO devem ser versionados:
+```
+node_modules/          - Dependências npm (muito pesado)
+build/                 - Arquivos compilados
+coverage/              - Relatórios de teste
+.env.*                 - Variáveis de ambiente
+.DS_Store              - Arquivos do macOS
+```
+
+### Comandos Essenciais:
+```bash
+npm install              # Instalar dependências
+npm start               # Servidor desenvolvimento
+npm run build          # Build produção
+npm test               # Executar testes
+npm run eject          # Ejetar configurações (irreversível)
+```
+
+### Troubleshooting Comum:
+| Problema | Solução |
+|----------|---------|
+| "Module not found" | `npm install` |
+| "Port 3000 already in use" | Matar processo ou usar outra porta |
+| API não responde | Verificar se backend está em localhost:8080 |
+| Erro de proxy | Verificar configuração proxy em package.json |
+| Build falha | Verificar linting e testes |
+
+---
+
+## Informações Técnicas Detalhadas
+
+### Stack Tecnológico
+```
+Frontend Framework:   React 18.3.1
+Roteamento:          React Router DOM 6.28.0
+UI Framework:        Bootstrap 5.3.3 + React Bootstrap 2.10.5
+Icons:               Bootstrap Icons 1.11.3 + React Icons 5.5.0
+HTTP Client:         Axios 1.8.4
+Formulários:         React Input Mask 2.0.4
+Utilitários:         date-fns 4.1.0
+Testes:              Jest 27.5.1 + Testing Library
+```
+
+### Estatísticas do Projeto:
+```
+Total de Arquivos:       65+ arquivos
+Componentes React:       45+ componentes
+Linhas de Código App.js: 425 linhas
+Dependências:            22 dependências principais
+DevDependencies:         1 dependência de desenvolvimento
+```
+
+### Arquitetura de Componentes:
+```
+App.js (Root)
+├── Router (React Router)
+├── Autenticação
+│   ├── Login
+│   ├── EsqueceuSenha
+│   ├── Codigo
+│   └── NovaSenha
+├── Dashboards
+│   ├── Administrador (15 componentes)
+│   ├── Equitador (10 componentes)
+│   └── Praticante (19 componentes)
+└── Compartilhados
+    ├── Sidebar
+    ├── Agenda
+    ├── SearchBar
+    └── Utilitários
+```
+
+### Configurações de Proxy:
+- **Backend URL**: http://localhost:8080
+- **Frontend URL**: http://localhost:3000
+- **Timeout API**: 10 segundos
+- **Headers padrão**: application/json
+
+### Configurações PWA:
+- **Suporte PWA**: Básico (manifest.json)
+- **Service Worker**: Não configurado
+- **Ícones**: 3 tamanhos (16x16, 192x192, 512x512)
+- **Tema**: Não personalizado
+
+### Configurações de Teste:
+- **Framework**: Jest + React Testing Library
+- **Configuração**: react-scripts (padrão CRA)
+- **Coverage**: Disponível com `npm test -- --coverage`
+- **Arquivos de teste**: `*.test.js` na pasta componentes
+
+---
+
+## Glossário de Termos
+
+| Termo | Significado |
+|-------|-------------|
+| **SPA** | Single Page Application - Aplicação de página única |
+| **CRA** | Create React App - Ferramenta para criar projetos React |
+| **JSX** | JavaScript XML - Sintaxe para escrever HTML no JavaScript |
+| **Hook** | Função React para gerenciar estado e ciclo de vida |
+| **Component** | Unidade reutilizável da interface React |
+| **Router** | Sistema de navegação entre páginas |
+| **Proxy** | Redirecionamento de requisições API durante desenvolvimento |
+| **Build** | Processo de compilação para produção |
+| **PWA** | Progressive Web App - Aplicação web progressiva |
+| **Hot Reload** | Atualização automática durante desenvolvimento |
+
+---
+
+**Data da documentação**: 11 de setembro de 2025  
+**Versão do projeto**: 0.1.0  
+**React**: 18.3.1  
+**Bootstrap**: 5.3.3  
+**Total de componentes documentados**: 65+ arquivos
