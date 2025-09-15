@@ -12,12 +12,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+// Lombok gera getters, setters e construtores automaticamente
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
-@Table(name = "tb_Legally_responsibles")
+@Entity // Indica que esta classe é uma entidade JPA
+@Table(name = "tb_Legally_responsibles") // Mapeia para a tabela "tb_Legally_responsibles"
 public class LegallyResponsible {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,6 +29,8 @@ public class LegallyResponsible {
     private String cpf;
 
     private Genders gender;
+
+    // Relação muitos-para-muitos com pacientes
     @ManyToMany
     @JoinTable(
             name = "tb_LegallyResponsibles_has_pacients",

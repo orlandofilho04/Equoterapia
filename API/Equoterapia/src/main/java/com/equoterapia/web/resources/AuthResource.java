@@ -16,6 +16,7 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+// Controlador REST para autenticação e registro de usuários
 @Slf4j
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
@@ -30,7 +31,7 @@ public class AuthResource {
     @Autowired
     private ProfessionalService professionalService;
 
-
+    // Endpoint de login: autentica usuário e retorna token JWT
     @PostMapping(value = "/login")
     public ResponseEntity<LoginResponseDTO> login(@RequestBody @Valid AuthenticationDTO user){
         var usernamePassword = new UsernamePasswordAuthenticationToken(user.username(),user.password());
@@ -42,6 +43,8 @@ public class AuthResource {
 
         return ResponseEntity.ok(new LoginResponseDTO(token, ((Professional) auth.getPrincipal()).getUsername(), professional.getName(), professional.getIsAdmin(), professional.getRole()));
     }
+
+    // Endpoint de registro de novo usuário (profissional)
     @PostMapping(value = "/register")
     public ResponseEntity<Professional> register(@RequestBody @Valid RegisterDTO user, @RequestParam(required = false) String adminPass){
         if (this.professionalRepository.findByUsername(user.username()) != null){

@@ -15,12 +15,13 @@ import java.time.ZoneId;
 
 import com.equoterapia.web.entities.enums.HorsesStatus;
 
+// Lombok gera getters, setters e construtores automaticamente
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity 
-@Table(name = "tb_horses")
+@Table(name = "tb_horses") // Mapeia para a tabela "tb_horses"
 public class Horse {
 
     @Id
@@ -28,7 +29,7 @@ public class Horse {
     private Long id;
 
     @Column(nullable = false, unique = true)
-    private String registerCode;
+    private String registerCode; // Código de registro do cavalo
 
     @Column(length = 100, nullable = false)
     private String name;
@@ -67,8 +68,9 @@ public class Horse {
     private LocalDateTime createdAt = LocalDateTime.now(ZoneId.of("America/Sao_Paulo"));
 
     @Column
-    private HorsesStatus status;
+    private HorsesStatus status; // Enum de status do cavalo
 
+    // Método auxiliar para verificar se o cavalo está ativo
     @JsonIgnore
     public boolean isActive(){
         return this.status.toString().equalsIgnoreCase("ativo");

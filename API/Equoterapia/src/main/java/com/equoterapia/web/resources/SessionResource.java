@@ -10,6 +10,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 import java.util.List;
 
+// Controlador REST para operações relacionadas a sessões de atendimento
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping(value = "/sessions")
@@ -18,6 +19,7 @@ public class SessionResource {
     @Autowired
     private SessionService sessionService;
 
+    // Busca todas as sessões, podendo filtrar por nome ou id do paciente
     @GetMapping
     public ResponseEntity<List<Session>> findAll(@RequestParam(required = false) String pacient_name, @RequestParam(required = false) Long pacient_id) {
         if (pacient_name != null && !pacient_name.isEmpty()){
@@ -32,12 +34,14 @@ public class SessionResource {
         return ResponseEntity.ok().body(sessions);
     }
 
+    // Busca uma sessão pelo ID
     @GetMapping(value = "/{id}")
     public ResponseEntity<Session> findById(@PathVariable Long id) {
         Session session = sessionService.findById(id);
         return ResponseEntity.ok().body(session);
     }
 
+    // Insere uma nova sessão
     @PostMapping
     public ResponseEntity<Session> insert(@RequestBody Session session) {
         session = sessionService.insert(session);
@@ -48,6 +52,8 @@ public class SessionResource {
                 .toUri();
         return ResponseEntity.created(uri).body(session);
     }
+
+    // Insere uma nova sessão associando IDs de paciente, cavalo e profissionais
     @PostMapping(value = "/registerSession")
     public ResponseEntity<Session> registerSession(@RequestBody Session session,
                                                    @RequestParam Long pacient_id,
@@ -64,6 +70,7 @@ public class SessionResource {
         return ResponseEntity.created(uri).body(session);
     }
 
+    // Atualiza uma sessão existente pelo ID
     @PutMapping(value = "/{id}")
     public ResponseEntity<Session> update(@PathVariable Long id, @RequestBody Session session) {
         session.setId(id);
@@ -71,6 +78,7 @@ public class SessionResource {
         return ResponseEntity.ok().body(session);
     }
 
+    // Remove uma sessão pelo ID
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         sessionService.delete(id);

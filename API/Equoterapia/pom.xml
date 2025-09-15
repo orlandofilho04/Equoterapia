@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <!-- Modelo do projeto Maven -->
     <modelVersion>4.0.0</modelVersion>
+    <!-- Herda configurações do Spring Boot Starter Parent -->
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
@@ -27,6 +29,7 @@
         <url/>
     </scm>
     <properties>
+        <!-- Define a versão do Java utilizada no projeto -->
         <java.version>23</java.version>
     </properties>
     <dependencies>
@@ -37,6 +40,7 @@
             <version>3.14.0</version>
         </dependency>
 
+        <!-- Spring Boot Starter para segurança (autenticação/autorização) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
@@ -66,12 +70,14 @@
             <artifactId>spring-security-oauth2-jose</artifactId>
             <version>6.4.2</version>
         </dependency>
+        <!-- Biblioteca para manipulação de JWT -->
         <dependency>
             <groupId>com.auth0</groupId>
             <artifactId>java-jwt</artifactId>
             <version>4.5.0</version>
         </dependency>
 
+        <!-- SpringDoc OpenAPI para documentação automática da API (Swagger) -->
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
@@ -83,6 +89,7 @@
             <artifactId>springdoc-openapi-starter-webmvc-api</artifactId>
             <version>2.8.3</version>
         </dependency>
+        <!-- Spring Boot Starter Web para criação de APIs REST -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -101,11 +108,13 @@
 <!--            <scope>runtime</scope>-->
 <!--        </dependency>-->
 
+        <!-- Starter para testes com Spring Boot -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <!-- Spring Boot Starter Data JPA para persistência de dados -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
@@ -128,10 +137,12 @@
 
     <build>
         <plugins>
+            <!-- Plugin para empacotar e rodar aplicações Spring Boot -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
+            <!-- Plugin para execução de testes unitários -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -140,6 +151,7 @@
                     <skipTests>true</skipTests>
                 </configuration>
             </plugin>
+            <!-- Plugin para compilação do código Java e processamento de anotações (Lombok) -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>

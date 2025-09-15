@@ -19,14 +19,16 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+// Lombok gera getters, setters e construtores automaticamente
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
-@Table(name = "tb_professionals")
-public class Professional implements UserDetails {
+@Entity // Indica que esta classe é uma entidade JPA
+@Table(name = "tb_professionals") // Mapeia para a tabela "tb_professionals"
+public class Professional implements UserDetails { // Implementa UserDetails para integração com Spring Security
 
+// Construtor customizado para facilitar criação de profissionais
     public Professional(String name, String username, LocalDate birthDate, String encryptedPassword, String cpf, String email, String phone, String address, Genders gender,  Roles role, String regNumber) {
         this.name = name;
         this.username = username;
@@ -70,20 +72,21 @@ public class Professional implements UserDetails {
     private String address;
 
     @Column
-    private Roles role;
+    private Roles role; // Enum de papel do profissional
 
     @Column
-    private Genders gender;
+    private Genders gender; // Enum de gênero
 
     @Column(unique = true)
-    private String regNumber;
+    private String regNumber; // Número de registro profissional
 
     @Column
-    private Boolean isAdmin = false;
+    private Boolean isAdmin = false; // Indica se é administrador
 
     @Column
     private LocalDateTime createdAt = LocalDateTime.now(ZoneId.of("America/Sao_Paulo"));
 
+    // Métodos da interface UserDetails para autenticação e autorização
     @JsonIgnore
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -124,6 +127,7 @@ public class Professional implements UserDetails {
         return UserDetails.super.isEnabled();
     }
 
+    // Relação muitos-para-muitos com pacientes
     @ManyToMany
     @JsonIgnore
     @JoinTable(name = "tb_professionals_has_pacients",
@@ -131,6 +135,7 @@ public class Professional implements UserDetails {
             inverseJoinColumns = @JoinColumn(name = "pacient_id"))
     private List<Pacient> pacients = new ArrayList<>();
 
+    // Relação um-para-muitos com agendamentos
     @OneToMany(mappedBy = "professional")
     @JsonIgnore
     private List<Appointment> appointments = new ArrayList<>();

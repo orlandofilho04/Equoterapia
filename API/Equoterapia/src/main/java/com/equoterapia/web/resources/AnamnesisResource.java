@@ -18,18 +18,18 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 import java.util.List;
 
+// Controlador REST para operações relacionadas a anamnese
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping(value = "/anamnesis")
 @EnableTransactionManagement
-
 public class AnamnesisResource {
     @Autowired
     private AnamnesisService anamnesisService;
     @Autowired
     private PacientService pacientService;
 
-
+    // Retorna todas as anamneses
     @Operation(description = "Endpoint responsável por retornar todas as anamneses")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Busca por anamneses concluída"),
@@ -41,6 +41,7 @@ public class AnamnesisResource {
         return ResponseEntity.ok().body(anamnesisList);
     }
 
+    // Busca uma anamnese por ID
     @Operation(description = "Endpoint responsável por buscar uma anamnese por a partir de um ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Busca por anamnese concluída"),
@@ -53,6 +54,7 @@ public class AnamnesisResource {
         return ResponseEntity.ok().body(anamnesis);
     }
 
+    // Insere uma nova anamnese e associa ao paciente
     @PostMapping
     @Operation(description = "Endpoint responsável por inserir uma anamnese e associar ao paciente")
     @ApiResponses(value = {
@@ -66,7 +68,6 @@ public class AnamnesisResource {
         anamnesis = anamnesisService.insert(anamnesis);
         pacientService.setPacientAnamnesis(anamnesis, pacient_id);
 
-
         URI uri = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/{id}").buildAndExpand(anamnesis.getId())
@@ -74,5 +75,4 @@ public class AnamnesisResource {
         return ResponseEntity.created(uri).body(anamnesis);
 
     }
-
 }

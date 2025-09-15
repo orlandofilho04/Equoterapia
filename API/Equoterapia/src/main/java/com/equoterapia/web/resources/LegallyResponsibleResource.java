@@ -14,6 +14,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import com.equoterapia.web.entities.Pacient;
 import com.equoterapia.web.services.LegallyResponsibleService;
 
+// Controlador REST para operações relacionadas a responsáveis legais
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping(value = "/legallyResponsible")
@@ -25,11 +26,14 @@ public class LegallyResponsibleResource{
     @Autowired
     private LegallyResponsibleService legallyResponsibleService;
 
+    // Busca todos os responsáveis legais
     @GetMapping
     public ResponseEntity<List<LegallyResponsible>> findAll(){
         List<LegallyResponsible> legallyResponsibles = responsibleService.findAll();
         return ResponseEntity.ok().body(legallyResponsibles);
     }
+
+    // Insere um novo responsável legal e associa a pacientes
     @PostMapping
     public ResponseEntity<LegallyResponsible> insert(@RequestBody LegallyResponsible legallyResponsible, @RequestParam List<Long> pacient_ids){
         try {

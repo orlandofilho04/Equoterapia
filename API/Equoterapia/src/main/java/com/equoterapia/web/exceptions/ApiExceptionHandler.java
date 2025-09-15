@@ -11,9 +11,11 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
+// Handler global de exceções para a API. Captura exceções personalizadas e retorna respostas padronizadas.
 @ControllerAdvice
 public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
+    // Trata exceção de recurso não encontrado
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<Object> notFoundExceptionHandler(NotFoundException e){
         HttpStatus statusCode = HttpStatus.NOT_FOUND;
@@ -25,6 +27,8 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         );
         return new ResponseEntity<>(exceptionPayload, statusCode);
     }
+
+    // Trata exceção de usuário não encontrado na autenticação
     @ExceptionHandler(ApiUsernameNotFoundException.class)
     public ResponseEntity<Object> usernameNotFoundExceptionHandler(ApiUsernameNotFoundException usernameNotFoundException){
         HttpStatus statusCode = HttpStatus.FORBIDDEN;
@@ -35,6 +39,8 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         );
         return new ResponseEntity<>(exceptionPayload, statusCode);
     }
+
+    // Trata exceção de verificação de token JWT inválido
     @ExceptionHandler(JWTVerificationException.class)
     public ResponseEntity<Object> jwtVerificationHandler(JWTVerificationException jwtVerificationException){
         HttpStatus statusCode =  HttpStatus.UNAUTHORIZED;
@@ -45,6 +51,8 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         );
         return new ResponseEntity<>(exceptionPayload, statusCode);
     }
+
+    // Trata exceção de token JWT expirado
     @ExceptionHandler(TokenExpiredException.class)
     public ResponseEntity<Object> jwtExpirationHandler(TokenExpiredException expiredException){
         HttpStatus statusCode =  HttpStatus.FORBIDDEN;
@@ -55,6 +63,8 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         );
         return new ResponseEntity<>(exceptionPayload, statusCode);
     }
+
+    // Trata exceção de data indisponível para agendamento
     @ExceptionHandler(UnavailableDateException.class)
     public ResponseEntity<Object> unavailableDateHandler(UnavailableDateException unavailableDateException){
         HttpStatus statusCode =  HttpStatus.BAD_REQUEST;
@@ -65,6 +75,8 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         );
         return new ResponseEntity<>(exceptionPayload, statusCode);
     }
+
+    // Trata exceção de acesso negado para administradores
     @ExceptionHandler(AdminAccessDeniedException.class)
     public ResponseEntity<Object> adminAccessDeniedHandler(AdminAccessDeniedException adminAccessDeniedException){
         HttpStatus statusCode =  HttpStatus.FORBIDDEN;
@@ -75,6 +87,8 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         );
         return new ResponseEntity<>(exceptionPayload, statusCode);
     }
+
+    // Trata exceção de paciente que precisa estar ativo
     @ExceptionHandler(PacientMustBeActiveException.class)
     public ResponseEntity<Object> PacientMustBeActiveHandler(PacientMustBeActiveException pacientMustBeActiveException){
         HttpStatus statusCode =  HttpStatus.BAD_REQUEST;
@@ -85,6 +99,8 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         );
         return new ResponseEntity<>(exceptionPayload, statusCode);
     }
+
+    // Trata exceção de papel (role) inválido
     @ExceptionHandler(InvalidRoleException.class)
     public ResponseEntity<Object> InvalidRoleExceptionHandler(InvalidRoleException invalidRoleException){
         HttpStatus statusCode =  HttpStatus.BAD_REQUEST;

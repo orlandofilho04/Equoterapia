@@ -1,0 +1,112 @@
+# Documentação da Pasta `API` (Back-end)
+
+## Visão Geral
+
+A pasta `API` contém todo o código-fonte, configurações e recursos necessários para o funcionamento do **back-end** do sistema Equoterapia. O projeto é desenvolvido em **Java** utilizando o framework **Spring Boot**, com persistência de dados via **Spring Data JPA** e autenticação baseada em **Spring Security** e **JWT**. O gerenciamento de dependências é feito com **Maven**.
+
+---
+
+## Estrutura de Pastas e Arquivos
+
+```
+API/
+│
+├── Equoterapia/
+│   ├── .gitattributes, .gitignore         # Configurações de versionamento
+│   ├── docker-compose.yaml                # Orquestração de containers (ex: API, banco de dados)
+│   ├── mvnw, mvnw.cmd, .mvn/              # Maven Wrapper (build sem Maven instalado)
+│   ├── pom.xml                            # Configuração do projeto Maven e dependências
+│   ├── README.md                          # Documentação e instruções do projeto
+│   ├── src/
+│   │   ├── main/
+│   │   │   ├── java/com/equoterapia/web/
+│   │   │   │   ├── EquoterapiaApplication.java      # Classe principal (ponto de entrada Spring Boot)
+│   │   │   │   ├── authentication/                 # Autenticação e segurança
+│   │   │   │   │   ├── UserDetailsServiceImpl.java
+│   │   │   │   │   ├── DTOs/                       # DTOs de autenticação
+│   │   │   │   │   └── security/                   # Serviços e filtros de segurança (JWT)
+│   │   │   │   ├── entities/                       # Entidades JPA (modelos de dados)
+│   │   │   │   │   ├── enums/                      # Enums usados nas entidades
+│   │   │   │   ├── exceptions/                     # Exceções personalizadas e handler global
+│   │   │   │   ├── repositories/                   # Interfaces de acesso a dados (Spring Data JPA)
+│   │   │   │   ├── resources/                      # Controllers REST (endpoints da API)
+│   │   │   │   └── services/                       # Serviços (regras de negócio)
+│   │   ├── resources/
+│   │   │   ├── application.properties              # Configurações da aplicação (ex: banco de dados)
+│   │   │   └── application-test.properties         # Configurações para ambiente de teste
+│   ├── test/
+│   │   └── java/com/equoterapia/web/               # Testes automatizados (JUnit, Mockito)
+```
+
+---
+
+## Principais Componentes
+
+### 1. **Configuração e Build**
+- **pom.xml**: Define as dependências do projeto (Spring Boot, JPA, Security, JWT, Lombok, MySQL, etc).
+- **docker-compose.yaml**: Permite subir a API e banco de dados em containers para facilitar o desenvolvimento e testes.
+- **application.properties**: Configurações de ambiente (porta, banco, JWT secret, etc).
+
+### 2. **Camada de Entidades (`entities/`)**
+- Contém as classes que representam as tabelas do banco de dados (ex: `Professional`, `Pacient`, `Horse`, `Session`, etc).
+- Utiliza anotações JPA para mapeamento objeto-relacional.
+- Subpasta `enums/` define tipos enumerados usados nas entidades.
+
+### 3. **Camada de Repositórios (`repositories/`)**
+- Interfaces que estendem `JpaRepository` para cada entidade.
+- Permitem operações CRUD e queries customizadas sem implementação manual.
+
+### 4. **Camada de Serviços (`services/`)**
+- Implementa as regras de negócio do sistema.
+- Realiza validações, orquestra operações entre entidades e repositórios.
+
+### 5. **Camada de Recursos/Controllers (`resources/`)**
+- Define os endpoints REST da API.
+- Recebe requisições HTTP, chama os serviços e retorna respostas adequadas.
+- Exemplo: `/professional`, `/pacients`, `/sessions`, `/auth/login`, etc.
+
+### 6. **Autenticação e Segurança (`authentication/`)**
+- Implementação de autenticação com Spring Security e JWT.
+- Filtros, serviços e DTOs para login, registro e autorização.
+- Exemplo: `TokenService`, `SecurityFilter`, `UserDetailsServiceImpl`.
+
+### 7. **Exceções Personalizadas (`exceptions/`)**
+- Define exceções específicas para regras de negócio e erros comuns.
+- Handler global (`ApiExceptionHandler`) para retornar respostas padronizadas de erro.
+
+### 8. **Testes Automatizados (`test/`)**
+- Testes unitários e de integração usando JUnit e Mockito.
+- Cobrem controllers, serviços e regras de negócio.
+
+---
+
+## Como Executar
+
+1. **Via Maven**  
+   ```sh
+   ./mvnw spring-boot:run
+   ```
+2. **Via Docker Compose**  
+   ```sh
+   docker-compose up
+   ```
+
+---
+
+## Observações
+
+- **Swagger/OpenAPI** disponível para documentação automática dos endpoints.
+- **Banco de dados**: MySQL (padrão), com opção de H2 para testes.
+- **Segurança**: JWT para autenticação, roles para autorização.
+- **Lombok**: Facilita a criação de getters, setters e construtores.
+
+---
+
+## Para Saber Mais
+
+Consulte o arquivo `README.md` para instruções detalhadas de configuração, execução, endpoints e exemplos de uso.
+
+---
+
+**Resumo:**  
+A pasta `API` implementa todo o back-end do sistema Equoterapia, incluindo autenticação, regras de negócio, persistência de dados, tratamento de exceções e testes automatizados, seguindo boas práticas de arquitetura

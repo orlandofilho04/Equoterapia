@@ -6,15 +6,16 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+// Lombok gera getters, setters e construtores automaticamente
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
-@Table(name = "tb_administrators")
+@Entity // Indica que esta classe é uma entidade JPA
+@Table(name = "tb_administrators") // Mapeia para a tabela "tb_administrators"
 public class Administrator {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Chave primária auto-incrementada
     private Long id;
 
     @Column(nullable = false)

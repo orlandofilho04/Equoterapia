@@ -16,6 +16,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 import java.util.List;
 
+// Controlador REST para operações relacionadas a cavalos
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping(value = "/horses")
@@ -24,6 +25,7 @@ public class HorseResource {
     @Autowired
     private HorseService horseService;
 
+    // Retorna todos os cavalos, podendo filtrar por status
     @Operation(description = "Rota reponsavel por retornar todos os cavalos")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Cavalos encontrados com sucesso")
@@ -44,6 +46,7 @@ public class HorseResource {
         return ResponseEntity.ok().body(horses);
     }
 
+    // Retorna um cavalo pelo ID
     @Operation(description = "Rota responsavel por retornar um cavalo pelo ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Cavalo encontrado com sucesso"),
@@ -55,6 +58,7 @@ public class HorseResource {
         return ResponseEntity.ok().body(horse);
     }
 
+    // Insere um novo cavalo
     @Operation(description = "Rota responsavel por inserir um novo cavalo")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Cavalo criado com sucesso"),
@@ -70,6 +74,7 @@ public class HorseResource {
         return ResponseEntity.created(uri).body(horse);
     }
 
+    // Atualiza os dados de um cavalo pelo ID
     @Operation(description = "Rota responsavel por atualizar os dados de um cavalo")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Cavalo atualizado com sucesso"),
@@ -87,6 +92,7 @@ public class HorseResource {
         return ResponseEntity.created(uri).body(horse);
     }
 
+    // Deleta um cavalo pelo ID
     @Operation(description = "Rota responsavel por deletar um cavalo pelo ID")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Cavalo deletado com sucesso"),

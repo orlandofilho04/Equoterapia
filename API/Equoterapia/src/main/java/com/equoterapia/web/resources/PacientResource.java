@@ -11,6 +11,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 import java.util.List;
 
+// Controlador REST para operações relacionadas a pacientes
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping(value = "/pacients")
@@ -19,7 +20,7 @@ public class PacientResource {
     @Autowired
     private PacientService pacientService;
 
-
+    // Busca todos os pacientes, podendo filtrar por status (ATIVO, ARQUIVADO)
     @GetMapping
     public ResponseEntity<List<Pacient>> findAll(@RequestParam(required = false, defaultValue = "*") String status){
 
@@ -37,11 +38,13 @@ public class PacientResource {
         return ResponseEntity.ok().body(pacients);
     }
 
+    // Busca um paciente pelo ID
     @GetMapping(value = "/{id}")
     public ResponseEntity<Pacient> findOne(@PathVariable(name = "id") Long id){
         return ResponseEntity.ok().body(pacientService.findById(id));
     }
 
+    // Insere um novo paciente
     @PostMapping
     public ResponseEntity<Pacient> insert(@RequestBody Pacient pacient){
         pacient = pacientService.insert(pacient);

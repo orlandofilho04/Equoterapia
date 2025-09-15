@@ -13,6 +13,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 import java.util.List;
 
+// Controlador REST para operações relacionadas a administradores
 @RestController
 @RequestMapping(value = "/administrators")
 public class AdministratorResource {
@@ -20,6 +21,7 @@ public class AdministratorResource {
     @Autowired
     private AdministratorService administratorService;
 
+    // Retorna todos os administradores
     @GetMapping
     @Operation(description = "Endpoint responsável por retornar todos os usuários")
     @ApiResponses(value = {
@@ -30,6 +32,7 @@ public class AdministratorResource {
         return ResponseEntity.ok().body(administrators);
     }
 
+    // Insere um novo administrador
     @PostMapping
     public ResponseEntity<Administrator> insert(@RequestBody Administrator administrator) {
         administrator = administratorService.insert(administrator);

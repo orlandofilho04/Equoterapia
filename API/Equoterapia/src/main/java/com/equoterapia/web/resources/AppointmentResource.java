@@ -13,6 +13,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 import java.util.List;
 
+// Controlador REST para operações relacionadas a agendamentos (consultas)
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping("/appointment")
@@ -20,6 +21,7 @@ public class AppointmentResource {
     @Autowired
     private AppointmentService appointmentService;
 
+    // Retorna todas as consultas
     @GetMapping
     @Operation(description = "Endpoint responsável por retornar todas as consultas")
     @ApiResponses(value = {
@@ -31,6 +33,7 @@ public class AppointmentResource {
         return ResponseEntity.ok().body(appointmentList);
     }
 
+    // Busca uma consulta por ID
     @GetMapping(value = "/{id}")
     @Operation(description = "Endpoint responsável por buscar uma consulta por ID")
     @ApiResponses(value = {
@@ -44,6 +47,7 @@ public class AppointmentResource {
         return ResponseEntity.ok().body(appointment);
     }
 
+    // Insere uma nova consulta
     @PostMapping
     @Operation(description = "Endpoint responsável por inserir uma consulta")
     @ApiResponses(value = {
@@ -61,6 +65,8 @@ public class AppointmentResource {
                 .toUri();
         return ResponseEntity.created(uri).body(appointment);
     }
+
+    // Atualiza uma consulta existente
     @PutMapping
     @Operation(description = "Endpoint responsável por atualizar uma consulta")
     @ApiResponses(value = {
@@ -79,6 +85,7 @@ public class AppointmentResource {
         return ResponseEntity.created(uri).body(appointment);
     }
 
+    // Deleta uma consulta por ID
     @DeleteMapping(value = {"/{id}"})
     @Operation(description = "Endpoint responsável por deletar uma consulta por ID")
     @ApiResponses(value = {
