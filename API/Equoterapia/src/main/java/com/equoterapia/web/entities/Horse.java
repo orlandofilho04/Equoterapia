@@ -67,7 +67,7 @@ public class Horse {
     private LocalDateTime createdAt = LocalDateTime.now(ZoneId.of("America/Sao_Paulo"));
 
     @Column
-    private HorsesStatus status;
+    private HorsesStatus status = HorsesStatus.ATIVO;
 
     @JsonIgnore
     public boolean isActive(){

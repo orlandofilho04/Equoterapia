@@ -29,6 +29,48 @@ public class Pacient {
     private String name;
 
     @Column
+    private String scholarClass;
+
+    @Column
+    private Integer schoolYear;
+
+    @Column
+    private Integer schoolModality;
+
+    @Column
+    private String schoolName;
+
+    @Column
+    private String schoolShift;
+
+    @Column
+    private LocalDate avaliationDate;
+
+    @Column
+    private String susNumber;
+
+    @Column
+    private String address;
+
+    @Column
+    private String motherName;
+
+    @Column
+    private String fatherName;
+
+    @Column
+    private String workAddress;
+
+    @Column
+    private String phoneNumber;
+
+    @Column
+    private String caregiverName;
+
+    @Column
+    private String clinicDiagnosis;
+
+    @Column
     private LocalDate birthDate;
 
     @Column
@@ -39,6 +81,12 @@ public class Pacient {
 
     @Column
     private PacientStatus status;
+
+    @Column
+    private String observation;
+
+    @Column
+    private String familyIncome;
 
     @ManyToMany(mappedBy = "pacients")
     private List<LegallyResponsible> legallyResponsibles  = new ArrayList<>();
