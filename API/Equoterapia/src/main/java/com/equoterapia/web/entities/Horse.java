@@ -68,7 +68,7 @@ public class Horse {
     private LocalDateTime createdAt = LocalDateTime.now(ZoneId.of("America/Sao_Paulo"));
 
     @Column
-    private HorsesStatus status; // Enum de status do cavalo
+    private HorsesStatus status = HorsesStatus.ATIVO; // Enum de status do cavalo
 
     // Método auxiliar para verificar se o cavalo está ativo
     @JsonIgnore
