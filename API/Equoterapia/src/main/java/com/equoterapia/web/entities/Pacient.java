@@ -80,7 +80,7 @@ public class Pacient {
     private Genders gender;
 
     @Column
-    private PacientStatus status;
+    private PacientStatus status = PacientStatus.ATIVO;
 
     @Column
     private String observation;
