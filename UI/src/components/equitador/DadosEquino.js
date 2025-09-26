@@ -3,7 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./DadosEquino.css";
 import api from "../../services/api";
-import { format, parseISO, isValid } from "date-fns"; // Importar 'isValid' para verificação
+import { format, parseISO, isValid } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
 const DadosEquino = () => {
@@ -13,40 +13,52 @@ const DadosEquino = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (!id) {
-      setLoading(false);
-      return;
-    }
+    // Esta função encapsula toda a lógica de busca de dados
+    const fetchHorseData = async () => {
+      // Garante que o estado de loading esteja ativo no início da busca
+      setLoading(true);
+      setError(null);
 
-    const loadHorseData = async () => {
       try {
         const response = await api.get(`/horses/${id}`);
-        setHorse(response.data);
+
+        if (response.data) {
+          setHorse(response.data);
+        } else {
+          // Caso a API responda com 200 OK mas sem corpo de dados
+          throw new Error("A resposta da API está vazia.");
+        }
       } catch (err) {
-        setError(
-          err.response?.data?.message || "Erro ao buscar dados do cavalo"
-        );
+        console.error("Falha ao buscar dados do cavalo:", err);
+        const errorMessage =
+          err.response?.data?.message ||
+          err.message ||
+          "Ocorreu um erro ao buscar os dados.";
+        setError(errorMessage);
       } finally {
-        setLoading(false); // Esta linha garante que o "loading" termine
+        // Independentemente de sucesso ou falha, o loading é encerrado
+        setLoading(false);
       }
     };
 
-    loadHorseData();
-  }, [id]);
+    // A busca só é chamada se o 'id' existir
+    if (id) {
+      fetchHorseData();
+    } else {
+      // Se não houver id, encerra o loading e informa o usuário
+      setLoading(false);
+      setError("ID do equino não fornecido na URL.");
+    }
+  }, [id]); // O useEffect será reexecutado sempre que o 'id' mudar
 
-  // NOVA FUNÇÃO: Formata a data de forma segura, evitando que a página quebre
   const safeFormatDate = (dateString) => {
-    if (!dateString) {
-      return "Não informado";
-    }
+    if (!dateString) return "Não informado";
     const date = parseISO(dateString);
-    if (isValid(date)) {
-      return format(date, "dd/MM/yyyy", { locale: ptBR });
-    }
-    return "Data inválida"; // Retorna isso se a data não estiver em formato reconhecível
+    return isValid(date)
+      ? format(date, "dd/MM/yyyy", { locale: ptBR })
+      : "Data inválida";
   };
 
-  // Função auxiliar para renderizar os itens de informação
   const renderInfoItem = (label, value, unit = "") => (
     <div className="info-item">
       <span className="info-label">{label}</span>
@@ -56,12 +68,20 @@ const DadosEquino = () => {
     </div>
   );
 
-  if (loading)
+  // Renderização condicional clara
+  if (loading) {
     return <div className="loading-container">Carregando dados...</div>;
-  if (error) return <div className="error-container">Erro: {error}</div>;
-  if (!horse)
-    return <div className="loading-container">Nenhum cavalo encontrado.</div>;
+  }
 
+  if (error) {
+    return <div className="error-container">Erro: {error}</div>;
+  }
+
+  if (!horse) {
+    return <div className="loading-container">Nenhum cavalo encontrado.</div>;
+  }
+
+  // Renderização do componente com os dados
   return (
     <div className="details-container">
       <div className="details-header">
@@ -72,10 +92,7 @@ const DadosEquino = () => {
         />
         <div className="header-info">
           <h2>{horse.name}</h2>
-          <p>
-            {/* APLICAÇÃO DA NOVA FUNÇÃO SEGURA */}
-            Cadastrado em: {safeFormatDate(horse.createdAt)}
-          </p>
+          <p>Cadastrado em: {safeFormatDate(horse.createdAt)}</p>
           <Link to={`/editar-equino/${id}`} className="action-button">
             Editar Informações
           </Link>
