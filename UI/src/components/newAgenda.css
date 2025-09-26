@@ -1,9 +1,12 @@
+/* Cor do título principal */
 .agendamento {
-    color: #07C158;
+    color: #4E3B31;
+    /* Cor de madeira/terra para um visual mais sóbrio */
     font-weight: bold;
     font-size: 24px;
 }
 
+/* Estilo dos botões */
 .btnB,
 .btnA {
     border-radius: 5px;
@@ -11,14 +14,26 @@
     color: #FAFAFA !important;
     margin-top: 10px;
     min-width: 120px;
+    transition: background-color 0.2s;
 }
 
+/* Botão Cancelar (mais neutro) */
 .btnB {
-    background-color: #032437 !important;
+    background-color: #6c757d !important;
+    /* Cinza do Bootstrap */
 }
 
+.btnB:hover {
+    background-color: #5a6268 !important;
+}
+
+/* Botão Confirmar (cor principal) */
 .btnA {
-    background-color: #07C158 !important;
+    background-color: #4E3B31 !important;
+}
+
+.btnA:hover {
+    background-color: #6a5347 !important;
 }
 
 .form {
@@ -26,44 +41,57 @@
     font-weight: 500;
 }
 
-/* Ajuste para telas pequenas */
-@media (max-width: 576px) {
+
+/* NOVO: Estilos para o Card de Resumo */
+.summary-card {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 25px;
+    height: fit-content;
+    margin-top: 38px;
+    /* Alinha o topo do card com os labels do formulário */
+}
+
+.summary-card h4 {
+    color: #4E3B31;
+    font-weight: bold;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #ddd;
+    padding-bottom: 10px;
+}
+
+.summary-item {
+    margin-bottom: 15px;
+    font-size: 1rem;
+}
+
+.summary-item strong {
+    color: #333;
+    display: block;
+    /* Faz o label ficar em uma linha */
+    margin-bottom: 2px;
+    font-weight: 600;
+}
+
+
+/* Ajustes para telas pequenas */
+@media (max-width: 767px) {
+
+    /* Mudei para 767px para pegar tablets também */
+    .summary-card {
+        margin-top: 30px;
+        /* Espaçamento quando fica abaixo do form */
+        margin-bottom: 20px;
+    }
 
     .btnB,
     .btnA {
         min-width: 100%;
-        /* Botões ocupando 100% da largura */
-    }
-
-    .btnSM {
-        justify-content: start;
-        /* Botões alinhados à esquerda se necessário */
-    }
-
-    /* Garantir que os campos do formulário se ajustem bem */
-    .form .form-group {
         margin-bottom: 10px;
-    }
-
-    .form label {
-        font-size: 14px;
-    }
-
-    .form select,
-    .form input {
-        font-size: 14px;
-        /* Garantir que os campos se expandam corretamente */
     }
 
     .agendamento {
         font-size: 20px;
-        /* Reduz o título para se adaptar melhor */
-    }
-
-    /* Ajuste das colunas para telas pequenas */
-    .form .row {
-        display: flex;
-        flex-direction: column;
-        /* Coloca os campos um abaixo do outro */
     }
 }
