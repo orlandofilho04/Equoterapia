@@ -1,7 +1,6 @@
-/* Cor do título principal */
+/* Cor do título principal (verde original) */
 .agendamento {
-    color: #4E3B31;
-    /* Cor de madeira/terra para um visual mais sóbrio */
+    color: #07C158;
     font-weight: bold;
     font-size: 24px;
 }
@@ -17,23 +16,19 @@
     transition: background-color 0.2s;
 }
 
-/* Botão Cancelar (mais neutro) */
+/* Botão Cancelar (azul original) */
 .btnB {
-    background-color: #6c757d !important;
-    /* Cinza do Bootstrap */
+    background-color: #032437 !important;
 }
 
-.btnB:hover {
-    background-color: #5a6268 !important;
-}
-
-/* Botão Confirmar (cor principal) */
+/* Botão Confirmar (verde original) */
 .btnA {
-    background-color: #4E3B31 !important;
+    background-color: #07C158 !important;
 }
 
 .btnA:hover {
-    background-color: #6a5347 !important;
+    background-color: #06a54b !important;
+    /* Um tom de verde um pouco mais escuro */
 }
 
 .form {
@@ -41,8 +36,7 @@
     font-weight: 500;
 }
 
-
-/* NOVO: Estilos para o Card de Resumo */
+/* Estilos para o Card de Resumo */
 .summary-card {
     background-color: #f8f9fa;
     border: 1px solid #dee2e6;
@@ -50,11 +44,11 @@
     padding: 25px;
     height: fit-content;
     margin-top: 38px;
-    /* Alinha o topo do card com os labels do formulário */
 }
 
 .summary-card h4 {
-    color: #4E3B31;
+    color: #07C158;
+    /* Título do card em verde */
     font-weight: bold;
     margin-bottom: 20px;
     border-bottom: 2px solid #ddd;
@@ -69,19 +63,14 @@
 .summary-item strong {
     color: #333;
     display: block;
-    /* Faz o label ficar em uma linha */
     margin-bottom: 2px;
     font-weight: 600;
 }
 
-
 /* Ajustes para telas pequenas */
 @media (max-width: 767px) {
-
-    /* Mudei para 767px para pegar tablets também */
     .summary-card {
         margin-top: 30px;
-        /* Espaçamento quando fica abaixo do form */
         margin-bottom: 20px;
     }
 

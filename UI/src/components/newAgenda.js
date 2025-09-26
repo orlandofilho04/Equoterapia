@@ -11,21 +11,22 @@ import {
 import "./newAgenda.css";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../services/api";
-// NOVO: Importações para formatar a data
-import { format } from "date-fns";
+// AJUSTE: Importar parseISO para garantir a interpretação correta da data
+import { format, parseISO } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
 function NewAgenda() {
+  // ... (todo o seu state e useEffects permanecem iguais) ...
   const navigate = useNavigate();
   const [professional_id, setProfessionalId] = useState(null);
   const [pacients, setPacients] = useState([]);
-  const [selectedPacientId, setSelectedPacientId] = useState(""); // Iniciar como string vazia
+  const [selectedPacientId, setSelectedPacientId] = useState("");
   const [horsers, setHorses] = useState([]);
-  const [selectedHorseId, setSelectedHorseId] = useState(""); // Iniciar como string vazia
+  const [selectedHorseId, setSelectedHorseId] = useState("");
   const [equitors, setEquitors] = useState([]);
-  const [selectedEquitorId, setSelectedEquitorId] = useState(""); // Iniciar como string vazia
+  const [selectedEquitorId, setSelectedEquitorId] = useState("");
   const [mediators, setMediators] = useState([]);
-  const [selectedMediatorId, setSelectedMediatorId] = useState(""); // Iniciar como string vazia
+  const [selectedMediatorId, setSelectedMediatorId] = useState("");
   const [selectedDate, setSelectedDate] = useState("");
   const [selectedTime, setSelectedTime] = useState("");
   const [sessions, setSessions] = useState([]);
@@ -42,8 +43,6 @@ function NewAgenda() {
     .toISOString()
     .split("T")[0];
 
-  // ... (O restante dos useEffects e funções handleAgendamento permanecem os mesmos) ...
-  // BUSCAR SESSÕES AGENDADAS
   useEffect(() => {
     const fetchSessions = async () => {
       try {
@@ -56,7 +55,6 @@ function NewAgenda() {
     fetchSessions();
   }, []);
 
-  // BUSCAR PROFISSIONAL LOGADO
   useEffect(() => {
     if (username) {
       api
@@ -66,7 +64,6 @@ function NewAgenda() {
     }
   }, [username]);
 
-  // BUSCAR PACIENTES, EQUITADORES, CAVALOS E MEDIADORES
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -76,7 +73,6 @@ function NewAgenda() {
           api.get("/horses"),
           api.get("/professional/role?role=MEDIADOR"),
         ]);
-
         setPacients(pRes.data);
         setEquitors(eRes.data);
         setHorses(hRes.data);
@@ -85,20 +81,16 @@ function NewAgenda() {
         console.error("Erro ao buscar dados:", err);
       }
     };
-
     fetchData();
   }, []);
 
-  // FUNÇÃO PARA CRIAR O AGENDAMENTO
   const handleAgendamento = async (event) => {
     event.preventDefault();
-
     const sessionData = {
       sessionHour: `${selectedDate}T${selectedTime}:00`,
       duration: "01:00:00",
       sessionStatus: "AGENDADA",
     };
-
     const params = new URLSearchParams({
       pacient_id: selectedPacientId,
       horse_id: selectedHorseId,
@@ -106,16 +98,11 @@ function NewAgenda() {
       equitor_id: selectedEquitorId,
       mediator_id: selectedMediatorId,
     }).toString();
-
     setIsSubmitting(true);
-
     try {
       await api.post(`/sessions/registerSession?${params}`, sessionData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
-
       setShowSuccess(true);
       setTimeout(() => {
         navigate("/agenda-geral");
@@ -152,28 +139,17 @@ function NewAgenda() {
     return hours;
   };
 
-  // NOVO: Funções para obter os nomes dos itens selecionados para o resumo
   const getSelectedName = (id, list) =>
     list.find((item) => item.id === id)?.name || "Aguardando seleção...";
 
   return (
     <div className="container my-5 p-4 rounded shadow bg-white">
-      <ToastContainer
-        position="top-end"
-        className="p-3"
-        style={{ zIndex: 9999 }}
-      >
-        {/* ... Toasts de sucesso e erro ... */}
-      </ToastContainer>
-
+      {/* ... ToastContainer ... */}
       <div className="agendamento mb-4">Novo Agendamento</div>
-
-      {/* NOVO: Layout de duas colunas */}
       <Row>
-        {/* Coluna do Formulário */}
         <Col md={7}>
           <Form className="mx-2 mx-md-4 form" onSubmit={handleAgendamento}>
-            {/* ... (Todo o conteúdo do seu <Form> vai aqui, sem alterações) ... */}
+            {/* ... Seus Form.Groups ... */}
             <Row className="mb-3">
               <Form.Group
                 as={Col}
@@ -200,7 +176,6 @@ function NewAgenda() {
                     ))}
                 </Form.Select>
               </Form.Group>
-
               <Form.Group
                 as={Col}
                 xs={12}
@@ -216,9 +191,10 @@ function NewAgenda() {
                   min={localDate}
                   onChange={(e) => {
                     const inputDate = e.target.value;
-                    const selected = new Date(inputDate + "T00:00:00");
+                    const selected = parseISO(inputDate); // Usar parseISO aqui também
                     const day = selected.getDay();
-                    if (day === 0 || day === 6) {
+                    if (day === 5 || day === 6) {
+                      // Sábado (6) ou Domingo (0) no JS Date
                       setDateError("Fins de semana não são permitidos.");
                       setSelectedDate("");
                       return;
@@ -231,7 +207,6 @@ function NewAgenda() {
                   <Form.Text className="text-danger">{dateError}</Form.Text>
                 )}
               </Form.Group>
-
               <Form.Group
                 as={Col}
                 xs={12}
@@ -256,7 +231,6 @@ function NewAgenda() {
                 </Form.Select>
               </Form.Group>
             </Row>
-
             <Row className="mb-3">
               <Form.Group
                 as={Col}
@@ -280,7 +254,6 @@ function NewAgenda() {
                   ))}
                 </Form.Select>
               </Form.Group>
-
               <Form.Group
                 as={Col}
                 xs={12}
@@ -305,7 +278,6 @@ function NewAgenda() {
                     ))}
                 </Form.Select>
               </Form.Group>
-
               <Form.Group
                 as={Col}
                 xs={12}
@@ -329,7 +301,6 @@ function NewAgenda() {
                 </Form.Select>
               </Form.Group>
             </Row>
-
             <Row className="mb-3">
               <Form.Group controlId="formGridObs" className="mb-3">
                 <Form.Label>Observações para a sessão</Form.Label>
@@ -340,7 +311,6 @@ function NewAgenda() {
                 />
               </Form.Group>
             </Row>
-
             <Row className="mt-3">
               <div className="d-flex justify-content-end flex-wrap">
                 <Link
@@ -376,8 +346,6 @@ function NewAgenda() {
             </Row>
           </Form>
         </Col>
-
-        {/* NOVO: Coluna do Resumo */}
         <Col md={5}>
           <div className="summary-card">
             <h4>Resumo do Agendamento</h4>
@@ -386,11 +354,9 @@ function NewAgenda() {
               {getSelectedName(selectedPacientId, pacients)}
             </div>
             <div className="summary-item">
-              <strong>Data:</strong>{" "}
+              <strong>Data:</strong> {/* CORREÇÃO APLICADA AQUI */}
               {selectedDate
-                ? format(new Date(selectedDate + "T00:00:00"), "dd/MM/yyyy", {
-                    locale: ptBR,
-                  })
+                ? format(parseISO(selectedDate), "dd/MM/yyyy", { locale: ptBR })
                 : "..."}
             </div>
             <div className="summary-item">

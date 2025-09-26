@@ -5,6 +5,7 @@ import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import CabecalhoSessao from './CabecalhoSessao';
 import BotaoEfeito from "./BotaoEfeito";
+import './DetalhesSessao.css';
 
 const DetalhesSessao = () => {
   const { id } = useParams();
