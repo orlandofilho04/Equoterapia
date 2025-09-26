@@ -7,49 +7,45 @@ import { format, parseISO, isValid } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
 const DadosEquino = () => {
+  // A linha abaixo lê o ID da URL. É aqui que o problema provavelmente está.
   const { id } = useParams();
   const [horse, setHorse] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Adicionamos um console.log para verificar o que está vindo da URL
+  console.log("ID recebido pela URL:", id);
+
   useEffect(() => {
-    // Esta função encapsula toda a lógica de busca de dados
     const fetchHorseData = async () => {
-      // Garante que o estado de loading esteja ativo no início da busca
       setLoading(true);
       setError(null);
-
       try {
+        // A requisição usa o ID aqui. Se ele for 'undefined', a chamada falhará.
         const response = await api.get(`/horses/${id}`);
-
         if (response.data) {
           setHorse(response.data);
         } else {
-          // Caso a API responda com 200 OK mas sem corpo de dados
           throw new Error("A resposta da API está vazia.");
         }
       } catch (err) {
         console.error("Falha ao buscar dados do cavalo:", err);
-        const errorMessage =
-          err.response?.data?.message ||
-          err.message ||
-          "Ocorreu um erro ao buscar os dados.";
-        setError(errorMessage);
+        setError(err.message || "Ocorreu um erro ao buscar os dados.");
       } finally {
-        // Independentemente de sucesso ou falha, o loading é encerrado
         setLoading(false);
       }
     };
 
-    // A busca só é chamada se o 'id' existir
     if (id) {
       fetchHorseData();
     } else {
-      // Se não houver id, encerra o loading e informa o usuário
+      // Se o ID for nulo ou undefined, informamos o erro sem chamar a API.
       setLoading(false);
-      setError("ID do equino não fornecido na URL.");
+      setError(
+        "Não foi possível encontrar o ID do equino na URL. Verifique a configuração da rota."
+      );
     }
-  }, [id]); // O useEffect será reexecutado sempre que o 'id' mudar
+  }, [id]);
 
   const safeFormatDate = (dateString) => {
     if (!dateString) return "Não informado";
@@ -68,7 +64,6 @@ const DadosEquino = () => {
     </div>
   );
 
-  // Renderização condicional clara
   if (loading) {
     return <div className="loading-container">Carregando dados...</div>;
   }
@@ -81,7 +76,6 @@ const DadosEquino = () => {
     return <div className="loading-container">Nenhum cavalo encontrado.</div>;
   }
 
-  // Renderização do componente com os dados
   return (
     <div className="details-container">
       <div className="details-header">
@@ -99,6 +93,7 @@ const DadosEquino = () => {
         </div>
       </div>
 
+      {/* O restante do seu JSX continua aqui, sem alterações... */}
       <div className="info-card">
         <h4 className="info-card-title">Identificação do Equino</h4>
         <div className="info-grid">
