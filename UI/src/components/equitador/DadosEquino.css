@@ -23,7 +23,6 @@
     width: 120px;
     height: 120px;
     border-radius: 50%;
-    /* Imagem redonda */
     object-fit: cover;
     border: 3px solid #e9ecef;
 }
@@ -45,8 +44,8 @@
 
 /* Botão de ação principal (Editar) */
 .action-button {
-    background-color: #032437 !important;
-    /* Cor azul do tema */
+    background-color: #4E3B31 !important;
+    /* ALTERADO PARA MARROM */
     color: #fff !important;
     font-weight: 500;
     border: none;
@@ -58,10 +57,11 @@
 }
 
 .action-button:hover {
-    background-color: #021a29 !important;
+    background-color: #3a2d25 !important;
+    /* ALTERADO PARA MARROM MAIS ESCURO */
 }
 
-/* Card de informações (para Dados, Escolaridade, etc.) */
+/* Card de informações */
 .info-card {
     background-color: #f8f9fa;
     border: 1px solid #dee2e6;
@@ -71,8 +71,8 @@
 }
 
 .info-card-title {
-    color: #07C158;
-    /* Cor verde principal */
+    color: #4E3B31;
+    /* ALTERADO PARA MARROM */
     font-size: 22px;
     font-weight: 600;
     margin-bottom: 20px;
@@ -87,7 +87,6 @@
     gap: 20px;
 }
 
-/* Cada item do grid (label + valor) */
 .info-item {
     display: flex;
     flex-direction: column;
