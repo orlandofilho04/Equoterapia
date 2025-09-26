@@ -1,0 +1,124 @@
+/* Container principal da página */
+.details-container {
+    max-width: 900px;
+    margin: 30px auto;
+    padding: 30px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Navegação das abas (Detalhes, Praticante, etc.) */
+.tab-navigation {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 30px;
+    border-bottom: 2px solid #e9ecef;
+    padding-bottom: 15px;
+}
+
+/* Estilo do conteúdo da aba ativa */
+.tab-content {
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Card de informações (para Dados, Escolaridade, etc.) */
+.info-card {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 25px;
+    margin-bottom: 30px;
+}
+
+.info-card-title {
+    color: #07C158;
+    /* Cor verde principal */
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 10px;
+}
+
+/* Grid para alinhar os dados (ex: Nome: Fulano) */
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+/* Cada item do grid (label + valor) */
+.info-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.info-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #555;
+    margin-bottom: 4px;
+}
+
+.info-value {
+    font-size: 16px;
+    color: #212529;
+}
+
+/* Estilo para o campo de diagnóstico, que pode ter mais texto */
+.info-value.pre-wrap {
+    white-space: pre-wrap;
+    background-color: #fff;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #e0e0e0;
+}
+
+
+/* Botão para voltar */
+.back-button {
+    background-color: #032437 !important;
+    /* Cor azul do tema */
+    color: #fff !important;
+    border: none;
+    border-radius: 5px;
+    padding: 12px 25px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    margin-top: 20px;
+}
+
+.back-button:hover {
+    background-color: #021a29 !important;
+}
+
+/* Estilos para estados de loading e erro */
+.loading-container,
+.error-container {
+    text-align: center;
+    padding: 50px;
+    font-size: 18px;
+    color: #6c757d;
+}
+
+.error-container {
+    background-color: #fff3f3;
+    border-left: 5px solid #d9534f;
+    color: #d9534f;
+    text-align: left;
+}
