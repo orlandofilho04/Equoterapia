@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
-import "./DadosEquino.css"; // Importa o novo CSS
+import "./DadosEquino.css";
 import api from "../../services/api";
-import { format, parseISO } from "date-fns"; // Importa do date-fns
+import { format, parseISO, isValid } from "date-fns"; // Importar 'isValid' para verificação
 import { ptBR } from "date-fns/locale";
 
 const DadosEquino = () => {
@@ -13,7 +13,10 @@ const DadosEquino = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (!id) return;
+    if (!id) {
+      setLoading(false);
+      return;
+    }
 
     const loadHorseData = async () => {
       try {
@@ -24,14 +27,26 @@ const DadosEquino = () => {
           err.response?.data?.message || "Erro ao buscar dados do cavalo"
         );
       } finally {
-        setLoading(false);
+        setLoading(false); // Esta linha garante que o "loading" termine
       }
     };
 
     loadHorseData();
   }, [id]);
 
-  // Função auxiliar para renderizar os itens de informação, evitando repetição
+  // NOVA FUNÇÃO: Formata a data de forma segura, evitando que a página quebre
+  const safeFormatDate = (dateString) => {
+    if (!dateString) {
+      return "Não informado";
+    }
+    const date = parseISO(dateString);
+    if (isValid(date)) {
+      return format(date, "dd/MM/yyyy", { locale: ptBR });
+    }
+    return "Data inválida"; // Retorna isso se a data não estiver em formato reconhecível
+  };
+
+  // Função auxiliar para renderizar os itens de informação
   const renderInfoItem = (label, value, unit = "") => (
     <div className="info-item">
       <span className="info-label">{label}</span>
@@ -51,19 +66,15 @@ const DadosEquino = () => {
     <div className="details-container">
       <div className="details-header">
         <img
-          src={horse.photo || "https://i.imgur.com/AhdG3Q2.png"} // Imagem placeholder
+          src={horse.photo || "https://i.imgur.com/AhdG3Q2.png"}
           alt="Imagem do Equino"
           className="header-image"
         />
         <div className="header-info">
           <h2>{horse.name}</h2>
           <p>
-            Cadastrado em:{" "}
-            {horse.createdAt
-              ? format(parseISO(horse.createdAt), "dd/MM/yyyy", {
-                  locale: ptBR,
-                })
-              : "Não informado"}
+            {/* APLICAÇÃO DA NOVA FUNÇÃO SEGURA */}
+            Cadastrado em: {safeFormatDate(horse.createdAt)}
           </p>
           <Link to={`/editar-equino/${id}`} className="action-button">
             Editar Informações
