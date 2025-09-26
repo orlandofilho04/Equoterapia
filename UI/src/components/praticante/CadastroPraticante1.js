@@ -112,27 +112,29 @@ const CadastroPraticante1 = () => {
             event.preventDefault();
 
             const cadastroData = {
-              name: pacient.name,
-              scholarClass: pacient.scholarClass,
-              schoolYear: pacient.schoolYear,
-              schoolModality: pacient.schoolModality,
-              schoolName: pacient.schoolName,
-              schoolShift: pacient.schoolShift,
-              avaliationDate: pacient.avaliationDate,
-              susNumber: pacient.susNumber,
-              address: pacient.address,
-              motherName: pacient.motherName,
-              fatherName: pacient.fatherName,
-              workAddress: pacient.workAddress,
-              phoneNumber: pacient.phoneNumber,
-              caregiverName: pacient.caregiverName,
-              clinicDiagnosis: pacient.clinicDiagnosis,
-              birthDate: pacient.birthDate,
-              photo: pacient.photo,
-              gender: pacient.gender,
-              status: pacient.status,
-              observation: pacient.observation,
-              familyIncome: pacient.familyIncome,
+              pacient: {
+                name: pacient.name,
+                scholarClass: pacient.scholarClass,
+                schoolYear: pacient.schoolYear,
+                schoolModality: pacient.schoolModality,
+                schoolName: pacient.schoolName,
+                schoolShift: pacient.schoolShift,
+                avaliationDate: pacient.avaliationDate,
+                susNumber: pacient.susNumber,
+                address: pacient.address,
+                motherName: pacient.motherName,
+                fatherName: pacient.fatherName,
+                workAddress: pacient.workAddress,
+                phoneNumber: pacient.phoneNumber,
+                caregiverName: pacient.caregiverName,
+                clinicDiagnosis: pacient.clinicDiagnosis,
+                birthDate: pacient.birthDate,
+                photo: pacient.photo,
+                gender: pacient.gender,
+                status: pacient.status,
+                observation: pacient.observation,
+                familyIncome: pacient.familyIncome
+              },
               anamnesis: {
                 reasonEvaluation: anamnesis.reasonEvaluation,
                 currentIllnessHistory: anamnesis.currentIllnessHistory,
@@ -151,7 +153,7 @@ const CadastroPraticante1 = () => {
     
             try {
                 await api.post(
-                    `/pacients`,
+                    `/pacients/registerCompletePacient`,
                     cadastroData,
                     {
                         headers: {
