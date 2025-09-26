@@ -60,8 +60,7 @@ const Login = () => {
         navigate("/agenda-geral");
       }
     } catch (error) {
-      console.error("Erro ao fazer login:", error);
-      alert("Usuário ou senha incorretos");
+      setAuthError("Erro ao fazer login, usuário ou senha incorretos");
     }
   };
 
