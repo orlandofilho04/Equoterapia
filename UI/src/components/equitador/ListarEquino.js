@@ -67,7 +67,7 @@ const ListarEquino = () => {
             key={equino.id}
             className="item-container d-flex align-items-center"
           >
-            <Link to="/dados-equino">
+            <Link to={`/dados-equino/${equino.id}`}>
               <img
                 src={
                   equino.photo
@@ -85,13 +85,11 @@ const ListarEquino = () => {
               <p className="text mb-0">Idade: {equino.age}</p>
               <p className="text mb-0">
                 Data de cadastro:{" "}
-                {
-                  format(
-                    subHours(new Date(equino.createdAt), 3),
-                    "dd/MM/yyyy 'às' HH:mm",
-                    { locale: ptBR }
-                  )
-                }
+                {format(
+                  subHours(new Date(equino.createdAt), 3),
+                  "dd/MM/yyyy 'às' HH:mm",
+                  { locale: ptBR }
+                )}
               </p>
             </div>
             <div className="status text-end me-3">
