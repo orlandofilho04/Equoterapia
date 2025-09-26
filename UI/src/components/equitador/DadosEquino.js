@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { Row, Col } from 'react-bootstrap';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import './DadosEquino.css';
+import React, { useEffect, useState } from "react";
+import { useParams, Link } from "react-router-dom";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "./DadosEquino.css"; // Importa o novo CSS
 import api from "../../services/api";
+import { format, parseISO } from "date-fns"; // Importa do date-fns
+import { ptBR } from "date-fns/locale";
 
 const DadosEquino = () => {
   const { id } = useParams();
@@ -19,7 +20,9 @@ const DadosEquino = () => {
         const response = await api.get(`/horses/${id}`);
         setHorse(response.data);
       } catch (err) {
-        setError(err.response?.data?.message || 'Erro ao buscar dados do cavalo');
+        setError(
+          err.response?.data?.message || "Erro ao buscar dados do cavalo"
+        );
       } finally {
         setLoading(false);
       }
@@ -28,73 +31,79 @@ const DadosEquino = () => {
     loadHorseData();
   }, [id]);
 
-  const formatDate = (dateStr) => {
-    const date = new Date(dateStr);
-    return date.toLocaleDateString('pt-BR');
-  };
+  // Função auxiliar para renderizar os itens de informação, evitando repetição
+  const renderInfoItem = (label, value, unit = "") => (
+    <div className="info-item">
+      <span className="info-label">{label}</span>
+      <span className="info-value">
+        {value ? `${value} ${unit}`.trim() : "Não informado"}
+      </span>
+    </div>
+  );
 
-  if (loading) return <div className="container my-5">Carregando dados...</div>;
-  if (error) return <div className="container my-5 text-danger">Erro: {error}</div>;
-  if (!horse) return <div className="container my-5">Nenhum cavalo encontrado.</div>;
+  if (loading)
+    return <div className="loading-container">Carregando dados...</div>;
+  if (error) return <div className="error-container">Erro: {error}</div>;
+  if (!horse)
+    return <div className="loading-container">Nenhum cavalo encontrado.</div>;
 
   return (
-    <div className='container my-5'>
-      <Row className="mb-3">
-        <Col md={2}>
-          <img
-            src="https://www.sunsetbeachclub.com/storage/pages/Leisure/750x750el-ranchito-caballo.png"
-            alt="Imagem do Equino"
-            className="img-fluid img rounded"
-          />
-        </Col>
-
-        <Col>
-          <div className='d-flex gap-5'>
-            <h3 className="title-sec fw-bold">{horse.name}</h3>
-            <p className='color-grey ms-5'>
-              <strong>Data de cadastro:</strong> {horse.createdAt ? formatDate(horse.createdAt) : 'Não informado'}
-            </p>
-          </div>
-          <p className="text-muted sub-title-sec">{horse.age} anos</p>
-
-          <Link to={`/editar-equino/${id}`} className="btn btnB-equino" role="button" aria-pressed="true">
+    <div className="details-container">
+      <div className="details-header">
+        <img
+          src={horse.photo || "https://i.imgur.com/AhdG3Q2.png"} // Imagem placeholder
+          alt="Imagem do Equino"
+          className="header-image"
+        />
+        <div className="header-info">
+          <h2>{horse.name}</h2>
+          <p>
+            Cadastrado em:{" "}
+            {horse.createdAt
+              ? format(parseISO(horse.createdAt), "dd/MM/yyyy", {
+                  locale: ptBR,
+                })
+              : "Não informado"}
+          </p>
+          <Link to={`/editar-equino/${id}`} className="action-button">
             Editar Informações
           </Link>
-        </Col>
-      </Row>
-
-      <div className='title-div'>Dados Equino</div>
-
-      <div className="my-5">
-        <h5 className="title-sec mb-4">Identificação do Equino</h5>
-        <ul className="list-unstyled">
-          <li><strong>Nome do Equino:</strong> {horse.name}</li>
-          <li><strong>Número de Registro:</strong> {horse.registerCode || 'Não informado'}</li>
-          <li><strong>Raça:</strong> {horse.breed || 'Não informado'}</li>
-          <li><strong>Sexo:</strong> {horse.sex || 'Não informado'}</li>
-          <li><strong>Idade:</strong> {horse.age} anos</li>
-        </ul>
+        </div>
       </div>
 
-      <div className="my-5">
-        <h5 className="title-sec mb-4">Características Físicas</h5>
-        <ul className="list-unstyled">
-          <li><strong>Peso do Equino:</strong> {horse.weight ? `${horse.weight} kg` : 'Não informado'}</li>
-          <li><strong>Altura do Equino:</strong> {horse.height ? `${horse.height} m` : 'Não informado'}</li>
-          <li><strong>Cor da Pelagem:</strong> {horse.coatColor || 'Não informado'}</li>
-          <li><strong>Marcha:</strong> {horse.gait || 'Não informado'}</li>
-          <li><strong>Marca ou Características Especiais:</strong> {horse.specialsTraits || 'Nenhuma'}</li>
-        </ul>
+      <div className="info-card">
+        <h4 className="info-card-title">Identificação do Equino</h4>
+        <div className="info-grid">
+          {renderInfoItem("Nome do Equino", horse.name)}
+          {renderInfoItem("Número de Registro", horse.registerCode)}
+          {renderInfoItem("Raça", horse.breed)}
+          {renderInfoItem("Sexo", horse.sex)}
+          {renderInfoItem("Idade", horse.age, "anos")}
+        </div>
       </div>
 
-      <div className="my-5">
-        <h5 className="title-sec mb-4">Equipamentos</h5>
-        <ul className="list-unstyled">
-          <li><strong>Equipamentos:</strong> {horse.weight ? `${horse.equipment}` : 'Não informado'}</li>
-        </ul>
+      <div className="info-card">
+        <h4 className="info-card-title">Características Físicas</h4>
+        <div className="info-grid">
+          {renderInfoItem("Peso do Equino", horse.weight, "kg")}
+          {renderInfoItem("Altura do Equino", horse.height, "m")}
+          {renderInfoItem("Cor da Pelagem", horse.coatColor)}
+          {renderInfoItem("Marcha", horse.gait)}
+          {renderInfoItem(
+            "Marca ou Características Especiais",
+            horse.specialsTraits
+          )}
+        </div>
+      </div>
+
+      <div className="info-card">
+        <h4 className="info-card-title">Equipamentos</h4>
+        <div className="info-grid">
+          {renderInfoItem("Equipamentos Utilizados", horse.equipment)}
+        </div>
       </div>
     </div>
   );
 };
 
-export default DadosEquino
+export default DadosEquino;
