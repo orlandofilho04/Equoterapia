@@ -102,14 +102,11 @@ const DetalhesSessao = () => {
                     locale: ptBR,
                   })
                 )}
-                {renderInfoItem(
-                  "Nº Cartão SUS",
-                  sessao?.pacient?.susCardNumber
-                )}
-                {renderInfoItem("Telefone", sessao?.pacient?.phone)}
+                {renderInfoItem("Nº Cartão SUS", sessao?.pacient?.susNumber)}
+                {renderInfoItem("Telefone", sessao?.pacient?.phoneNumber)}
                 {renderInfoItem("E-mail", sessao?.pacient?.email)}
                 {renderInfoItem("Endereço", sessao?.pacient?.address)}
-                {renderInfoItem("Cuidador", sessao?.pacient?.caregiver)}
+                {renderInfoItem("Cuidador", sessao?.pacient?.caregiverName)}
                 {renderInfoItem("Nome do Pai", sessao?.pacient?.fatherName)}
                 {renderInfoItem("Nome da Mãe", sessao?.pacient?.motherName)}
               </div>
@@ -118,16 +115,10 @@ const DetalhesSessao = () => {
             <div className="info-card">
               <h4 className="info-card-title">Escolaridade</h4>
               <div className="info-grid">
-                {renderInfoItem(
-                  "Instituição",
-                  sessao?.pacient?.education?.school
-                )}
-                {renderInfoItem(
-                  "Ano/Série",
-                  sessao?.pacient?.education?.anoSerie
-                )}
-                {renderInfoItem("Turma", sessao?.pacient?.education?.turma)}
-                {renderInfoItem("Período", sessao?.pacient?.education?.periodo)}
+                {renderInfoItem("Instituição", sessao?.pacient?.schoolName)}
+                {renderInfoItem("Ano/Série", sessao?.pacient?.schoolYear)}
+                {renderInfoItem("Turma", sessao?.pacient?.scholarClass)}
+                {renderInfoItem("Período", sessao?.pacient?.schoolShift)}
               </div>
             </div>
 
@@ -135,7 +126,7 @@ const DetalhesSessao = () => {
               <h4 className="info-card-title">Diagnóstico Clínico</h4>
               <div className="info-item">
                 <span className="info-value pre-wrap">
-                  {sessao?.pacient?.diagnosticoClinico || "Não informado"}
+                  {sessao?.pacient?.clinicDiagnosis || "Não informado"}
                 </span>
               </div>
             </div>

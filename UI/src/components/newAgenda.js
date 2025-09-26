@@ -144,7 +144,7 @@ function NewAgenda() {
 
   return (
     <div className="container my-5 p-4 rounded shadow bg-white">
-      {/* ... ToastContainer ... */}
+      {showSuccess}
       <div className="agendamento mb-4">Novo Agendamento</div>
       <Row>
         <Col md={7}>
