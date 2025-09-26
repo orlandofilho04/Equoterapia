@@ -95,4 +95,14 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         );
         return new ResponseEntity<>(exceptionPayload, statusCode);
     }
+    @ExceptionHandler(LegallyResponsibleMissingException.class)
+    public ResponseEntity<Object> LegallyResponsibleMissingExceptionHandler(LegallyResponsibleMissingException legallyResponsibleMissingException){
+        HttpStatus statusCode =  HttpStatus.BAD_REQUEST;
+        ExceptionPayload exceptionPayload = new ExceptionPayload(
+                legallyResponsibleMissingException.getMessage(),
+                statusCode,
+                ZonedDateTime.now(ZoneId.of("America/Sao_Paulo"))
+        );
+        return new ResponseEntity<>(exceptionPayload, statusCode);
+    }
 }

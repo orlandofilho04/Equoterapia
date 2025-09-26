@@ -2,6 +2,7 @@ package com.equoterapia.web.resources;
 
 import com.equoterapia.web.entities.Pacient;
 import com.equoterapia.web.entities.enums.PacientStatus;
+import com.equoterapia.web.resources.DTOs.PacientRegistrationCompleteDTO;
 import com.equoterapia.web.services.PacientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -45,6 +46,15 @@ public class PacientResource {
     @PostMapping
     public ResponseEntity<Pacient> insert(@RequestBody Pacient pacient){
         pacient = pacientService.insert(pacient);
+        URI uri = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}").buildAndExpand(pacient.getId()).
+                toUri(); // configurando URI que será retornada ao criar user
+        return ResponseEntity.created(uri).body(pacient);
+    }
+    @PostMapping("/registerCompletePacient")
+    public ResponseEntity<Pacient> insertWithLegallyResponsible(@RequestBody PacientRegistrationCompleteDTO  pacientRegistrationCompleteDTO){
+        Pacient pacient = pacientService.insertPacientWithResponsible(pacientRegistrationCompleteDTO.getPacient(), pacientRegistrationCompleteDTO.getLegallyResponsibles(), pacientRegistrationCompleteDTO.getAnamnesis());
         URI uri = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/{id}").buildAndExpand(pacient.getId()).

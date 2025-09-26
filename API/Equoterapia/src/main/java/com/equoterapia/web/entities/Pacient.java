@@ -4,6 +4,7 @@ import com.equoterapia.web.entities.enums.Genders;
 import com.equoterapia.web.entities.enums.PacientStatus;
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -110,6 +111,11 @@ public class Pacient {
     @JsonIgnore
     public boolean isActive(){
         return this.status.toString().equalsIgnoreCase("ativo");
+    }
+
+    @JsonInclude
+    public Integer age(){
+        return LocalDate.now().getYear() - this.birthDate.getYear();
     }
 
 
